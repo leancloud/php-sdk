@@ -1,4 +1,4 @@
 test:
-	phpunit --bootstrap src/autoload.php tests
+	vendor/bin/phpunit --bootstrap src/autoload.php tests
 
 .PHONY: test
