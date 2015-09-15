@@ -1,17 +1,20 @@
 {
     "name": "leancloud/php-sdk",
     "description": "LeanCloud PHP SDK",
-    "require": {
-        "ext-curl": "*"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^4.8"
-    },
     "authors": [
         {
             "name": "Juvenn Woo",
             "email": "yun.wu@leancloud.rocks"
         }
     ],
+    "require": {
+        "ext-curl": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8"
+    },
+    "autoload": {
+        "psr-4": {"LeanCloud\\": "src/LeanCloud"}
+    },
     "minimum-stability": "stable"
 }
