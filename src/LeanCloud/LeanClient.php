@@ -112,7 +112,7 @@ class LeanClient {
      * @param string $appKey       Application key
      * @param string $appMasterKey Application master key
      *
-     * @return null
+     * @return void
      */
     public static function initialize($appId, $appKey, $appMasterKey) {
         self::$appId        = $appId;
@@ -224,7 +224,8 @@ class LeanClient {
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      *
-     * @return string              Body string
+     * @return array               json decoded associated array
+     * @throws ErrorException, LeanException
      */
     public static function request($method, $path, $data,
                                    $headers=array(),
@@ -285,18 +286,64 @@ class LeanClient {
         return $data;
     }
 
+    /**
+     * Issue GET request to LeanCloud
+     *
+     * @param string $method       GET, POST, PUT, DELETE
+     * @param string $path         Request path (without version string)
+     * @param array  $headers      Optional headers
+     * @param bool   $useMasterkey Use master key or not, optional
+     *
+     * @return array               json decoded associated array
+     * @throws ErrorException, LeanException
+     */
     public static function get($path, $headers=array(), $useMasterKey=false) {
         return self::request("GET", $path, null, $headers, $useMasterKey);
     }
 
+    /**
+     * Issue POST request to LeanCloud
+     *
+     * @param string $method       GET, POST, PUT, DELETE
+     * @param string $path         Request path (without version string)
+     * @param string $data         Payload data
+     * @param array  $headers      Optional headers
+     * @param bool   $useMasterkey Use master key or not, optional
+     *
+     * @return array               json decoded associated array
+     * @throws ErrorException, LeanException
+     */
     public static function post($path, $data, $headers=array(), $useMasterKey=false) {
         return self::request("POST", $path, $data, $headers, $useMasterKey);
     }
 
+    /**
+     * Issue PUT request to LeanCloud
+     *
+     * @param string $method       GET, POST, PUT, DELETE
+     * @param string $path         Request path (without version string)
+     * @param string $data         Payload data
+     * @param array  $headers      Optional headers
+     * @param bool   $useMasterkey Use master key or not, optional
+     *
+     * @return array               json decoded associated array
+     * @throws ErrorException, LeanException
+     */
     public static function put($path, $data, $headers=array(), $useMasterKey=false) {
         return self::request("PUT", $path, $data, $headers, $useMasterKey);
     }
 
+    /**
+     * Issue DELETE request to LeanCloud
+     *
+     * @param string $method       GET, POST, PUT, DELETE
+     * @param string $path         Request path (without version string)
+     * @param array  $headers      Optional headers
+     * @param bool   $useMasterkey Use master key or not, optional
+     *
+     * @return array               json decoded associated array
+     * @throws ErrorException, LeanException
+     */
     public static function delete($path, $headers=array(), $useMasterKey=false) {
         return self::request("DELETE", $path, $headers, $useMasterKey);
     }
