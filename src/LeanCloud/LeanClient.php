@@ -280,8 +280,8 @@ class LeanClient {
 
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
-            throw new LeanException($data["error"],
-                                    isset($data["code"]) ? $data["code"] : -1);
+            $code = isset($data["code"]) ? $data["code"] : -1;
+            throw new LeanException("{$code} {$data['error']}", $code);
         }
         return $data;
     }
