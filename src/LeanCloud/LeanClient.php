@@ -120,7 +120,7 @@ class LeanClient {
         self::$appMasterKey = $appMasterKey;
 
         self::$default_headers = array(
-            'X-AVOSCloud-Application-Id' => self::$appId,
+            'X-LC-Id' => self::$appId,
             'Content-Type' => 'application/json;charset=utf-8',
             'User-Agent'   => 'LeanCloud PHP SDK ' . self::$versionString
         );
@@ -196,14 +196,14 @@ class LeanClient {
     private static function getRequestHeaders($headers, $useMasterKey) {
         $h = self::$default_headers;
 
-        $h['X-AVOSCloud-Application-Production'] = self::$useProduction ? 1 : 0;
+        $h['X-LC-Prod'] = self::$useProduction ? 1 : 0;
 
         $timestamp = time();
         $key       = $useMasterKey ? self::$appMasterKey : self::$appKey;
         $sign      = md5($timestamp . $key);
-        $h['X-AVOSCloud-Request-Sign'] = $sign . "," . $timestamp;
+        $h['X-LC-Sign'] = $sign . "," . $timestamp;
         if ($useMasterKey || self::$useMasterKey) {
-            $h['X-AVOSCloud-Request-Sign'] .= ",master";
+            $h['X-LC-Sign'] .= ",master";
         }
 
         if (!empty($headers)) {
@@ -211,7 +211,7 @@ class LeanClient {
         }
 
         // TODO: add current user session token
-        // $headers['X-AVOSCloud-Session-Token'] = user._session_token
+        // $headers['X-LC-Session'] = user._session_token
         return $h;
     }
 
