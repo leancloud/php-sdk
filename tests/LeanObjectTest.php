@@ -31,6 +31,24 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($movie instanceof LeanObject);
     }
 
+    public function testSetGet() {
+        $movie = new Movie();
+        $movie->set("title", "How to train your dragon");
+        $movie->set("release", 2010);
+        $this->assertEquals($movie->get("title"), "How to train your dragon");
+        $this->assertEquals($movie->get("release"), 2010);
+    }
+
+    public function testIncrement() {
+        $movie = new Movie();
+        $movie->set("score", 60);
+        $this->assertEquals($movie->get("score"), 60);
+        $movie->increment("score", 10);
+        $this->assertEquals($movie->get("score"), 70);
+        $movie->increment("score", -5);
+        $this->assertEquals($movie->get("score"), 65);
+    }
+
 }
 
 ?>

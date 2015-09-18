@@ -1,6 +1,9 @@
 <?php
 namespace LeanCloud;
 
+use LeanCloud\Operation\SetOperation;
+use LeanCloud\Operation\IncrementOperation;
+
 /**
  * LeanObject - Object interface to storage API.
  *
@@ -8,7 +11,7 @@ namespace LeanCloud;
  *
  *     $testObject = new LeanObject("TestObject");
  *
- * Or we can extend object to provide domain methods:
+ * Or we can extend object to provide more methods:
  *
  *      class Movie extends LeanObject {
  *          protected static $leanClassName;
@@ -89,14 +92,79 @@ class LeanObject {
 
     /**
      * Get registered className of current subclass.
+     *
      * @return string if found, false if not.
      */
     private static function getRegisteredClassName() {
         return array_search(get_called_class(), self::$_registeredClasses);
     }
 
-    public function set($key, $val) {}
-    public function increment($key, $val) {}
+
+    /**
+     * Set field value by key.
+     * @param string $key field key
+     * @param mixed  $val field value
+     * @return void
+     */
+    public function set($key, $val) {
+        $this->_applyOperation(new SetOperation($key, $val));
+    }
+
+    /**
+     * Get field value by key.
+     *
+     * @param string $key field key
+     * @return mixed      field value
+     */
+    public function get($key) {
+        if (isset($this->_data[$key])) {
+            return $this->_data[$key];
+        }
+        return null;
+    }
+
+    /**
+     * Increment a numeric field
+     *
+     * For decrement, provide a negative amount.
+     *
+     * @param string $key    field key
+     * @param number $amount amount to increment
+     */
+    public function increment($key, $amount = 1) {
+        $this->_applyOperation(new IncrementOperation($key, $amount));
+    }
+
+    /**
+     * Get queued operation by key
+     *
+     * @param string $key
+     * @return IOperation, null if not found.
+     */
+    private function _getPreviousOp($key) {
+        if (isset($this->_operationSet[$key])) {
+            return $this->_operationSet[$key];
+        }
+        return null;
+    }
+
+    /**
+     * Apply operation
+     *
+     * @param IOperation $operation
+     * @return void
+     */
+    private function _applyOperation($operation) {
+        $key    = $operation->getKey();
+        $oldval = $this->get($key);
+        $newval = $operation->applyOn($oldval);
+        $this->_data[$key] = $newval;
+
+        $prevOp = $this->_getPreviousOp($key);
+        $newOp  = $prevOp ? $operation->mergeWith($prevOp) : $operation;
+        $this->_operationSet[$key] = $newOp;
+    }
+
     public function addIn($key, $val) {}
     public function addUniqueIn($key, $val) {}
     public function removeIn() {}
@@ -110,4 +178,5 @@ class LeanObject {
     public static function saveAll() {}
     public static function destroyAll() {}
 }
+
 ?>
