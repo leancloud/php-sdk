@@ -26,6 +26,6 @@ interface IOperation {
      * @param IOperation $prevOp
      * @return IOperation
      */
-    public function mergeWith(IOperation $prevOp);
+    public function mergeWith($prevOp);
 }
 ?>

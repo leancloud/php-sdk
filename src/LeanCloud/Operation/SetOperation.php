@@ -1,6 +1,8 @@
 <?php
 namespace LeanCloud\Operation;
 
+use LeanCloud\LeanClient;
+
 class SetOperation implements IOperation {
     /**
      * The key of field the operation is about to apply.
@@ -29,11 +31,22 @@ class SetOperation implements IOperation {
     }
 
     /**
+     * Get value of operation
+     *
+     * @return mixed
+     */
+    public function getValue() {
+        return $this->value;
+    }
+
+    /**
      * Encode to json represented operation.
      *
      * @return string json represented string
      */
-    public function encode() {}
+    public function encode() {
+        return LeanClient::encode($this->value);
+    }
 
     /**
      * Apply this operation on old value.
@@ -51,7 +64,7 @@ class SetOperation implements IOperation {
      * @param IOperation $prevOp
      * @return IOperation
      */
-    public function mergeWith(IOperation $prevOp) {}
+    public function mergeWith($prevOp) {}
 }
 
 ?>

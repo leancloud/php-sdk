@@ -1,6 +1,8 @@
 <?php
 namespace LeanCloud\Operation;
 
+use LeanCloud\Operation\SetOperation;
+
 class IncrementOperation implements IOperation {
     /**
      * The key of field the operation applies to.
@@ -32,11 +34,23 @@ class IncrementOperation implements IOperation {
     }
 
     /**
+     * Get value of operation
+     *
+     * @return number
+     */
+    public function getValue() {
+        return $this->value;
+    }
+
+    /**
      * Encode to json represented operation.
      *
      * @return string json represented string
      */
-    public function encode() {}
+    public function encode() {
+        return array("__op" => "Increment",
+                     "amount" => $this->value);
+    }
 
     /**
      * Apply this operation on old value.
@@ -58,7 +72,19 @@ class IncrementOperation implements IOperation {
      * @param IOperation $prevOp
      * @return IOperation
      */
-    public function mergeWith(IOperation $prevOp) {}
+    public function mergeWith($prevOp) {
+        if (is_null($prevOp)) {
+            return $this;
+        } else if ($prevOp instanceof SetOperation) {
+            return new SetOperation($this->key,
+                                    $prevOp->getValue() + $this->value);
+        } else if ($prevOp instanceof IncrementOperation) {
+            return new IncrementOperation($this->key,
+                                          $prevOp->getValue() + $this->value);
+        } else {
+            throw new \ErrorException("Cannot merge with previous operation.");
+        }
+    }
 }
 
 ?>

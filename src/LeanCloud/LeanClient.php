@@ -347,6 +347,37 @@ class LeanClient {
     public static function delete($path, $headers=array(), $useMasterKey=false) {
         return self::request("DELETE", $path, $headers, $useMasterKey);
     }
+
+    /**
+     * Encode value to LeanCloud compatible type.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public static function encode($value) {
+        if (is_scalar($value)) {
+            return $value;
+        } else if (($value instanceof \DateTime) ||
+                   ($value instanceof \DateTimeImmutable)) {
+            return array("__type" => "Date",
+                         "iso"    => self::formatDate($value));
+        }
+    }
+
+    /**
+     * Format date according to LeanCloud spec.
+     *
+     * @param DateTime $date
+     * @return string
+     */
+    public static function formatDate($date) {
+        $s = $date->format("Y-m-d\TH:i:s.u");
+        // PHP does not support sub seconds well, it and always gives 6 zero
+        // digits as microseconds. We chop 3 zeros off:
+        //  `2015-09-18T08:06:20.000000Z` -> `2015-09-18T08:06:20.000Z`
+        $s = substr($s, 0, 23) . "Z";
+        return $s;
+    }
 }
 
 ?>
