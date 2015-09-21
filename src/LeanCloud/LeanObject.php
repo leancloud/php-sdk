@@ -26,7 +26,7 @@ use LeanCloud\Operation\IncrementOperation;
 class LeanObject {
     /**
      * Registered mapping of className to class.
-     * @var array()
+     * @var array
      */
     private static $_registeredClasses = array();
 
@@ -65,7 +65,7 @@ class LeanObject {
         $this->_data         = array();
         $this->_serverdata   = array();
         $this->_operationSet = array();
-        $this->objectId      = $objectId;
+        $this->_data["objectId"] = $objectId;
     }
 
     /**
@@ -99,14 +99,34 @@ class LeanObject {
         return array_search(get_called_class(), self::$_registeredClasses);
     }
 
+    /**
+     * Get objectId.
+     *
+     * @return string
+     */
+    public function getObjectId() {
+        return $this->get("objectId");
+    }
+
+    public function getCreatedAt() {
+        return $this->get("createdAt");
+    }
+
+    public function getUpdatedAt() {
+        return $this->get("updatedAt");
+    }
 
     /**
      * Set field value by key.
      * @param string $key field key
      * @param mixed  $val field value
      * @return void
+     * @throws ErrorException
      */
     public function set($key, $val) {
+        if (in_array($key, array("objectId", "createdAt", "updatedAt"))) {
+            throw new \ErrorException("Preserved field could not be set.");
+        }
         $this->_applyOperation(new SetOperation($key, $val));
     }
 
@@ -168,7 +188,69 @@ class LeanObject {
     public function addIn($key, $val) {}
     public function addUniqueIn($key, $val) {}
     public function removeIn() {}
-    public function save() {}
+
+    /**
+     * Has changes or not.
+     * @return bool
+     */
+    private function hasChanges() {
+        return !empty($this->_operationSet);
+    }
+
+    /**
+     * Get unsaved data
+     *
+     * @return array Deep associative array
+     */
+    private function getSaveData() {
+        return LeanClient::encode($this->_operationSet);
+    }
+
+    /**
+     * Save object
+     *
+     * @return void
+     */
+    public function save() {
+        if (!$this->hasChanges()) {return;}
+        $data = $this->getSaveData();
+        if (empty($this->getObjectId())) {
+            $resp = LeanClient::post("/classes/{$this->_className}", $data);
+        } else {
+            $resp = LeanClient::put("/classes/{$this->_className}/{$this->getObjectId()}",
+                                    $data);
+        }
+        $this->_mergeData($resp);
+    }
+
+    /**
+     * Merge data from server
+     *
+     * @param array $data JSON decoded server response
+     * @return void
+     */
+    private function _mergeData($data) {
+        forEach($data as $key => $val) {
+            $this->_data[$key] = $val;
+            if (isset($this->_operationSet[$key])) {
+                unset($this->_operationSet[$key]);
+            }
+        }
+    }
+
+    /**
+     * Fetch data from server
+     *
+     * @return void
+     */
+    public function fetch() {
+        if (empty($this->getObjectId())) {
+            throw new \ErrorException("Cannot fetch object without objectId.");
+        }
+        $resp = LeanClient::get("/classes/{$this->_className}/{$this->getObjectId()}");
+        $this->_mergeData($resp);
+    }
+
     public function delete($key) {}
     public function destroy() {}
 

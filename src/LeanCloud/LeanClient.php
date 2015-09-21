@@ -2,6 +2,8 @@
 
 namespace LeanCloud;
 
+use LeanCloud\Operation\IOperation;
+
 /**
  * LeanClient - HTTP LeanClient talking to LeanCloud REST API
  *
@@ -218,13 +220,15 @@ class LeanClient {
     /**
      * Issue request to LeanCloud
      *
+     * The payload data is automatically json encoded, if the request has
+     * content-type of `application/json`.
+     *
      * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
-     * @param string $data         Payload data
+     * @param mixed  $data         Payload data
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
-     *
-     * @return array               json decoded associated array
+     * @return array               json decoded associative array
      * @throws ErrorException, LeanException
      */
     public static function request($method, $path, $data,
@@ -234,10 +238,15 @@ class LeanClient {
         $url  = self::getAPIEndPoint();
         $url .= $path;
 
-        $headers = self::getRequestHeaders($headers, $useMasterKey);
+        $headers_array = self::getRequestHeaders($headers, $useMasterKey);
+
+        if (strpos($headers_array["Content-Type"], "/json") !== false) {
+            $data = json_encode($data);
+        }
+
         $headers = array_map(function($key, $val) { return "$key: $val";},
-                             array_keys($headers),
-                             $headers);
+                             array_keys($headers_array),
+                             $headers_array);
 
         $req = curl_init($url);
         curl_setopt($req, CURLOPT_SSL_VERIFYPEER, true);
@@ -248,11 +257,11 @@ class LeanClient {
         switch($method) {
             case "POST":
                 curl_setopt($req, CURLOPT_POST, 1);
-                curl_setopt($req, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($req, CURLOPT_POSTFIELDS, $data);
                 break;
             case "PUT":
                 curl_setopt($req, CURLOPT_CUSTOMREQUEST, $method);
-                curl_setopt($req, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($req, CURLOPT_POSTFIELDS, $data);
                 break;
             case "DELETE":
                 curl_setopt($req, CURLOPT_CUSTOMREQUEST, $method);
@@ -361,6 +370,17 @@ class LeanClient {
                    ($value instanceof \DateTimeImmutable)) {
             return array("__type" => "Date",
                          "iso"    => self::formatDate($value));
+        } else if ($value instanceof IOperation) {
+            return $value->encode();
+        } else if (is_array($value)) {
+            $res = array();
+            forEach($value as $key => $val) {
+                $res[$key] = self::encode($val);
+            }
+            return $res;
+        } else {
+            throw new \ErrorException("Dont know how to encode " .
+                                      gettype($value));
         }
     }
 
