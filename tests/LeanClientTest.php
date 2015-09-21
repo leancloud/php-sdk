@@ -6,9 +6,9 @@ use LeanCloud\LeanException;
 class LeanClientTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
         LeanClient::initialize(
-            getenv("LEANCLOUD_APP_ID"),
-            getenv("LEANCLOUD_APP_KEY"),
-            getenv("LEANCLOUD_APP_MASTER_KEY"));
+            getenv("LC_APP_ID"),
+            getenv("LC_APP_KEY"),
+            getenv("LC_APP_MASTER_KEY"));
         LeanClient::useRegion("CN");
     }
 
