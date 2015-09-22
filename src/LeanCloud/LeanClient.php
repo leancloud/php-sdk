@@ -298,7 +298,6 @@ class LeanClient {
     /**
      * Issue GET request to LeanCloud
      *
-     * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
@@ -313,7 +312,6 @@ class LeanClient {
     /**
      * Issue POST request to LeanCloud
      *
-     * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param string $data         Payload data
      * @param array  $headers      Optional headers
@@ -329,7 +327,6 @@ class LeanClient {
     /**
      * Issue PUT request to LeanCloud
      *
-     * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param string $data         Payload data
      * @param array  $headers      Optional headers
@@ -345,7 +342,6 @@ class LeanClient {
     /**
      * Issue DELETE request to LeanCloud
      *
-     * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
