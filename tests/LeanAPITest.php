@@ -71,5 +71,20 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($resp["objectId"]);
     }
 
+    public function testSetHashValue() {
+        $obj = array("name" => "alice",
+                     "attr" => array("age" => 12,
+                                     "gender" => "female"));
+        $resp = LeanClient::post("/classes/TestObject", $obj);
+        $this->assertNotEmpty($resp["objectId"]);
+
+        // Add hash pair to hash field is not valid
+        $this->setExpectedException("LeanCloud\LeanException", null, 1);
+        $resp2 = LeanClient::put("/classes/TestObject/{$resp["objectId"]}",
+                                 array("attr" => array(
+                                     "__op" => "add",
+                                     "objects" => array("favColor" => "Orange"))));
+    }
+
 }
 ?>
