@@ -59,12 +59,14 @@ class SetOperation implements IOperation {
     }
 
     /**
-     * Merge this operation into a (previous) operation.
+     * Merge this operation with (previous) operation.
      *
-     * @param IOperation $prevOp
+     * @param  IOperation $prevOp
      * @return IOperation
      */
-    public function mergeWith($prevOp) {}
+    public function mergeWith($prevOp) {
+        return $this;
+    }
 }
 
 ?>

@@ -63,7 +63,7 @@ class IncrementOperation implements IOperation {
         if (is_numeric($oldval)) {
             return $this->value + $oldval;
         }
-        throw new \ErrorException("Cannot increment on non-numeric value.");
+        throw new \ErrorException("Operation incompatible with previous value.");
     }
 
     /**
@@ -73,16 +73,16 @@ class IncrementOperation implements IOperation {
      * @return IOperation
      */
     public function mergeWith($prevOp) {
-        if (is_null($prevOp)) {
+        if (!$prevOp) {
             return $this;
         } else if ($prevOp instanceof SetOperation) {
             return new SetOperation($this->key,
-                                    $prevOp->getValue() + $this->value);
+                                    $this->applyOn($prevOp->getValue()));
         } else if ($prevOp instanceof IncrementOperation) {
             return new IncrementOperation($this->key,
-                                          $prevOp->getValue() + $this->value);
+                                          $this->applyOn($prevOp->getValue()));
         } else {
-            throw new \ErrorException("Cannot merge with previous operation.");
+            throw new \ErrorException("Operation incompatible with previous one.");
         }
     }
 }
