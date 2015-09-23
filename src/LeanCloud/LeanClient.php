@@ -2,6 +2,8 @@
 
 namespace LeanCloud;
 
+use LeanCloud\Operation\IOperation;
+
 /**
  * LeanClient - HTTP LeanClient talking to LeanCloud REST API
  *
@@ -120,7 +122,7 @@ class LeanClient {
         self::$appMasterKey = $appMasterKey;
 
         self::$default_headers = array(
-            'X-AVOSCloud-Application-Id' => self::$appId,
+            'X-LC-Id' => self::$appId,
             'Content-Type' => 'application/json;charset=utf-8',
             'User-Agent'   => 'LeanCloud PHP SDK ' . self::$versionString
         );
@@ -196,14 +198,14 @@ class LeanClient {
     private static function getRequestHeaders($headers, $useMasterKey) {
         $h = self::$default_headers;
 
-        $h['X-AVOSCloud-Application-Production'] = self::$useProduction ? 1 : 0;
+        $h['X-LC-Prod'] = self::$useProduction ? 1 : 0;
 
         $timestamp = time();
         $key       = $useMasterKey ? self::$appMasterKey : self::$appKey;
         $sign      = md5($timestamp . $key);
-        $h['X-AVOSCloud-Request-Sign'] = $sign . "," . $timestamp;
+        $h['X-LC-Sign'] = $sign . "," . $timestamp;
         if ($useMasterKey || self::$useMasterKey) {
-            $h['X-AVOSCloud-Request-Sign'] .= ",master";
+            $h['X-LC-Sign'] .= ",master";
         }
 
         if (!empty($headers)) {
@@ -211,20 +213,22 @@ class LeanClient {
         }
 
         // TODO: add current user session token
-        // $headers['X-AVOSCloud-Session-Token'] = user._session_token
+        // $headers['X-LC-Session'] = user._session_token
         return $h;
     }
 
     /**
      * Issue request to LeanCloud
      *
+     * The payload data is automatically json encoded, if the request has
+     * content-type of `application/json`.
+     *
      * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
-     * @param string $data         Payload data
+     * @param mixed  $data         Payload data
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
-     *
-     * @return array               json decoded associated array
+     * @return array               json decoded associative array
      * @throws ErrorException, LeanException
      */
     public static function request($method, $path, $data,
@@ -234,10 +238,15 @@ class LeanClient {
         $url  = self::getAPIEndPoint();
         $url .= $path;
 
-        $headers = self::getRequestHeaders($headers, $useMasterKey);
+        $headers_array = self::getRequestHeaders($headers, $useMasterKey);
+
+        if (strpos($headers_array["Content-Type"], "/json") !== false) {
+            $data = json_encode($data);
+        }
+
         $headers = array_map(function($key, $val) { return "$key: $val";},
-                             array_keys($headers),
-                             $headers);
+                             array_keys($headers_array),
+                             $headers_array);
 
         $req = curl_init($url);
         curl_setopt($req, CURLOPT_SSL_VERIFYPEER, true);
@@ -248,11 +257,11 @@ class LeanClient {
         switch($method) {
             case "POST":
                 curl_setopt($req, CURLOPT_POST, 1);
-                curl_setopt($req, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($req, CURLOPT_POSTFIELDS, $data);
                 break;
             case "PUT":
                 curl_setopt($req, CURLOPT_CUSTOMREQUEST, $method);
-                curl_setopt($req, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($req, CURLOPT_POSTFIELDS, $data);
                 break;
             case "DELETE":
                 curl_setopt($req, CURLOPT_CUSTOMREQUEST, $method);
@@ -280,8 +289,8 @@ class LeanClient {
 
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
-            throw new LeanException($data["error"],
-                                    isset($data["code"]) ? $data["code"] : -1);
+            $code = isset($data["code"]) ? $data["code"] : -1;
+            throw new LeanException("{$code} {$data['error']}", $code);
         }
         return $data;
     }
@@ -289,7 +298,6 @@ class LeanClient {
     /**
      * Issue GET request to LeanCloud
      *
-     * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
@@ -304,7 +312,6 @@ class LeanClient {
     /**
      * Issue POST request to LeanCloud
      *
-     * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param string $data         Payload data
      * @param array  $headers      Optional headers
@@ -320,7 +327,6 @@ class LeanClient {
     /**
      * Issue PUT request to LeanCloud
      *
-     * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param string $data         Payload data
      * @param array  $headers      Optional headers
@@ -336,7 +342,6 @@ class LeanClient {
     /**
      * Issue DELETE request to LeanCloud
      *
-     * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
@@ -346,6 +351,48 @@ class LeanClient {
      */
     public static function delete($path, $headers=array(), $useMasterKey=false) {
         return self::request("DELETE", $path, $headers, $useMasterKey);
+    }
+
+    /**
+     * Encode value to LeanCloud compatible type.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public static function encode($value) {
+        if (is_scalar($value)) {
+            return $value;
+        } else if (($value instanceof \DateTime) ||
+                   ($value instanceof \DateTimeImmutable)) {
+            return array("__type" => "Date",
+                         "iso"    => self::formatDate($value));
+        } else if ($value instanceof IOperation) {
+            return $value->encode();
+        } else if (is_array($value)) {
+            $res = array();
+            forEach($value as $key => $val) {
+                $res[$key] = self::encode($val);
+            }
+            return $res;
+        } else {
+            throw new \ErrorException("Dont know how to encode " .
+                                      gettype($value));
+        }
+    }
+
+    /**
+     * Format date according to LeanCloud spec.
+     *
+     * @param DateTime $date
+     * @return string
+     */
+    public static function formatDate($date) {
+        $s = $date->format("Y-m-d\TH:i:s.u");
+        // PHP does not support sub seconds well, it and always gives 6 zero
+        // digits as microseconds. We chop 3 zeros off:
+        //  `2015-09-18T08:06:20.000000Z` -> `2015-09-18T08:06:20.000Z`
+        $s = substr($s, 0, 23) . "Z";
+        return $s;
     }
 }
 
