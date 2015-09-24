@@ -117,6 +117,16 @@ class LeanObject {
     }
 
     /**
+     * Delete field by key.
+     *
+     * @param string $key Field key
+     * @return void
+     */
+    public function delete($key) {
+        $this->_applyOperation(new DeleteOperation($key));
+    }
+
+    /**
      * Get field value by key.
      *
      * @param string $key field key
@@ -271,7 +281,6 @@ class LeanObject {
         $this->_mergeData($resp);
     }
 
-    public function delete($key) {}
     public function destroy() {}
 
     public function query() {}

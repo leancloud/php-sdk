@@ -1,6 +1,7 @@
 <?php
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\IncrementOperation;
+use LeanCloud\Operation\DeleteOperation;
 
 class IncrementOperationTest extends PHPUnit_Framework_TestCase {
     public function testGetKey() {
@@ -62,6 +63,13 @@ class IncrementOperationTest extends PHPUnit_Framework_TestCase {
         $op2 = $op->mergeWith(new IncrementOperation("score", 3));
         $this->assertTrue($op2 instanceof IncrementOperation);
         $this->assertEquals($op2->getValue(), 5);
+    }
+
+    public function testMergeWithDelete() {
+        $op  = new IncrementOperation("score", 2);
+        $op2 = $op->mergeWith(new DeleteOperation("score"));
+        $this->assertTrue($op2 instanceof SetOperation);
+        $this->assertEquals($op2->getValue(), 2);
     }
 }
 ?>
