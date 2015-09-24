@@ -2,6 +2,7 @@
 namespace LeanCloud;
 
 use LeanCloud\Operation\SetOperation;
+use LeanCloud\Operation\DeleteOperation;
 use LeanCloud\Operation\ArrayOperation;
 use LeanCloud\Operation\IncrementOperation;
 
