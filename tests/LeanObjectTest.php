@@ -174,6 +174,17 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(array("frontend"), $obj->get("tags"));
     }
 
+    public function testDestroyObject() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("tags", array("frontend"));
+        $obj->save();
+
+        $this->assertNotEmpty($obj->getObjectId());
+        $obj->destroy();
+
+        $this->assertFalse($obj->fetch());
+    }
+
 }
 
 ?>

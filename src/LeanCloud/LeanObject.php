@@ -272,17 +272,40 @@ class LeanObject {
     /**
      * Fetch data from server
      *
-     * @return void
+     * Local unsaved changes will be discarded.
+     *
+     * @return bool False if object not found.
+     * @throws ErrorException, LeanException
      */
     public function fetch() {
         if (empty($this->getObjectId())) {
             throw new \ErrorException("Cannot fetch object without objectId.");
         }
         $resp = LeanClient::get("/classes/{$this->_className}/{$this->getObjectId()}");
-        $this->_mergeData($resp);
+        if (empty($resp)) {
+            return false;
+        } else {
+            $this->_mergeData($resp);
+            return true;
+        }
     }
 
-    public function destroy() {}
+    /**
+     * Destroy object on server
+     *
+     * It does and only destroy current object.
+     *
+     * @return void
+     * @throws LeanException
+     */
+    public function destroy() {
+        if (!$this->getObjectId()) {
+            return;
+        }
+
+        LeanClient::delete("/classes/{$this->_className}/" .
+                           "{$this->getObjectId()}");
+    }
 
     public function query() {}
     public function relation($key) {}
