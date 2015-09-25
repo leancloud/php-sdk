@@ -86,5 +86,40 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
                                      "objects" => array("favColor" => "Orange"))));
     }
 
+    public function testAddRelation() {
+        $obj = array("name" => "alice",
+                     "likes" => array("__op" => "AddRelation",
+                                      "objects" => array(
+                                          array("__type" => "Pointer",
+                                                "className" => "Post",
+                                                "objectId" => "3a43bcbc3"))));
+        $resp = LeanClient::post("/classes/TestObject", $obj);
+        $this->assertNotEmpty($resp["objectId"]);
+    }
+
+    /**
+     * Batch on array operation will result error:
+     *
+     * 301 - Fails to insert new document, cannot update on ...
+     *       at the same time.
+     */
+    public function testBatchOperationOnArray() {
+        $obj = array("name" => "Batch test", "tags" => array());
+        $resp = LeanClient::post("/classes/TestObject", $obj);
+        $this->assertNotEmpty($resp["objectId"]);
+
+
+        $adds    = array("__op" => "Add",
+                         "objects" => array("javascript", "frontend"));
+        $removes = array("__op" => "Remove",
+                         "objects" => array("frontend", "css"));
+        $obj     = array("tags" => array("__op" => "Batch",
+                                         "ops"  => array($adds, $removes)));
+
+        $this->setExpectedException("LeanCloud\LeanException", null, 301);
+        $resp = LeanClient::put("/classes/TestObject/{$resp['objectId']}",
+                                $obj);
+    }
+
 }
 ?>
