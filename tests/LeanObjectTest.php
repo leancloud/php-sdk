@@ -2,6 +2,7 @@
 
 use LeanCloud\LeanObject;
 use LeanCloud\LeanClient;
+use LeanCloud\LeanRelation;
 
 class Movie extends LeanObject {
     protected static $leanClassName = "Movie";
@@ -183,6 +184,23 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj->destroy();
 
         $this->assertFalse($obj->fetch());
+    }
+
+    /**
+     * Test relation
+     */
+
+    public function testAddRelation() {
+        $obj = new LeanObject("TestObject");
+        $rel = $obj->getRelation("authors");
+        $rel->add(new LeanObject("TestAuthor", "abc101"));
+        $this->assertEquals("Relation", $rel->encode()["__type"]);
+        $this->assertEquals("TestAuthor", $rel->encode()["className"]);
+
+        $val = $obj->get("authors");
+        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertEquals("Relation", $val->encode()["__type"]);
+        $this->assertEquals("TestAuthor", $val->encode()["className"]);
     }
 
 }

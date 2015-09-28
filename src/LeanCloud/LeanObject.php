@@ -1,6 +1,7 @@
 <?php
 namespace LeanCloud;
 
+use LeanCloud\Operation\IOperation;
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\DeleteOperation;
 use LeanCloud\Operation\ArrayOperation;
@@ -37,7 +38,7 @@ class LeanObject {
      *
      * @param string $className
      * @param string $objectId
-     * @throws InvalidArgumentexception
+     * @throws InvalidArgumentException
      */
     public function __construct($className=null, $objectId=null) {
         $class = get_called_class();
@@ -87,6 +88,28 @@ class LeanObject {
     }
 
     /**
+     * Get className of object
+     *
+     * @return string
+     */
+    public function getClassName() {
+        return $this->_className;
+    }
+
+    /**
+     * Get JSON representation of object pointer
+     *
+     * @return array
+     */
+    public function getPointer() {
+        return array(
+            "__type"    => "Pointer",
+            "className" => $this->getClassName(),
+            "objectId"  => $this->getObjectId(),
+        );
+    }
+
+    /**
      * Get objectId.
      *
      * @return string
@@ -95,10 +118,16 @@ class LeanObject {
         return $this->get("objectId");
     }
 
+    /**
+     * Get DateTime of creating object on LeanCloud.
+     */
     public function getCreatedAt() {
         return $this->get("createdAt");
     }
 
+    /**
+     * Get DateTime of updating object on LeanCloud.
+     */
     public function getUpdatedAt() {
         return $this->get("updatedAt");
     }
@@ -114,7 +143,10 @@ class LeanObject {
         if (in_array($key, array("objectId", "createdAt", "updatedAt"))) {
             throw new \ErrorException("Preserved field could not be set.");
         }
-        $this->_applyOperation(new SetOperation($key, $val));
+        if (!($val instanceof IOperation)) {
+            $val = new SetOperation($key, $val);
+        }
+        $this->_applyOperation($val);
     }
 
     /**
@@ -174,8 +206,12 @@ class LeanObject {
     private function _applyOperation($operation) {
         $key    = $operation->getKey();
         $oldval = $this->get($key);
-        $newval = $operation->applyOn($oldval);
-        $this->_data[$key] = $newval;
+        $newval = $operation->applyOn($oldval, $this);
+        if ($newval !== null) {
+            $this->_data[$key] = $newval;
+        } else if (isset($this->_data[$key])) {
+            unset($this->_data[$key]);
+        }
 
         $prevOp = $this->_getPreviousOp($key);
         $newOp  = $prevOp ? $operation->mergeWith($prevOp) : $operation;
@@ -272,7 +308,7 @@ class LeanObject {
     /**
      * Fetch data from server
      *
-     * Local unsaved changes will be discarded.
+     * Local unsaved changes will be **discarded**.
      *
      * @return bool False if object not found.
      * @throws ErrorException, LeanException
@@ -308,7 +344,25 @@ class LeanObject {
     }
 
     public function query() {}
-    public function relation($key) {}
+
+    /**
+     * Get (or build) relation on field
+     *
+     * @param  string $key Field key
+     * @return LeanRelation
+     * @throws ErrorException When it is not relation field
+     */
+    public function getRelation($key) {
+        $val = $this->get($key);
+        if ($val) {
+            if ($val instanceof LeanRelation) {
+                return $val;
+            } else {
+                throw new \ErrorException("Field {$key} is not relation.");
+            }
+        }
+        return new LeanRelation($this, $key);
+    }
 
     public static function saveAll() {}
     public static function destroyAll() {}
