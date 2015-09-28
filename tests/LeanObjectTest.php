@@ -84,6 +84,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($obj->getCreatedAt());
 
         $this->assertEquals($obj->get("score"), 81);
+        $obj->destroy();
     }
 
     public function testSaveFetchObject() {
@@ -98,6 +99,8 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj2->fetch();
         $this->assertEquals($obj2->get("name"), "Alice in wonderland");
         $this->assertEquals($obj2->get("score"), 81);
+
+        $obj->destroy();
     }
 
     public function testSaveExistingObject() {
@@ -115,6 +118,8 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj2->fetch();
         $this->assertEquals($obj2->get("name"), "Alice in wonderland");
         $this->assertEquals($obj2->get("score"), 81);
+
+        $obj->destroy();
     }
 
     /**

@@ -45,6 +45,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                                     "/classes/TestObject",
                                     array("name" => "alice",
                                           "story" => "in wonderland"));
+        LeanClient::delete("/classes/TestObject/{$data['objectId']}");
     }
 
     public function testRequestTestObject() {
@@ -60,6 +61,8 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                                     "/classes/TestObject/" . $id,
                                     null);
         $this->assertEquals($data["name"], "alice");
+
+        LeanClient::delete("/classes/TestObject/{$data['objectId']}");
     }
 
     public function testPostCreateTestObject() {
@@ -67,6 +70,8 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                                  array("name" => "alice",
                                        "story" => "in wonderland"));
         $this->assertArrayHasKey("objectId", $data);
+
+        LeanClient::delete("/classes/TestObject/{$data['objectId']}");
     }
 
     public function testGetTestObject() {
@@ -77,6 +82,8 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $obj = LeanClient::get("/classes/TestObject/{$data['objectId']}");
         $this->assertEquals($obj["name"], "alice");
         $this->assertEquals($obj["story"], "in wonderland");
+
+        LeanClient::delete("/classes/TestObject/{$obj['objectId']}");
     }
 
     public function testUpdateTestObject() {
@@ -92,6 +99,8 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $obj = LeanClient::get("/classes/TestObject/{$data['objectId']}");
         $this->assertEquals($obj["name"], "Hiccup");
         $this->assertEquals($obj["story"], "How to train your dragon");
+
+        LeanClient::delete("/classes/TestObject/{$obj['objectId']}");
     }
 
     public function testDeleteTestObject() {
