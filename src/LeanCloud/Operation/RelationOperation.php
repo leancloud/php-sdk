@@ -164,7 +164,8 @@ class RelationOperation implements IOperation {
      */
     public function applyOn($relation, $object=null) {
         if (!$relation) {
-            return $object->getRelation($this->getKey());
+            return new LeanRelation($object, $this->getKey(),
+                                    $this->getTargetClassName());
         }
         if (!($relation instanceof LeanRelation)) {
             throw new \ErrorException("Operation incompatible to previous " .
