@@ -2,26 +2,12 @@
 namespace LeanCloud;
 
 use LeanCloud\Operation\SetOperation;
+use LeanCloud\Operation\ArrayOperation;
 use LeanCloud\Operation\IncrementOperation;
 
 /**
- * LeanObject - Object interface to storage API.
+ * LeanObject - Object interface to LeanCloud storage API.
  *
- * Create an plain object with:
- *
- *     $testObject = new LeanObject("TestObject");
- *
- * Or we can extend object to provide more methods:
- *
- *      class Movie extends LeanObject {
- *          protected static $leanClassName;
- *          public function getActors() {
- *              // ...
- *          }
- *      }
- *      Movie::register();
- *      $movie = new Movie();
- *      $movie->getActors();
  */
 class LeanObject {
     /**
@@ -185,9 +171,43 @@ class LeanObject {
         $this->_operationSet[$key] = $newOp;
     }
 
-    public function addIn($key, $val) {}
-    public function addUniqueIn($key, $val) {}
-    public function removeIn() {}
+    /**
+     * Add one object into array field
+     *
+     * @param  string $key Field key
+     * @param  miexed $val Object to add
+     * @return void
+     * @throws ErrorException When adding to non-array field
+     */
+    public function add($key, $val) {
+        $this->_applyOperation(new ArrayOperation($key, array($val), "Add"));
+    }
+
+    /**
+     * Add one object into array field only if it is not already present.
+     *
+     * @param string $key Field key
+     * @param mixed  $val Object to add
+     * @return void
+     * @throws ErrorException When adding to non-array field
+     */
+    public function addUnique($key, $val) {
+        $this->_applyOperation(new ArrayOperation($key,
+                                                  array($val),
+                                                  "AddUnique"));
+    }
+
+    /**
+     * Remove one object from array field.
+     *
+     * @param string $key Field key
+     * @param mixed  $val Object to remove
+     * @return void
+     * @throws ErrorException When removing from non-array field
+     */
+    public function remove($key, $val) {
+        $this->_applyOperation(new ArrayOperation($key, array($val), "Remove"));
+    }
 
     /**
      * Has changes or not.
