@@ -366,6 +366,8 @@ class LeanClient {
                    ($value instanceof \DateTimeImmutable)) {
             return array("__type" => "Date",
                          "iso"    => self::formatDate($value));
+        } else if ($value instanceof LeanObject) {
+            return $value->getPointer();
         } else if ($value instanceof IOperation) {
             return $value->encode();
         } else if (is_array($value)) {

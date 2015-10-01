@@ -208,6 +208,90 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("TestAuthor", $val->encode()["className"]);
     }
 
+    /**
+     * Test traverse, deep save, deep destroy
+     */
+
+    public function testObjectTraverseACycle() {
+        $a = new LeanObject("TestObject");
+        $b = new LeanObject("TestObject");
+        $c = new LeanObject("TestObject");
+        $a->set("likes", array($b, "foo"));
+        $b->set("likes", array($c, 42));
+        $c->set("likes", $a);
+        $objects = array(); // collected objects
+        $seen    = array();
+        LeanObject::traverse($a, $seen,
+                             function($val) use (&$objects) {
+                                 if ($val instanceof LeanObject) {
+                                     $objects[] = $val;
+                                 }
+                             });
+        $this->assertEquals(3, count($seen));
+        $this->assertEquals(3, count($objects));
+
+        // now start from $c
+        $objects = array(); // collected objects
+        $seen    = array();
+        LeanObject::traverse($c, $seen,
+                             function($val) use (&$objects) {
+                                 if ($val instanceof LeanObject) {
+                                     $objects[] = $val;
+                                 }
+                             });
+        $this->assertEquals(3, count($seen));
+        $this->assertEquals(3, count($objects));
+    }
+
+    public function testFindUnsavedChildren() {
+        $a = new LeanObject("TestObject");
+        $b = new LeanObject("TestObject");
+        $c = new LeanObject("TestObject");
+        $a->set("likes", array($b, "foo"));
+        $b->set("likes", array($c, 42));
+        $c->set("likes", $a);
+        $unsavedChildren = $b->findUnsavedChildren();
+        $this->assertContains($c, $unsavedChildren);
+        $this->assertContains($a, $unsavedChildren);
+
+        // it should not contain $b
+        $this->assertNotContains($b, $unsavedChildren);
+    }
+
+    public function testSaveObjectWithNewChildren() {
+        $a = new LeanObject("TestObject");
+        $b = new LeanObject("TestObject");
+        $c = new LeanObject("TestObject");
+        $a->set("foo", "aar");
+        $b->set("foo", "bar");
+        $c->set("foo", "car");
+        $a->set("likes", array($b, "foo"));
+        $a->set("dislikes", array($c, 42));
+        $a->save();
+
+        $this->assertNotEmpty($a->getObjectId());
+        $this->assertNotEmpty($b->getObjectId());
+        $this->assertNotEmpty($c->getObjectId());
+
+        LeanObject::destroyAll(array($a, $b, $c));
+    }
+
+    // it cannnot save when children's children is new
+    public function testSaveWithNewGrandChildren() {
+        $a = new LeanObject("TestObject");
+        $b = new LeanObject("TestObject");
+        $c = new LeanObject("TestObject");
+        $a->set("foo", "aar");
+        $b->set("foo", "bar");
+        $c->set("foo", "car");
+        $a->set("likes", array($b, "foo"));
+        $b->set("likes", array($c, 42));
+
+        $this->setExpectedException("ErrorException",
+                                    "Object without ID cannot be serialized.");
+        $a->save();
+    }
+
 }
 
 ?>
