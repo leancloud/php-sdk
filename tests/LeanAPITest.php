@@ -134,5 +134,38 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         LeanClient::delete("/classes/TestObject/{$obj['objectId']}");
     }
 
+    public function testBatchGet() {
+        $obj1 = array("name" => "alice 1");
+        $obj2 = array("name" => "alice 2");
+        $resp1 = LeanClient::post("/classes/TestObject", $obj1);
+        $resp2 = LeanClient::post("/classes/TestObject", $obj2);
+        $this->assertNotEmpty($resp1["objectId"]);
+        $this->assertNotEmpty($resp2["objectId"]);
+
+        $req[] = array("path" => "/1.1/classes/TestObject/{$resp1['objectId']}",
+                       "method" => "GET");
+        $req[] = array("path" => "/1.1/classes/TestObject/{$resp2['objectId']}",
+                       "method" => "GET");
+        $resp = LeanClient::post("/batch", array("requests" => $req));
+        $this->assertEquals(2, count($resp));
+        $this->assertEquals($resp1["objectId"], $resp[0]["success"]["objectId"]);
+        $this->assertEquals($resp2["objectId"], $resp[1]["success"]["objectId"]);
+    }
+
+    public function testBatchGetNotFound() {
+        $obj = array("name" => "alice");
+        $resp = LeanClient::post("/classes/TestObject", $obj);
+        $this->assertNotEmpty($resp["objectId"]);
+        $req[] = array("path" => "/1.1/classes/TestObject/{$resp['objectId']}",
+                       "method" => "GET");
+        $req[] = array("path" => "/1.1/classes/TestObject/nonexistent_id",
+                       "method" => "GET");
+        $resp2 = LeanClient::batch($req);
+        $this->assertNotEmpty($resp2[0]["success"]);
+        $this->assertEmpty($resp2[1]["success"]); // empty when not found
+
+        LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
+    }
+
 }
 ?>

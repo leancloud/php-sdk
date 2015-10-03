@@ -263,9 +263,11 @@ class LeanObject {
 
     /**
      * Has changes or not.
+     *
      * @return bool
      */
-    private function hasChanges() {
+    public function hasChanges() {
+        // TODO: check children too?
         return !empty($this->_operationSet);
     }
 
@@ -298,10 +300,35 @@ class LeanObject {
     private function _mergeData($data) {
         forEach($data as $key => $val) {
             $this->_data[$key] = $val;
+        }
+    }
+
+    /**
+     * Merge server data after save.
+     *
+     * @param array $data JSON decoded server response
+     * @return void
+     */
+    private function _mergeAfterSave($data) {
+        $this->_operationSet = array();
+        $this->_mergeData($data);
+    }
+
+    /**
+     * Merge server data after fetch.
+     *
+     * @param array $data JSON decoded server response
+     * @return void
+     */
+    private function _mergeAfterFetch($data) {
+        // Clear local operations prior to the fetch, except the new
+        // new fields that does not exist on server.
+        forEach($data as $key => $val) {
             if (isset($this->_operationSet[$key])) {
                 unset($this->_operationSet[$key]);
             }
         }
+        $this->_mergeData($data);
     }
 
     /**
@@ -313,15 +340,58 @@ class LeanObject {
      * @throws ErrorException, LeanException
      */
     public function fetch() {
-        if (empty($this->getObjectId())) {
-            throw new \ErrorException("Cannot fetch object without objectId.");
+        static::fetchAll(array($this));
+    }
+
+    /**
+     * Fetch objects from server
+     *
+     * @param array $objects Objects to fetch.
+     * @return ???
+     * @throws ErrorException
+     *         LeanException
+     */
+    public function fetchAll($objects) {
+        $batch = array();
+        forEach($objects as $obj) {
+            if (!$obj->getObjectId()) {
+                throw new \ErrorException("Cannot fetch object without ID.");
+            }
+            // remove duplicate objects by id
+            $batch[$obj->getObjectId()] = $obj;
         }
-        $resp = LeanClient::get("/classes/{$this->_className}/{$this->getObjectId()}");
-        if (empty($resp)) {
-            return false;
-        } else {
-            $this->_mergeData($resp);
-            return true;
+        if (empty($batch)) { return; }
+
+        $requests = array();
+        $objects  = array();
+        forEach($batch as $obj) {
+            $requests[] = array(
+                "path" => "/1.1/classes/{$obj->getClassName()}" .
+                          "/{$obj->getObjectId()}",
+                "method" => "GET"
+            );
+            $objects[] = $obj;
+        }
+
+        $response = LeanClient::batch($requests);
+
+        $errors = array();
+        forEach($objects as $i => $obj) {
+            if (isset($response[$i]["success"])) {
+                if (!empty($response[$i]["success"])) {
+                    $obj->_mergeAfterFetch($response[$i]["success"]);
+                } else {
+                    $errors[] = array("request" => $requests[$i],
+                                      "error" => "Object not found.");
+                }
+            } else {
+                $errors[] = array("request" => $requests[$i],
+                                  "error"   => $response[$i]["error"]);
+            }
+        }
+        if (count($errors) > 0) {
+            throw new LeanException("Batch requests error: " .
+                                    json_encode($errors));
         }
     }
 
@@ -475,11 +545,9 @@ class LeanObject {
             $batch[] = $obj;
         }
 
-        // The items in $requests and $response are assumed to be
-        // corresponding to each object in $batch.
-        // TODO: raise error when object has new objects as children
         $path     = "/1.1/classes";
         $requests = array();
+        $objects  = array();
         forEach($batch as $obj) {
             $req = array("body" => $obj->getSaveData());
             if ($obj->getObjectId()) {
@@ -491,27 +559,24 @@ class LeanObject {
                 $req["path"]   = "{$path}/{$obj->getClassName()}";
             }
             $requests[] = $req;
+            $objects[]  = $obj;
         }
 
-        $response = LeanClient::post("/batch",
-                                     array("requests" => $requests));
-        if (count($batch) != count($response)) {
-            throw new LeanException("Number of resquest and response " .
-                                    "mismatch in batch save!");
-        }
+        $response = LeanClient::batch($requests);
+
         // TODO: append remaining unsaved items to errors, so user
         // knows all objects that failed to save?
         $errors = array();
-        forEach($batch as $i => $obj) {
+        forEach($objects as $i => $obj) {
             if (isset($response[$i]["success"])) {
-                $obj->_mergeData($response[$i]["success"]);
+                $obj->_mergeAfterSave($response[$i]["success"]);
             } else {
                 $errors[] = array("request" => $requests[$i],
                                   "error"   => $response[$i]["error"]);
             }
         }
         if (count($errors) > 0) {
-            throw new \ErrorException("Batch save error: " .
+            throw new LeanException("Batch requests error: " .
                                       json_encode($errors));
         }
 
@@ -529,39 +594,35 @@ class LeanObject {
         $batch = array();
         forEach($objects as $obj) {
             if (!$obj->getObjectId()) {
-                throw new \ErrorException("Object without ID cannot be " .
-                                          "destroyed.");
-            } else {
-                // overwrite duplicate objects.
-                $batch[$obj->getObjectId()] = $obj;
+                throw new \ErrorException("Cannot destroy object without ID");
             }
+            // Remove duplicate objects by ID
+            $batch[$obj->getObjectId()] = $obj;
         }
         if (empty($batch)) { return; }
 
         $requests = array();
+        $objects  = array();
         forEach($batch as $obj) {
             $requests[] = array(
                 "path" => "/1.1/classes/{$obj->getClassName()}" .
                           "/{$obj->getObjectId()}",
                 "method" => "DELETE"
             );
+            $objects[] = $obj;
         }
-        $response = LeanClient::post("/batch",
-                                     array("requests" => $requests));
 
-        if (count($batch) != count($response)) {
-            throw new LeanException("Number of request and response " .
-                                    "mismatch in batch save!");
-        }
+        $response = LeanClient::batch($requests);
+
         $errors = array();
-        forEach($batch as $i => $obj) {
+        forEach($objects as $i => $obj) {
             if (isset($response[$i]["error"])) {
                 $errors[] = array("request" => $requests[$i],
                                   "error"   => $response[$i]["error"]);
             }
         }
         if (count($errors) > 0) {
-            throw new \ErrorException("Batch save error: " .
+            throw new \LeanException("Batch requests error: " .
                                       json_encode($errors));
         }
     }

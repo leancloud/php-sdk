@@ -82,6 +82,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj->save();
         $this->assertNotEmpty($obj->getObjectId());
         $this->assertNotEmpty($obj->getCreatedAt());
+        $this->assertFalse($obj->hasChanges());
 
         $this->assertEquals($obj->get("score"), 81);
         $obj->destroy();
@@ -188,7 +189,8 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($obj->getObjectId());
         $obj->destroy();
 
-        $this->assertFalse($obj->fetch());
+        $this->setExpectedException("LeanCloud\LeanException");
+        $obj->fetch();
     }
 
     /**
@@ -265,7 +267,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $a->set("foo", "aar");
         $b->set("foo", "bar");
         $c->set("foo", "car");
-        $a->set("likes", array($b, "foo"));
+        $a->set("mylikes", array($b, "foo"));
         $a->set("dislikes", array($c, 42));
         $a->save();
 

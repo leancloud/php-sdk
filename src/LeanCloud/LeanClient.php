@@ -281,7 +281,7 @@ class LeanClient {
           *  - rest api error
           */
         if ($errno > 0) {
-            throw new ErrorException("Failed to connect to API service.", $errno);
+            throw new \ErrorException("Failed to connect to API service.", $errno);
         }
         if (strpos($respType, "text/html") !== false) {
             throw new LeanException(-1, "Bad request");
@@ -351,6 +351,27 @@ class LeanClient {
      */
     public static function delete($path, $headers=array(), $useMasterKey=false) {
         return self::request("DELETE", $path, $headers, $useMasterKey);
+    }
+
+    /**
+     * Make a batch request with encoded requests.
+     *
+     * @param array $requests     Requests to make
+     * @param array $headers      Optional headers
+     * @param bool  $useMasterkey Use master key or not, optional
+     * @return array              JSON decoded associated array
+     * @throws ErrorException, LeanException
+     */
+    public static function batch($requests, $headers=array(), $useMasterKey=false) {
+        $response = LeanClient::post("/batch",
+                                     array("requests" => $requests),
+                                     $headers,
+                                     $useMasterKey);
+        if (count($requests) != count($response)) {
+            throw new LeanException("Number of resquest and response " .
+                                    "mismatch in batch operation!");
+        }
+        return $response;
     }
 
     /**
