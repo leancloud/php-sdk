@@ -31,7 +31,7 @@ class LeanRelation {
      *
      * @var string
      */
-    public  $targetClassName;
+    private  $targetClassName;
 
     /**
      * Initialize relation
@@ -43,7 +43,7 @@ class LeanRelation {
      * @param string     $key       Field key on parent object
      * @param string     $className ClassName the object relatedTo
      */
-    public function __construct(LeanObject $parent, $key, $className=null) {
+    public function __construct($parent, $key, $className=null) {
         $this->parent          = $parent;
         $this->key             = $key;
         $this->targetClassName = $className;
@@ -57,6 +57,33 @@ class LeanRelation {
     public function encode() {
         return array("__type"    => "Relation",
                      "className" => $this->targetClassName);
+    }
+
+    /**
+     * Attempt to set and validate parent of relation
+     *
+     * @param LeanObject $parent Parent object of relation
+     * @param string     $key    Field key
+     * @throws ErrorException If parent and key do not match
+     */
+    public function setParentAndKey($parent, $key) {
+        if ($this->parent && $this->parent != $parent) {
+            throw new \ErrorException("Relation does not belong to the object");
+        }
+        if ($this->key && $this->key != $key) {
+            throw new \ErrorException("Relation does not belong to the field");
+        }
+        $this->parent = $parent;
+        $this->key    = $key;
+    }
+
+    /**
+     * Get target className of relation
+     *
+     * @return string
+     */
+    public function getTargetClassName() {
+        return $this->targetClassName;
     }
 
     /**

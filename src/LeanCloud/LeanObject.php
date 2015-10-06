@@ -171,10 +171,14 @@ class LeanObject {
      * @return mixed      field value
      */
     public function get($key) {
-        if (isset($this->_data[$key])) {
-            return $this->_data[$key];
+        if (!isset($this->_data[$key])) {
+            return null;
         }
-        return null;
+        $val = $this->_data[$key];
+        if ($val instanceof LeanRelation) {
+            return $this->getRelation($key);
+        }
+        return $this->_data[$key];
     }
 
     /**
@@ -299,12 +303,14 @@ class LeanObject {
      */
     private function _mergeData($data) {
         forEach($data as $key => $val) {
-            $this->_data[$key] = $val;
+            $this->_data[$key] = LeanClient::decode($val);
         }
     }
 
     /**
      * Merge server data after save.
+     *
+     * All local changes will be cleared.
      *
      * @param array $data JSON decoded server response
      * @return void
@@ -317,12 +323,14 @@ class LeanObject {
     /**
      * Merge server data after fetch.
      *
+     * Local changes will be reset. Though it is different from
+     * megerAfterSave, that changes on new fields (which do not exist
+     * on server) will be preserved until saved to server.
+     *
      * @param array $data JSON decoded server response
      * @return void
      */
     private function _mergeAfterFetch($data) {
-        // Clear local operations prior to the fetch, except the new
-        // new fields that does not exist on server.
         forEach($data as $key => $val) {
             if (isset($this->_operationSet[$key])) {
                 unset($this->_operationSet[$key]);
@@ -420,9 +428,10 @@ class LeanObject {
      * @throws ErrorException When it is not relation field
      */
     public function getRelation($key) {
-        $val = $this->get($key);
+        $val = isset($this->_data[$key]) ? $this->_data[$key] : null;
         if ($val) {
             if ($val instanceof LeanRelation) {
+                $val->setParentAndKey($this, $key);
                 return $val;
             } else {
                 throw new \ErrorException("Field {$key} is not relation.");

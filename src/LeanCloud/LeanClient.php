@@ -437,11 +437,20 @@ class LeanClient {
             return $out;
         }
 
+        // Parse different data type from server.
         $type = $value["__type"];
 
-        // Parse different types from server.
         if ($type == "Date") {
+            // return time in default time zone
             return new \DateTime($value["iso"]);
+        }
+        if ($type == "Bytes") {}
+        if ($type == "GeoPoint") {}
+        if ($type == "File") {}
+        if ($type == "Pointer") {}
+        if ($type == "Object") {}
+        if ($type == "Relation") {
+            return new LeanRelation(null, null, $value["className"]);
         }
     }
 

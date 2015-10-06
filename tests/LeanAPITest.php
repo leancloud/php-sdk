@@ -100,7 +100,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
                      "likes" => array("__op" => "AddRelation",
                                       "objects" => array(
                                           array("__type" => "Pointer",
-                                                "className" => "Post",
+                                                "className" => "TestObject",
                                                 "objectId" => "3a43bcbc3"))));
         $resp = LeanClient::post("/classes/TestObject", $obj);
         $this->assertNotEmpty($resp["objectId"]);

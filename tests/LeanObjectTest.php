@@ -124,6 +124,44 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Test decoding
+     */
+
+    public function testGetDateShouldReturnDateTime() {
+        $obj = new LeanObject("TestObject");
+        $date = new DateTime();
+        $obj->set("release", $date);
+        $obj->save();
+        $this->assertNotEmpty($obj->getObjectId());
+        $obj2 = new LeanObject("TestObject", $obj->getObjectId());
+        $obj2->fetch();
+        $this->assertTrue($obj2->get("release") instanceof DateTime);
+        $this->assertEquals($obj->get("release"), $obj2->get("release"));
+
+        $obj2->destroy();
+    }
+
+    public function testRelationDecode() {
+        $a = new LeanObject("TestObject");
+        $a->set("name", "Pap");
+        $rel = $a->getRelation("likes_relation");
+        $b = new LeanObject("TestObject");
+        $b->set("name", "alice");
+        $b->save();
+        $rel->add($b);
+        $a->save();
+        $this->assertNotEmpty($a->getObjectId());
+
+        $a2 = new LeanObject("TestObject", $a->getObjectId());
+        $a2->fetch();
+        $val = $a2->get("likes_relation");
+        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertEquals("TestObject", $val->getTargetClassName());
+
+        LeanObject::destroyAll(array($a, $b));
+    }
+
+    /**
      * Test array operations
      */
 

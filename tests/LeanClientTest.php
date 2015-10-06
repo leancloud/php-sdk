@@ -1,6 +1,7 @@
 <?php
 
 use LeanCloud\LeanClient;
+use LeanCloud\LeanRelation;
 use LeanCloud\LeanException;
 
 class LeanClientTest extends PHPUnit_Framework_TestCase {
@@ -131,6 +132,14 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                           "iso" => LeanClient::formatDate($date));
             $this->assertEquals($date, LeanClient::decode($type));
         }
+    }
+
+    public function testDecodeRelation() {
+        $type = array("__type" => "Relation",
+                      "className" => "TestObject");
+        $val  = LeanClient::decode($type);
+        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertEquals("TestObject", $val->getTargetClassName());
     }
 }
 
