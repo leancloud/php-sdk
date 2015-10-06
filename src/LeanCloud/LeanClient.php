@@ -375,7 +375,7 @@ class LeanClient {
     }
 
     /**
-     * Encode value to LeanCloud compatible type.
+     * Encode value according to LeanCloud spec.
      *
      * @param mixed $value
      * @return mixed
@@ -410,13 +410,41 @@ class LeanClient {
      * @return string
      */
     public static function formatDate($date) {
-        $s = $date->format("Y-m-d\TH:i:s.u");
-        // PHP does not support sub seconds well, it and always gives 6 zero
+        $utc = new \DateTime($date->format("c"));
+        $utc->setTimezone(new \DateTimezone("UTC"));
+        $iso = $utc->format("Y-m-d\TH:i:s.u");
+        // PHP does not support sub seconds well, it will always gives 6 zero
         // digits as microseconds. We chop 3 zeros off:
         //  `2015-09-18T08:06:20.000000Z` -> `2015-09-18T08:06:20.000Z`
-        $s = substr($s, 0, 23) . "Z";
-        return $s;
+        $iso = substr($iso, 0, 23) . "Z";
+        return $iso;
     }
+
+    /**
+     * Decode value from LeanCloud response.
+     *
+     * @param mixed $value
+     */
+    public static function decode($value) {
+        if (is_scalar($value)) {
+            return $value;
+        }
+        if (!isset($value["__type"])) {
+            $out = array();
+            forEach($value as $key => $val) {
+                $out[$key] = self::decode($val);
+            }
+            return $out;
+        }
+
+        $type = $value["__type"];
+
+        // Parse different types from server.
+        if ($type == "Date") {
+            return new \DateTime($value["iso"]);
+        }
+    }
+
 }
 
 ?>

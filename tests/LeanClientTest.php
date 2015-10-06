@@ -114,6 +114,24 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $obj = LeanClient::get("/classes/TestObject/{$data['objectId']}");
         $this->assertEmpty($obj);
     }
+
+    public function testDecodeDate() {
+        $date = new DateTime();
+        $type = array("__type" => "Date",
+                      "iso" => LeanClient::formatDate($date));
+        $this->assertEquals($date, LeanClient::decode($type));
+    }
+
+    public function testDecodeDateWithTimeZone() {
+        $zones = array("Asia/Shanghai", "America/Los_Angeles",
+                       "Asia/Tokyo", "Europe/London");
+        forEach($zones as $zone) {
+            $date = new DateTime("now", new DateTimeZone($zone));
+            $type = array("__type" => "Date",
+                          "iso" => LeanClient::formatDate($date));
+            $this->assertEquals($date, LeanClient::decode($type));
+        }
+    }
 }
 
 ?>
