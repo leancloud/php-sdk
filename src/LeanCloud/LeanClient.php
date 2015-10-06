@@ -447,8 +447,15 @@ class LeanClient {
         if ($type == "Bytes") {}
         if ($type == "GeoPoint") {}
         if ($type == "File") {}
-        if ($type == "Pointer") {}
-        if ($type == "Object") {}
+        if ($type == "Pointer" || $type == "Object") {
+            $obj = new LeanObject($value["className"], $value["objectId"]);
+            unset($value["__type"]);
+            unset($value["className"]);
+            if (!empty($value)) {
+                $obj->mergeAfterFetch($value);
+            }
+            return $obj;
+        }
         if ($type == "Relation") {
             return new LeanRelation(null, null, $value["className"]);
         }

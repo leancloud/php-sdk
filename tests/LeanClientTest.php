@@ -1,6 +1,7 @@
 <?php
 
 use LeanCloud\LeanClient;
+use LeanCloud\LeanObject;
 use LeanCloud\LeanRelation;
 use LeanCloud\LeanException;
 
@@ -140,6 +141,30 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $val  = LeanClient::decode($type);
         $this->assertTrue($val instanceof LeanRelation);
         $this->assertEquals("TestObject", $val->getTargetClassName());
+    }
+
+    public function testDecodePointer() {
+        $type = array("__type" => "Pointer",
+                      "className" => "TestObject",
+                      "objectId" => "abc101");
+        $val  = LeanClient::decode($type);
+
+        $this->assertTrue($val instanceof LeanObject);
+        $this->assertEquals("TestObject", $val->getClassName());
+    }
+
+    public function testDecodeObject() {
+        $type = array("__type"    => "Object",
+                      "className" => "TestObject",
+                      "objectId"  => "abc101",
+                      "name"      => "alice",
+                      "tags"      => array("fiction", "bar"));
+        $val  = LeanClient::decode($type);
+
+        $this->assertTrue($val instanceof LeanObject);
+        $this->assertEquals("TestObject", $val->getClassName());
+        $this->assertEquals($type["name"], $val->get("name"));
+        $this->assertEquals($type["tags"], $val->get("tags"));
     }
 }
 

@@ -315,7 +315,7 @@ class LeanObject {
      * @param array $data JSON decoded server response
      * @return void
      */
-    private function _mergeAfterSave($data) {
+    public function mergeAfterSave($data) {
         $this->_operationSet = array();
         $this->_mergeData($data);
     }
@@ -323,14 +323,14 @@ class LeanObject {
     /**
      * Merge server data after fetch.
      *
-     * Local changes will be reset. Though it is different from
+     * Local changes will be cleared. Though it is different from
      * megerAfterSave, that changes on new fields (which do not exist
      * on server) will be preserved until saved to server.
      *
      * @param array $data JSON decoded server response
      * @return void
      */
-    private function _mergeAfterFetch($data) {
+    public function mergeAfterFetch($data) {
         forEach($data as $key => $val) {
             if (isset($this->_operationSet[$key])) {
                 unset($this->_operationSet[$key]);
@@ -387,7 +387,7 @@ class LeanObject {
         forEach($objects as $i => $obj) {
             if (isset($response[$i]["success"])) {
                 if (!empty($response[$i]["success"])) {
-                    $obj->_mergeAfterFetch($response[$i]["success"]);
+                    $obj->mergeAfterFetch($response[$i]["success"]);
                 } else {
                     $errors[] = array("request" => $requests[$i],
                                       "error" => "Object not found.");
@@ -578,7 +578,7 @@ class LeanObject {
         $errors = array();
         forEach($objects as $i => $obj) {
             if (isset($response[$i]["success"])) {
-                $obj->_mergeAfterSave($response[$i]["success"]);
+                $obj->mergeAfterSave($response[$i]["success"]);
             } else {
                 $errors[] = array("request" => $requests[$i],
                                   "error"   => $response[$i]["error"]);
