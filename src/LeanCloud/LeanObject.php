@@ -14,25 +14,32 @@ use LeanCloud\Operation\IncrementOperation;
  */
 class LeanObject {
     /**
-     * Registered mapping of className to class.
+     * Map of registered className to class.
+     *
      * @var array
      */
     private static $_registeredClasses = array();
 
     /**
-     * ClassName to LeanCloud storage.
+     * className on LeanCloud storage.
+     *
      * @var string
      */
     private $_className;
-    private $_serverData;
-    private $_data;
-    private $_operationSet;
 
     /**
-     * Unique ID on LeanCloud storage.
-     * @var string
+     * Snapshot of data fields.
+     *
+     * @var array
      */
-    private $objectId;
+    private $_data;
+
+    /**
+     * Unsaved operations of fields.
+     *
+     * @var array
+     */
+    private $_operationSet;
 
     /**
      * Make a new *plain* LeanObject.
@@ -52,37 +59,65 @@ class LeanObject {
         }
         $this->_className    = $className;
         $this->_data         = array();
-        $this->_serverdata   = array();
         $this->_operationSet = array();
         $this->_data["objectId"] = $objectId;
     }
 
     /**
-     * Register class with className.
+     * Make a new object for class
      *
-     * Only callable on subclass of LeanObject.
-     * @throws ErrorException
+     * The returned object will be instance of sub-class, if className has
+     * been registered.
+     *
+     * @param string $className
+     * @param string $objectId
+     * @return LeanObject or extended Object if class registered.
      */
-    public static function registerClass() {
-        if (isset(static::$leanClassName)) {
-            $class = get_called_class();
-            if (isset(self::$_registeredClasses[static::$leanClassName])) {
-                $prevClass = self::$_registeredClasses[static::$leanClassName];
-                if ($class !== $prevClass) {
-                    throw new \ErrorException("Cannot overwriting registered className.");
-                }
-            } else {
-                self::$_registeredClasses[static::$leanClassName] = get_called_class();
-            }
+    public static function create($className, $objectId=null) {
+        if (isset(self::$_registeredClasses[$className])) {
+            return new self::$_registeredClasses[$className]($className,
+                                                               $objectId);
         } else {
-            throw new \ErrorException("Cannot register class without leanClassName.");
+            return new LeanObject($className, $objectId);
         }
     }
 
     /**
-     * Get registered className of current subclass.
+     * Register a sub-class to LeanObject.
      *
-     * @return string if found, false if not.
+     * When a sub-class extends LeanObject, it should specify a static
+     * string variable `::$className`, which corresponds to a className on
+     * LeanCloud. It shall then invoke `::registerClass` to register
+     * itself to LeanObject. Such that LeanObject maintains a map of
+     * className to sub-classes.
+     *
+     * It is only callable on sub-class.
+     *
+     * @throws ErrorException
+     */
+    public static function registerClass() {
+        if (isset(static::$className)) {
+            $class = get_called_class();
+            $name  = static::$className;
+            if (isset(self::$_registeredClasses[$name])) {
+                $prevClass = self::$_registeredClasses[$name];
+                if ($class !== $prevClass) {
+                    throw new \ErrorException("className '$name' " .
+                                              "has already been registered.");
+                }
+            } else {
+                self::$_registeredClasses[static::$className] = get_called_class();
+            }
+        } else {
+            throw new \ErrorException("Cannot register class without " .
+                                      "::className.");
+        }
+    }
+
+    /**
+     * Search for className given a sub-class.
+     *
+     * @return string className if found, false if not.
      */
     private static function getRegisteredClassName() {
         return array_search(get_called_class(), self::$_registeredClasses);

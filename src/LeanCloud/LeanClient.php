@@ -448,7 +448,7 @@ class LeanClient {
         if ($type == "GeoPoint") {}
         if ($type == "File") {}
         if ($type == "Pointer" || $type == "Object") {
-            $obj = new LeanObject($value["className"], $value["objectId"]);
+            $obj = LeanObject::create($value["className"], $value["objectId"]);
             unset($value["__type"]);
             unset($value["className"]);
             if (!empty($value)) {

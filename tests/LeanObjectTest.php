@@ -5,13 +5,9 @@ use LeanCloud\LeanClient;
 use LeanCloud\LeanRelation;
 
 class Movie extends LeanObject {
-    protected static $leanClassName = "Movie";
+    protected static $className = "Movie";
 }
 Movie::registerClass();
-
-class UnregisteredObject extends LeanObject{
-    protected static $leanClassName = "UnregisteredObject";
-}
 
 class LeanObjectTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
