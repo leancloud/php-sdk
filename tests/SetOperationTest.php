@@ -1,6 +1,9 @@
 <?php
 
 use LeanCloud\Operation\SetOperation;
+use LeanCloud\Operation\ArrayOperation;
+use LeanCloud\Operation\DeleteOperation;
+use LeanCloud\Operation\IncrementOperation;
 use LeanCloud\LeanClient;
 
 class SetOperationTest extends PHPUnit_Framework_TestCase {
@@ -32,6 +35,21 @@ class SetOperationTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($op->encode()['__type'], "Date");
         $this->assertEquals($op->encode()['iso'],
                             LeanClient::formatDate($date));
+    }
+
+    public function testMergeWithAnyOp() {
+        $op = new SetOperation("name", "alice");
+
+        $op2 = $op->mergeWith(null);
+        $this->assertTrue($op2 instanceof SetOperation);
+        $op2 = $op->mergeWith(new SetOperation("name", "jack"));
+        $this->assertTrue($op2 instanceof SetOperation);
+        $op2 = $op->mergeWith(new IncrementOperation("name", 1));
+        $this->assertTrue($op2 instanceof SetOperation);
+        $op2 = $op->mergeWith(new DeleteOperation("name"));
+        $this->assertTrue($op2 instanceof SetOperation);
+        $op2 = $op->mergeWith(new ArrayOperation("name", array("jack"), "Add"));
+        $this->assertTrue($op2 instanceof SetOperation);
     }
 
 }

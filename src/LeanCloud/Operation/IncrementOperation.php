@@ -76,11 +76,13 @@ class IncrementOperation implements IOperation {
         if (!$prevOp) {
             return $this;
         } else if ($prevOp instanceof SetOperation) {
-            return new SetOperation($this->key,
+            return new SetOperation($this->getKey(),
                                     $this->applyOn($prevOp->getValue()));
         } else if ($prevOp instanceof IncrementOperation) {
-            return new IncrementOperation($this->key,
+            return new IncrementOperation($this->getKey(),
                                           $this->applyOn($prevOp->getValue()));
+        } else if ($prevOp instanceof DeleteOperation){
+            return new SetOperation($this->getKey(), $this->getValue());
         } else {
             throw new \ErrorException("Operation incompatible with previous one.");
         }

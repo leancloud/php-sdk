@@ -1,6 +1,7 @@
 <?php
 use LeanCloud\Operation\ArrayOperation;
 use LeanCloud\Operation\SetOperation;
+use LeanCloud\Operation\DeleteOperation;
 
 class ArrayOperationTest extends PHPUnit_Framework_TestCase {
     public function testInvalidOp() {
@@ -226,5 +227,32 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
                             $op2->encode()["objects"]);
     }
 
+    public function testMergeAddWithDelete() {
+        $op = new ArrayOperation("tags",
+                                 array("frontend", "javascript"),
+                                 "Add");
+        $op2 = $op->mergeWith(new DeleteOperation("tags"));
+        $this->assertTrue($op2 instanceof SetOperation);
+        $this->assertEquals(array("frontend", "javascript"),
+                            $op2->encode());
+    }
+
+    public function testMergeAddUniqueWithDelete() {
+        $op = new ArrayOperation("tags",
+                                 array("frontend", "frontend", "javascript"),
+                                 "AddUnique");
+        $op2 = $op->mergeWith(new DeleteOperation("tags"));
+        $this->assertTrue($op2 instanceof SetOperation);
+        $this->assertEquals(array("frontend", "javascript"),
+                            $op2->encode());
+    }
+
+    public function testMergeRemoveWithDelete() {
+        $op = new ArrayOperation("tags",
+                                 array("frontend", "javascript"),
+                                 "Remove");
+        $op2 = $op->mergeWith(new DeleteOperation("tags"));
+        $this->assertTrue($op2 instanceof DeleteOperation);
+    }
 }
 ?>

@@ -2,6 +2,8 @@
 namespace LeanCloud\Operation;
 
 use LeanCloud\LeanClient;
+use LeanCloud\Operation\SetOperation;
+use LeanCloud\Operation\DeleteOperation;
 
 /**
  * ArrayOpertion - Add, Remove, AddUnique
@@ -183,10 +185,11 @@ class ArrayOperation implements IOperation {
     public function mergeWith($prevOp) {
         if (!$prevOp) {
             return $this;
-        } else if (!is_array($prevOp->getValue())){
-            throw new \ErrorException("Array operation incompatible " .
-                                      "with previous value.");
         } else if ($prevOp instanceof SetOperation) {
+            if (!is_array($prevOp->getValue())) {
+                throw new \ErrorException("Array operation incompatible " .
+                                          "with previous value.");
+            }
             return new SetOperation($this->key,
                                     $this->applyOn($prevOp->getValue()));
         } else if (($prevOp instanceof ArrayOperation) &&
@@ -199,6 +202,12 @@ class ArrayOperation implements IOperation {
             return new ArrayOperation($this->key,
                                       $objects,
                                       $this->getOpType());
+        } else if ($prevOp instanceof DeleteOperation) {
+            if ($this->getOpType() === "Remove") {
+                return $prevOp;
+            } else {
+                return new SetOperation($this->getKey(), $this->applyOn(null));
+            }
         } else {
             throw new \ErrorException("Operation incompatible to previous one.");
         }

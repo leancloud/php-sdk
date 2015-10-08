@@ -24,6 +24,8 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $resp2 = LeanClient::put("/classes/TestObject/" . $resp["objectId"],
                                  array("name" => array("__op" => "Increment",
                                                        "amount" => 1)));
+
+        LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
     /**
@@ -43,6 +45,8 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
                                      "objects" => array("frontend")));
         $resp = LeanClient::post("/classes/TestObject", $obj);
         $this->assertNotEmpty($resp["objectId"]);
+
+        LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
     public function testAddUniqueOnAddField() {
@@ -62,6 +66,8 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $resp4 = LeanClient::get("/classes/TestObject/{$resp["objectId"]}");
         $this->assertEquals(array("frontend", "frontend", "css"),
                             $resp4["tags"]);
+
+        LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
     public function testHeterogeneousObjectsInArray() {
@@ -69,6 +75,8 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
                      "tags" => array("foo", 42, array("a", "b")));
         $resp = LeanClient::post("/classes/TestObject", $obj);
         $this->assertNotEmpty($resp["objectId"]);
+
+        LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
     public function testSetHashValue() {
@@ -84,6 +92,46 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
                                  array("attr" => array(
                                      "__op" => "add",
                                      "objects" => array("favColor" => "Orange"))));
+        LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
+    }
+
+    public function testAddRelation() {
+        $obj = array("name" => "alice",
+                     "likes" => array("__op" => "AddRelation",
+                                      "objects" => array(
+                                          array("__type" => "Pointer",
+                                                "className" => "Post",
+                                                "objectId" => "3a43bcbc3"))));
+        $resp = LeanClient::post("/classes/TestObject", $obj);
+        $this->assertNotEmpty($resp["objectId"]);
+
+        LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
+    }
+
+    /**
+     * Batch on array operation will result error:
+     *
+     * 301 - Fails to insert new document, cannot update on ...
+     *       at the same time.
+     */
+    public function testBatchOperationOnArray() {
+        $obj = array("name" => "Batch test", "tags" => array());
+        $resp = LeanClient::post("/classes/TestObject", $obj);
+        $this->assertNotEmpty($resp["objectId"]);
+
+
+        $adds    = array("__op" => "Add",
+                         "objects" => array("javascript", "frontend"));
+        $removes = array("__op" => "Remove",
+                         "objects" => array("frontend", "css"));
+        $obj     = array("tags" => array("__op" => "Batch",
+                                         "ops"  => array($adds, $removes)));
+
+        $this->setExpectedException("LeanCloud\LeanException", null, 301);
+        $resp = LeanClient::put("/classes/TestObject/{$resp['objectId']}",
+                                $obj);
+
+        LeanClient::delete("/classes/TestObject/{$obj['objectId']}");
     }
 
 }

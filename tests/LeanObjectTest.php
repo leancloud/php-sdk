@@ -2,6 +2,7 @@
 
 use LeanCloud\LeanObject;
 use LeanCloud\LeanClient;
+use LeanCloud\LeanRelation;
 
 class Movie extends LeanObject {
     protected static $leanClassName = "Movie";
@@ -83,6 +84,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($obj->getCreatedAt());
 
         $this->assertEquals($obj->get("score"), 81);
+        $obj->destroy();
     }
 
     public function testSaveFetchObject() {
@@ -97,6 +99,8 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj2->fetch();
         $this->assertEquals($obj2->get("name"), "Alice in wonderland");
         $this->assertEquals($obj2->get("score"), 81);
+
+        $obj->destroy();
     }
 
     public function testSaveExistingObject() {
@@ -114,6 +118,8 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj2->fetch();
         $this->assertEquals($obj2->get("name"), "Alice in wonderland");
         $this->assertEquals($obj2->get("score"), 81);
+
+        $obj->destroy();
     }
 
     /**
@@ -157,6 +163,49 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
 
         $obj->remove("tags", "javascript");
         $this->assertEquals(array("frontend"), $obj->get("tags"));
+    }
+
+    public function testDeleteField() {
+        $obj = new LeanObject("TestObject");
+        $obj->delete("tags");
+        $this->assertNull($obj->get("tags"));
+
+        $obj->set("tags", array("frontend", "javascript"));
+        $this->assertEquals(array("frontend", "javascript"), $obj->get("tags"));
+
+        $obj->delete("tags");
+        $this->assertNull($obj->get("tags"));
+
+        $obj->add("tags", "frontend");
+        $this->assertEquals(array("frontend"), $obj->get("tags"));
+    }
+
+    public function testDestroyObject() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("tags", array("frontend"));
+        $obj->save();
+
+        $this->assertNotEmpty($obj->getObjectId());
+        $obj->destroy();
+
+        $this->assertFalse($obj->fetch());
+    }
+
+    /**
+     * Test relation
+     */
+
+    public function testAddRelation() {
+        $obj = new LeanObject("TestObject");
+        $rel = $obj->getRelation("authors");
+        $rel->add(new LeanObject("TestAuthor", "abc101"));
+        $this->assertEquals("Relation", $rel->encode()["__type"]);
+        $this->assertEquals("TestAuthor", $rel->encode()["className"]);
+
+        $val = $obj->get("authors");
+        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertEquals("Relation", $val->encode()["__type"]);
+        $this->assertEquals("TestAuthor", $val->encode()["className"]);
     }
 
 }
