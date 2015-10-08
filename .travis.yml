@@ -1,0 +1,12 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+  - 5.6
+
+env:
+  - LC_APP_ID=QfyeouUjk2B95bJ3EYz2bTOA LC_APP_KEY=V9FSYpM8vXVF54xglOBVaxbV
+
+script: phpunit --bootstrap src/autoload.php tests
