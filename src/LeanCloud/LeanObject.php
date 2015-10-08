@@ -87,7 +87,7 @@ class LeanObject {
      *
      * When a sub-class extends LeanObject, it should specify a static
      * string variable `::$className`, which corresponds to a className on
-     * LeanCloud. It shall then invoke `::registerClass` to register
+     * LeanCloud. It shall then invoke `->registerClass` to register
      * itself to LeanObject. Such that LeanObject maintains a map of
      * className to sub-classes.
      *

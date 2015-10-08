@@ -2,7 +2,7 @@
 namespace LeanCloud\Operation;
 
 /**
- * Operation Interface
+ * (Immutable) Operation Interface
  */
 interface IOperation {
     /**
