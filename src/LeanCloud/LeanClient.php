@@ -2,6 +2,8 @@
 
 namespace LeanCloud;
 
+use LeanCloud\LeanBytes;
+use LeanCloud\LeanObject;
 use LeanCloud\Operation\IOperation;
 
 /**
@@ -389,7 +391,8 @@ class LeanClient {
                          "iso"    => self::formatDate($value));
         } else if ($value instanceof LeanObject) {
             return $value->getPointer();
-        } else if ($value instanceof IOperation) {
+        } else if ($value instanceof IOperation ||
+                   $value instanceof LeanBytes) {
             return $value->encode();
         } else if (is_array($value)) {
             $res = array();
@@ -444,7 +447,9 @@ class LeanClient {
             // return time in default time zone
             return new \DateTime($value["iso"]);
         }
-        if ($type == "Bytes") {}
+        if ($type == "Bytes") {
+            return LeanBytes::createFromBase64Data($value["base64"]);
+        }
         if ($type == "GeoPoint") {}
         if ($type == "File") {}
         if ($type == "Pointer" || $type == "Object") {

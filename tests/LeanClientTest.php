@@ -2,6 +2,7 @@
 
 use LeanCloud\LeanClient;
 use LeanCloud\LeanObject;
+use LeanCloud\LeanBytes;
 use LeanCloud\LeanRelation;
 use LeanCloud\LeanException;
 
@@ -166,6 +167,16 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($type["name"], $val->get("name"));
         $this->assertEquals($type["tags"], $val->get("tags"));
     }
+
+    public function testDecodeBytes() {
+        $type = array("__type" => "Bytes",
+                      "base64" => base64_encode("Hello"));
+        $val = LeanClient::decode($type);
+        $this->assertTrue($val instanceof LeanBytes);
+        $this->assertEquals(array(72, 101, 108, 108, 111),
+                            $val->getByteArray());
+    }
+
 }
 
 ?>
