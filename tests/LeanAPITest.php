@@ -12,7 +12,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion("CN");
+        LeanClient::useRegion(getenv("LC_API_REGION"));
     }
 
     public function testIncrementOnStringField() {

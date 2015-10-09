@@ -12,7 +12,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion("CN");
+        LeanClient::useRegion(getenv("LC_API_REGION"));
     }
 
     // TODO:
@@ -42,7 +42,9 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRequestUnauthorized() {
-        LeanClient::initialize(getenv("LEANCLOUD_APP_ID"), "invalid key", "invalid key");
+        LeanClient::initialize(getenv("LC_APP_ID"),
+                               "invalid key",
+                               "invalid master key");
         $this->setExpectedException("LeanCloud\LeanException", "Unauthorized");
         $data = LeanClient::request("POST",
                                     "/classes/TestObject",

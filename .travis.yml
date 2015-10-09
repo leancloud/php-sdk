@@ -7,6 +7,6 @@ php:
   - 5.6
 
 env:
-  - LC_APP_ID=QfyeouUjk2B95bJ3EYz2bTOA LC_APP_KEY=V9FSYpM8vXVF54xglOBVaxbV
+  - LC_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LC_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LC_API_REGION=US
 
 script: phpunit --bootstrap src/autoload.php tests
