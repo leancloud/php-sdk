@@ -111,7 +111,8 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
         $parent = new LeanObject("Test2Object");
         $val    = $op->applyOn(null, $parent);
         $this->assertTrue($val instanceof LeanRelation);
-        $this->assertEquals("TestObject", $val->encode()["className"]);
+        $out    = $val->encode();
+        $this->assertEquals("TestObject", $out["className"]);
     }
 
     public function testMergeWithNull() {

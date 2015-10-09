@@ -235,13 +235,15 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj = new LeanObject("TestObject");
         $rel = $obj->getRelation("authors");
         $rel->add(new LeanObject("TestAuthor", "abc101"));
-        $this->assertEquals("Relation", $rel->encode()["__type"]);
-        $this->assertEquals("TestAuthor", $rel->encode()["className"]);
+        $out = $rel->encode();
+        $this->assertEquals("Relation", $out["__type"]);
+        $this->assertEquals("TestAuthor", $out["className"]);
 
         $val = $obj->get("authors");
         $this->assertTrue($val instanceof LeanRelation);
-        $this->assertEquals("Relation", $val->encode()["__type"]);
-        $this->assertEquals("TestAuthor", $val->encode()["className"]);
+        $out = $val->encode();
+        $this->assertEquals("Relation", $out["__type"]);
+        $this->assertEquals("TestAuthor", $out["className"]);
     }
 
     /**
