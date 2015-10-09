@@ -274,6 +274,7 @@ class LeanClient {
         $resp     = curl_exec($req);
         $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         $respType = curl_getinfo($req, CURLINFO_CONTENT_TYPE);
+        $error    = curl_errno($req);
         $errno    = curl_errno($req);
         curl_close($req);
 
@@ -283,7 +284,8 @@ class LeanClient {
           *  - rest api error
           */
         if ($errno > 0) {
-            throw new \ErrorException("Failed to connect to API service.", $errno);
+            throw new \ErrorException("Network (curl) error: $errno $error",
+                                      $errno);
         }
         if (strpos($respType, "text/html") !== false) {
             throw new LeanException(-1, "Bad request");
