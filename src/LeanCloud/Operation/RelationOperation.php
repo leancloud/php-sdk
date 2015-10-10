@@ -171,7 +171,7 @@ class RelationOperation implements IOperation {
             throw new \ErrorException("Operation incompatible to previous " .
                                       "value.");
         }
-        // TODO: checkt target class
+        // TODO: check target class
         return $relation;
     }
 

@@ -17,24 +17,27 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testOperationEncode() {
-        $op = new ArrayOperation("tags", array("frontend", "javascript"), "Add");
-        $this->assertEquals("Add", $op->encode()["__op"]);
+        $op  = new ArrayOperation("tags", array("frontend", "javascript"), "Add");
+        $out = $op->encode();
+        $this->assertEquals("Add", $out["__op"]);
         $this->assertEquals(array("frontend", "javascript"),
-                            $op->encode()["objects"]);
+                            $out["objects"]);
 
         $op = new ArrayOperation("tags",
                                  array("frontend", "javascript"),
                                  "AddUnique");
-        $this->assertEquals("AddUnique", $op->encode()["__op"]);
+        $out = $op->encode();
+        $this->assertEquals("AddUnique", $out["__op"]);
         $this->assertEquals(array("frontend", "javascript"),
-                            $op->encode()["objects"]);
+                            $out["objects"]);
 
         $op = new ArrayOperation("tags",
                                  array("frontend", "javascript"),
                                  "Remove");
-        $this->assertEquals("Remove", $op->encode()["__op"]);
+        $out = $op->encode();
+        $this->assertEquals("Remove", $out["__op"]);
         $this->assertEquals(array("frontend", "javascript"),
-                            $op->encode()["objects"]);
+                            $out["objects"]);
     }
 
     public function testApplyAddToNonArray() {
@@ -140,27 +143,30 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
         $op = new ArrayOperation("tags", array("frontend", "javascript"), "Add");
         $op2 = $op->mergeWith(null);
         $this->assertTrue($op2 instanceof ArrayOperation);
-        $this->assertEquals("Add", $op2->encode()["__op"]);
+        $out = $op2->encode();
+        $this->assertEquals("Add", $out["__op"]);
         $this->assertEquals(array("frontend", "javascript"),
-                            $op2->encode()["objects"]);
+                            $out["objects"]);
 
         $op = new ArrayOperation("tags",
                                  array("frontend", "javascript"),
                                  "AddUnique");
         $op2 = $op->mergeWith(null);
+        $out = $op2->encode();
         $this->assertTrue($op2 instanceof ArrayOperation);
-        $this->assertEquals("AddUnique", $op2->encode()["__op"]);
+        $this->assertEquals("AddUnique", $out["__op"]);
         $this->assertEquals(array("frontend", "javascript"),
-                            $op2->encode()["objects"]);
+                            $out["objects"]);
 
         $op = new ArrayOperation("tags",
                                  array("frontend", "javascript"),
                                  "Remove");
         $op2 = $op->mergeWith(null);
+        $out = $op2->encode();
         $this->assertTrue($op2 instanceof ArrayOperation);
-        $this->assertEquals("Remove", $op2->encode()["__op"]);
+        $this->assertEquals("Remove", $out["__op"]);
         $this->assertEquals(array("frontend", "javascript"),
-                            $op2->encode()["objects"]);
+                            $out["objects"]);
     }
 
     public function testMergeToSetOperation() {
@@ -169,16 +175,18 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
                                  "Add");
         $op2 = $op->mergeWith(new SetOperation("tags", array("css")));
         $this->assertTrue($op2 instanceof SetOperation);
+        $out = $op2->encode();
         $this->assertEquals(array("css", "frontend", "javascript"),
-                            $op2->encode());
+                            $out);
 
         $op = new ArrayOperation("tags",
                                  array("css", "frontend", "frontend"),
                                  "AddUnique");
         $op2 = $op->mergeWith(new SetOperation("tags", array("css")));
         $this->assertTrue($op2 instanceof SetOperation);
+        $out = $op2->encode();
         $this->assertEquals(array("css", "frontend"),
-                            $op2->encode());
+                            $out);
 
         $op = new ArrayOperation("tags",
                                  array("frontend", "javascript"),
@@ -186,8 +194,9 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
         $op2 = $op->mergeWith(new SetOperation("tags",
                                                array("css", "frontend", "javascript")));
         $this->assertTrue($op2 instanceof SetOperation);
+        $out = $op2->encode();
         $this->assertEquals(array("css"),
-                            $op2->encode());
+                            $out);
     }
 
     public function testMergeAddToAdd() {
@@ -196,9 +205,10 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
                                  "Add");
         $op2 = $op->mergeWith(new ArrayOperation("tags", array("foo"), "Add"));
         $this->assertTrue($op2 instanceof ArrayOperation);
-        $this->assertEquals("Add", $op2->encode()["__op"]);
+        $out = $op2->encode();
+        $this->assertEquals("Add", $out["__op"]);
         $this->assertEquals(array("foo", "frontend", "javascript"),
-                            $op2->encode()["objects"]);
+                            $out["objects"]);
     }
 
     public function testMergeAddUniqueToAddUnique() {
@@ -209,9 +219,10 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
                                                  array("foo", "frontend"),
                                                  "AddUnique"));
         $this->assertTrue($op2 instanceof ArrayOperation);
-        $this->assertEquals("AddUnique", $op2->encode()["__op"]);
+        $out = $op2->encode();
+        $this->assertEquals("AddUnique", $out["__op"]);
         $this->assertEquals(array("foo", "frontend", "javascript"),
-                            $op2->encode()["objects"]);
+                            $out["objects"]);
     }
 
     public function testMergeRemoveToRemove() {
@@ -222,9 +233,10 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
                                                  array("foo"),
                                                  "Remove"));
         $this->assertTrue($op2 instanceof ArrayOperation);
-        $this->assertEquals("Remove", $op2->encode()["__op"]);
+        $out = $op2->encode();
+        $this->assertEquals("Remove", $out["__op"]);
         $this->assertEquals(array("foo", "frontend", "javascript"),
-                            $op2->encode()["objects"]);
+                            $out["objects"]);
     }
 
     public function testMergeAddWithDelete() {
@@ -233,8 +245,9 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
                                  "Add");
         $op2 = $op->mergeWith(new DeleteOperation("tags"));
         $this->assertTrue($op2 instanceof SetOperation);
+        $out = $op2->encode();
         $this->assertEquals(array("frontend", "javascript"),
-                            $op2->encode());
+                            $out);
     }
 
     public function testMergeAddUniqueWithDelete() {
@@ -243,8 +256,9 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
                                  "AddUnique");
         $op2 = $op->mergeWith(new DeleteOperation("tags"));
         $this->assertTrue($op2 instanceof SetOperation);
+        $out = $op2->encode();
         $this->assertEquals(array("frontend", "javascript"),
-                            $op2->encode());
+                            $out);
     }
 
     public function testMergeRemoveWithDelete() {

@@ -36,19 +36,22 @@ class IncrementOperationTest extends PHPUnit_Framework_TestCase {
 
     public function testOperationEncode() {
         $op = new IncrementOperation("score", 2);
-        $this->assertEquals($op->encode()["__op"], "Increment");
-        $this->assertEquals($op->encode()["amount"], 2);
+        $out = $op->encode();
+        $this->assertEquals($out["__op"], "Increment");
+        $this->assertEquals($out["amount"], 2);
 
         $op = new IncrementOperation("score", -2);
-        $this->assertEquals($op->encode()["__op"], "Increment");
-        $this->assertEquals($op->encode()["amount"], -2);
+        $out = $op->encode();
+        $this->assertEquals($out["__op"], "Increment");
+        $this->assertEquals($out["amount"], -2);
     }
 
     public function testMergeWithNull() {
         $op  = new IncrementOperation("score", 2);
         $op2 = $op->mergeWith(null);
-        $this->assertEquals($op2->encode()["__op"], "Increment");
-        $this->assertEquals($op2->encode()["amount"], 2);
+        $out = $op2->encode();
+        $this->assertEquals($out["__op"], "Increment");
+        $this->assertEquals($out["amount"], 2);
     }
 
     public function testMergeWithSetOperation() {

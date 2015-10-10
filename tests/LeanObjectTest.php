@@ -5,13 +5,9 @@ use LeanCloud\LeanClient;
 use LeanCloud\LeanRelation;
 
 class Movie extends LeanObject {
-    protected static $leanClassName = "Movie";
+    protected static $className = "Movie";
 }
 Movie::registerClass();
-
-class UnregisteredObject extends LeanObject{
-    protected static $leanClassName = "UnregisteredObject";
-}
 
 class LeanObjectTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
@@ -19,7 +15,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion("CN");
+        LeanClient::useRegion(getenv("LC_API_REGION"));
     }
 
     public function testInitializePlainObjectWithoutName() {
@@ -82,6 +78,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj->save();
         $this->assertNotEmpty($obj->getObjectId());
         $this->assertNotEmpty($obj->getCreatedAt());
+        $this->assertFalse($obj->hasChanges());
 
         $this->assertEquals($obj->get("score"), 81);
         $obj->destroy();
@@ -120,6 +117,44 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($obj2->get("score"), 81);
 
         $obj->destroy();
+    }
+
+    /**
+     * Test decoding
+     */
+
+    public function testGetDateShouldReturnDateTime() {
+        $obj = new LeanObject("TestObject");
+        $date = new DateTime();
+        $obj->set("release", $date);
+        $obj->save();
+        $this->assertNotEmpty($obj->getObjectId());
+        $obj2 = new LeanObject("TestObject", $obj->getObjectId());
+        $obj2->fetch();
+        $this->assertTrue($obj2->get("release") instanceof DateTime);
+        $this->assertEquals($obj->get("release"), $obj2->get("release"));
+
+        $obj2->destroy();
+    }
+
+    public function testRelationDecode() {
+        $a = new LeanObject("TestObject");
+        $a->set("name", "Pap");
+        $rel = $a->getRelation("likes_relation");
+        $b = new LeanObject("TestObject");
+        $b->set("name", "alice");
+        $b->save();
+        $rel->add($b);
+        $a->save();
+        $this->assertNotEmpty($a->getObjectId());
+
+        $a2 = new LeanObject("TestObject", $a->getObjectId());
+        $a2->fetch();
+        $val = $a2->get("likes_relation");
+        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertEquals("TestObject", $val->getTargetClassName());
+
+        LeanObject::destroyAll(array($a, $b));
     }
 
     /**
@@ -188,7 +223,8 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($obj->getObjectId());
         $obj->destroy();
 
-        $this->assertFalse($obj->fetch());
+        $this->setExpectedException("LeanCloud\LeanException");
+        $obj->fetch();
     }
 
     /**
@@ -199,13 +235,99 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj = new LeanObject("TestObject");
         $rel = $obj->getRelation("authors");
         $rel->add(new LeanObject("TestAuthor", "abc101"));
-        $this->assertEquals("Relation", $rel->encode()["__type"]);
-        $this->assertEquals("TestAuthor", $rel->encode()["className"]);
+        $out = $rel->encode();
+        $this->assertEquals("Relation", $out["__type"]);
+        $this->assertEquals("TestAuthor", $out["className"]);
 
         $val = $obj->get("authors");
         $this->assertTrue($val instanceof LeanRelation);
-        $this->assertEquals("Relation", $val->encode()["__type"]);
-        $this->assertEquals("TestAuthor", $val->encode()["className"]);
+        $out = $val->encode();
+        $this->assertEquals("Relation", $out["__type"]);
+        $this->assertEquals("TestAuthor", $out["className"]);
+    }
+
+    /**
+     * Test traverse, deep save, deep destroy
+     */
+
+    public function testObjectTraverseACycle() {
+        $a = new LeanObject("TestObject");
+        $b = new LeanObject("TestObject");
+        $c = new LeanObject("TestObject");
+        $a->set("likes", array($b, "foo"));
+        $b->set("likes", array($c, 42));
+        $c->set("likes", $a);
+        $objects = array(); // collected objects
+        $seen    = array();
+        LeanObject::traverse($a, $seen,
+                             function($val) use (&$objects) {
+                                 if ($val instanceof LeanObject) {
+                                     $objects[] = $val;
+                                 }
+                             });
+        $this->assertEquals(3, count($seen));
+        $this->assertEquals(3, count($objects));
+
+        // now start from $c
+        $objects = array(); // collected objects
+        $seen    = array();
+        LeanObject::traverse($c, $seen,
+                             function($val) use (&$objects) {
+                                 if ($val instanceof LeanObject) {
+                                     $objects[] = $val;
+                                 }
+                             });
+        $this->assertEquals(3, count($seen));
+        $this->assertEquals(3, count($objects));
+    }
+
+    public function testFindUnsavedChildren() {
+        $a = new LeanObject("TestObject");
+        $b = new LeanObject("TestObject");
+        $c = new LeanObject("TestObject");
+        $a->set("likes", array($b, "foo"));
+        $b->set("likes", array($c, 42));
+        $c->set("likes", $a);
+        $unsavedChildren = $b->findUnsavedChildren();
+        $this->assertContains($c, $unsavedChildren);
+        $this->assertContains($a, $unsavedChildren);
+
+        // it should not contain $b
+        $this->assertNotContains($b, $unsavedChildren);
+    }
+
+    public function testSaveObjectWithNewChildren() {
+        $a = new LeanObject("TestObject");
+        $b = new LeanObject("TestObject");
+        $c = new LeanObject("TestObject");
+        $a->set("foo", "aar");
+        $b->set("foo", "bar");
+        $c->set("foo", "car");
+        $a->set("mylikes", array($b, "foo"));
+        $a->set("dislikes", array($c, 42));
+        $a->save();
+
+        $this->assertNotEmpty($a->getObjectId());
+        $this->assertNotEmpty($b->getObjectId());
+        $this->assertNotEmpty($c->getObjectId());
+
+        LeanObject::destroyAll(array($a, $b, $c));
+    }
+
+    // it cannnot save when children's children is new
+    public function testSaveWithNewGrandChildren() {
+        $a = new LeanObject("TestObject");
+        $b = new LeanObject("TestObject");
+        $c = new LeanObject("TestObject");
+        $a->set("foo", "aar");
+        $b->set("foo", "bar");
+        $c->set("foo", "car");
+        $a->set("likes", array($b, "foo"));
+        $b->set("likes", array($c, 42));
+
+        $this->setExpectedException("ErrorException",
+                                    "Object without ID cannot be serialized.");
+        $a->save();
     }
 
 }

@@ -8,7 +8,8 @@ use LeanCloud\Operation\ArrayOperation;
 class DeleteOperationTest extends PHPUnit_Framework_TestCase {
     public function testOperationEncode() {
         $op = new DeleteOperation("tags");
-        $this->assertEquals("Delete", $op->encode()["__op"]);
+        $out = $op->encode();
+        $this->assertEquals("Delete", $out["__op"]);
     }
 
     public function testApplyOperation() {

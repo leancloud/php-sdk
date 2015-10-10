@@ -1,6 +1,7 @@
 <?php
 namespace LeanCloud;
 
+// use LeanCloud\LeanClient;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\DeleteOperation;
@@ -13,25 +14,32 @@ use LeanCloud\Operation\IncrementOperation;
  */
 class LeanObject {
     /**
-     * Registered mapping of className to class.
+     * Map of registered className to class.
+     *
      * @var array
      */
     private static $_registeredClasses = array();
 
     /**
-     * ClassName to LeanCloud storage.
+     * className on LeanCloud storage.
+     *
      * @var string
      */
     private $_className;
-    private $_serverData;
-    private $_data;
-    private $_operationSet;
 
     /**
-     * Unique ID on LeanCloud storage.
-     * @var string
+     * Snapshot of data fields.
+     *
+     * @var array
      */
-    private $objectId;
+    private $_data;
+
+    /**
+     * Unsaved operations of fields.
+     *
+     * @var array
+     */
+    private $_operationSet;
 
     /**
      * Make a new *plain* LeanObject.
@@ -51,37 +59,65 @@ class LeanObject {
         }
         $this->_className    = $className;
         $this->_data         = array();
-        $this->_serverdata   = array();
         $this->_operationSet = array();
         $this->_data["objectId"] = $objectId;
     }
 
     /**
-     * Register class with className.
+     * Make a new object for class
      *
-     * Only callable on subclass of LeanObject.
-     * @throws ErrorException
+     * The returned object will be instance of sub-class, if className has
+     * been registered.
+     *
+     * @param string $className
+     * @param string $objectId
+     * @return LeanObject or extended Object if class registered.
      */
-    public static function registerClass() {
-        if (isset(static::$leanClassName)) {
-            $class = get_called_class();
-            if (isset(self::$_registeredClasses[static::$leanClassName])) {
-                $prevClass = self::$_registeredClasses[static::$leanClassName];
-                if ($class !== $prevClass) {
-                    throw new \ErrorException("Cannot overwriting registered className.");
-                }
-            } else {
-                self::$_registeredClasses[static::$leanClassName] = get_called_class();
-            }
+    public static function create($className, $objectId=null) {
+        if (isset(self::$_registeredClasses[$className])) {
+            return new self::$_registeredClasses[$className]($className,
+                                                               $objectId);
         } else {
-            throw new \ErrorException("Cannot register class without leanClassName.");
+            return new LeanObject($className, $objectId);
         }
     }
 
     /**
-     * Get registered className of current subclass.
+     * Register a sub-class to LeanObject.
      *
-     * @return string if found, false if not.
+     * When a sub-class extends LeanObject, it should specify a static
+     * string variable `::$className`, which corresponds to a className on
+     * LeanCloud. It shall then invoke `->registerClass` to register
+     * itself to LeanObject. Such that LeanObject maintains a map of
+     * className to sub-classes.
+     *
+     * It is only callable on sub-class.
+     *
+     * @throws ErrorException
+     */
+    public static function registerClass() {
+        if (isset(static::$className)) {
+            $class = get_called_class();
+            $name  = static::$className;
+            if (isset(self::$_registeredClasses[$name])) {
+                $prevClass = self::$_registeredClasses[$name];
+                if ($class !== $prevClass) {
+                    throw new \ErrorException("className '$name' " .
+                                              "has already been registered.");
+                }
+            } else {
+                self::$_registeredClasses[static::$className] = get_called_class();
+            }
+        } else {
+            throw new \ErrorException("Cannot register class without " .
+                                      "::className.");
+        }
+    }
+
+    /**
+     * Search for className given a sub-class.
+     *
+     * @return string className if found, false if not.
      */
     private static function getRegisteredClassName() {
         return array_search(get_called_class(), self::$_registeredClasses);
@@ -102,6 +138,10 @@ class LeanObject {
      * @return array
      */
     public function getPointer() {
+        if (!$this->getObjectId()) {
+            throw new \ErrorException("Object without ID cannot " .
+                                      "be serialized.");
+        }
         return array(
             "__type"    => "Pointer",
             "className" => $this->getClassName(),
@@ -166,10 +206,14 @@ class LeanObject {
      * @return mixed      field value
      */
     public function get($key) {
-        if (isset($this->_data[$key])) {
-            return $this->_data[$key];
+        if (!isset($this->_data[$key])) {
+            return null;
         }
-        return null;
+        $val = $this->_data[$key];
+        if ($val instanceof LeanRelation) {
+            return $this->getRelation($key);
+        }
+        return $this->_data[$key];
     }
 
     /**
@@ -258,9 +302,11 @@ class LeanObject {
 
     /**
      * Has changes or not.
+     *
      * @return bool
      */
-    private function hasChanges() {
+    public function hasChanges() {
+        // TODO: check children too?
         return !empty($this->_operationSet);
     }
 
@@ -274,20 +320,14 @@ class LeanObject {
     }
 
     /**
-     * Save object
+     * Save object and its children objects and files
      *
      * @return void
+     * @throws ErrorException When save fialed
      */
     public function save() {
         if (!$this->hasChanges()) {return;}
-        $data = $this->getSaveData();
-        if (empty($this->getObjectId())) {
-            $resp = LeanClient::post("/classes/{$this->_className}", $data);
-        } else {
-            $resp = LeanClient::put("/classes/{$this->_className}/{$this->getObjectId()}",
-                                    $data);
-        }
-        $this->_mergeData($resp);
+        return self::saveAll(array($this));
     }
 
     /**
@@ -298,11 +338,40 @@ class LeanObject {
      */
     private function _mergeData($data) {
         forEach($data as $key => $val) {
-            $this->_data[$key] = $val;
+            $this->_data[$key] = LeanClient::decode($val);
+        }
+    }
+
+    /**
+     * Merge server data after save.
+     *
+     * All local changes will be cleared.
+     *
+     * @param array $data JSON decoded server response
+     * @return void
+     */
+    public function mergeAfterSave($data) {
+        $this->_operationSet = array();
+        $this->_mergeData($data);
+    }
+
+    /**
+     * Merge server data after fetch.
+     *
+     * Local changes will be cleared. Though it is different from
+     * megerAfterSave, that changes on new fields (which do not exist
+     * on server) will be preserved until saved to server.
+     *
+     * @param array $data JSON decoded server response
+     * @return void
+     */
+    public function mergeAfterFetch($data) {
+        forEach($data as $key => $val) {
             if (isset($this->_operationSet[$key])) {
                 unset($this->_operationSet[$key]);
             }
         }
+        $this->_mergeData($data);
     }
 
     /**
@@ -314,15 +383,58 @@ class LeanObject {
      * @throws ErrorException, LeanException
      */
     public function fetch() {
-        if (empty($this->getObjectId())) {
-            throw new \ErrorException("Cannot fetch object without objectId.");
+        static::fetchAll(array($this));
+    }
+
+    /**
+     * Fetch objects from server
+     *
+     * @param array $objects Objects to fetch.
+     * @return ???
+     * @throws ErrorException
+     *         LeanException
+     */
+    public function fetchAll($objects) {
+        $batch = array();
+        forEach($objects as $obj) {
+            if (!$obj->getObjectId()) {
+                throw new \ErrorException("Cannot fetch object without ID.");
+            }
+            // remove duplicate objects by id
+            $batch[$obj->getObjectId()] = $obj;
         }
-        $resp = LeanClient::get("/classes/{$this->_className}/{$this->getObjectId()}");
-        if (empty($resp)) {
-            return false;
-        } else {
-            $this->_mergeData($resp);
-            return true;
+        if (empty($batch)) { return; }
+
+        $requests = array();
+        $objects  = array();
+        forEach($batch as $obj) {
+            $requests[] = array(
+                "path" => "/1.1/classes/{$obj->getClassName()}" .
+                          "/{$obj->getObjectId()}",
+                "method" => "GET"
+            );
+            $objects[] = $obj;
+        }
+
+        $response = LeanClient::batch($requests);
+
+        $errors = array();
+        forEach($objects as $i => $obj) {
+            if (isset($response[$i]["success"])) {
+                if (!empty($response[$i]["success"])) {
+                    $obj->mergeAfterFetch($response[$i]["success"]);
+                } else {
+                    $errors[] = array("request" => $requests[$i],
+                                      "error" => "Object not found.");
+                }
+            } else {
+                $errors[] = array("request" => $requests[$i],
+                                  "error"   => $response[$i]["error"]);
+            }
+        }
+        if (count($errors) > 0) {
+            throw new LeanException("Batch requests error: " .
+                                    json_encode($errors));
         }
     }
 
@@ -331,16 +443,14 @@ class LeanObject {
      *
      * It does and only destroy current object.
      *
-     * @return void
+     * @return bool True if success
      * @throws LeanException
      */
     public function destroy() {
         if (!$this->getObjectId()) {
-            return;
+            return false;
         }
-
-        LeanClient::delete("/classes/{$this->_className}/" .
-                           "{$this->getObjectId()}");
+        return self::destroyAll(array($this));
     }
 
     public function query() {}
@@ -353,9 +463,10 @@ class LeanObject {
      * @throws ErrorException When it is not relation field
      */
     public function getRelation($key) {
-        $val = $this->get($key);
+        $val = isset($this->_data[$key]) ? $this->_data[$key] : null;
         if ($val) {
             if ($val instanceof LeanRelation) {
+                $val->setParentAndKey($this, $key);
                 return $val;
             } else {
                 throw new \ErrorException("Field {$key} is not relation.");
@@ -364,8 +475,201 @@ class LeanObject {
         return new LeanRelation($this, $key);
     }
 
-    public static function saveAll() {}
-    public static function destroyAll() {}
+    /**
+     * Traverse value in a hierarchy of arrays and objects
+     *
+     * Array and data attributes of LeanObject will be traversed, each time
+     * a non-array value found the func will be invoked with the value as
+     * arguement.
+     *
+     * @param array    $seen Objects that have been traversed
+     * @param function $func A function to call when non-array value found.
+     * @return void
+     */
+    public static function traverse($value, &$seen, $func) {
+        if ($value instanceof LeanObject) {
+            if (!in_array($value, $seen)) {
+                $seen[] = $value;
+                static::traverse($value->_data, $seen, $func);
+                $func($value);
+            }
+        } else if (is_array($value)) {
+            forEach($value as $val) {
+                if (is_array($val)) {
+                    static::traverse($val, $seen, $func);
+                } else if ($val instanceof LeanObject) {
+                    static::traverse($val, $seen, $func);
+                } else {
+                    $func($val);
+                }
+            }
+        } else {
+            $func($value);
+        }
+    }
+
+    /**
+     * Find unsaved children (both files and objects) of object.
+     *
+     * @return array
+     */
+    public function findUnsavedChildren() {
+        $unsavedChildren = array();
+        $seen            = array($this); // excluding object itself
+        static::traverse($this->_data, $seen,
+                       function($val) use (&$unsavedChildren) {
+                           if (($val instanceof LeanObject) ||
+                               ($val instanceof LeanFile)) {
+                               if ($val->hasChanges()) {
+                                   $unsavedChildren[] = $val;
+                               }
+                           }
+                       });
+        return $unsavedChildren;
+    }
+
+    /**
+     * Save objects and associated unsaved children and files.
+     *
+     * @param  array $objects Array of objects to save
+     * @return void
+     * @throws ErrorException When save failed
+     */
+    public static function saveAll($objects) {
+        if (empty($objects)) { return; }
+        // Unsaved children (objects and files) are saved before saving
+        // top level objects.
+        $unsavedChildren = array();
+        forEach($objects as $obj) {
+            $unsavedChildren = array_merge($unsavedChildren,
+                                           $obj->findUnsavedChildren());
+        }
+
+        $children = array(); // Array of unsaved objects excluding files
+        forEach($unsavedChildren as $obj) {
+            if ($obj instanceof LeanFile) {
+                $obj.save();
+            } else if ($obj instanceof LeanObject) {
+                if (!in_array($obj, $children)) {
+                    $children[] = $obj;
+                }
+            }
+        }
+
+        static::batchSave($children);
+        static::batchSave($objects);
+    }
+
+    /**
+     * Save objects in batch.
+     *
+     * It saves objects in a shallow way, that we do not care about children
+     * objects.
+     *
+     * @param array $objects   Array of objects to save
+     * @param int   $batchSize Number of objects to save per batch
+     * @return void
+     * @throws ErrorException When save failed
+     */
+    private static function batchSave($objects, $batchSize=20) {
+        if (empty($objects)) { return; }
+        $batch     = array(); // current batch of objects to save
+        $remaining = array(); // remaining objects to save
+        $count     = 0;
+        forEach($objects as $obj) {
+            if (!$obj->hasChanges()) {
+                continue;
+            }
+            if ($count > $batchSize) {
+                $remaining[] = $obj;
+                $count++;
+                continue;
+            }
+            $count++;
+            $batch[] = $obj;
+        }
+
+        $path     = "/1.1/classes";
+        $requests = array();
+        $objects  = array();
+        forEach($batch as $obj) {
+            $req = array("body" => $obj->getSaveData());
+            if ($obj->getObjectId()) {
+                $req["method"] = "PUT";
+                $req["path"]   = "{$path}/{$obj->getClassName()}" .
+                               "/{$obj->getObjectId()}";
+            } else {
+                $req["method"] = "POST";
+                $req["path"]   = "{$path}/{$obj->getClassName()}";
+            }
+            $requests[] = $req;
+            $objects[]  = $obj;
+        }
+
+        $response = LeanClient::batch($requests);
+
+        // TODO: append remaining unsaved items to errors, so user
+        // knows all objects that failed to save?
+        $errors = array();
+        forEach($objects as $i => $obj) {
+            if (isset($response[$i]["success"])) {
+                $obj->mergeAfterSave($response[$i]["success"]);
+            } else {
+                $errors[] = array("request" => $requests[$i],
+                                  "error"   => $response[$i]["error"]);
+            }
+        }
+        if (count($errors) > 0) {
+            throw new LeanException("Batch requests error: " .
+                                      json_encode($errors));
+        }
+
+        // start next batch
+        static::batchSave($remaining, $batchSize);
+    }
+
+    /**
+     * Delete objects in batch.
+     *
+     * @param array $objects Array of LeanObjects to destroy
+     * @return bool
+     */
+    public static function destroyAll($objects) {
+        $batch = array();
+        forEach($objects as $obj) {
+            if (!$obj->getObjectId()) {
+                throw new \ErrorException("Cannot destroy object without ID");
+            }
+            // Remove duplicate objects by ID
+            $batch[$obj->getObjectId()] = $obj;
+        }
+        if (empty($batch)) { return; }
+
+        $requests = array();
+        $objects  = array();
+        forEach($batch as $obj) {
+            $requests[] = array(
+                "path" => "/1.1/classes/{$obj->getClassName()}" .
+                          "/{$obj->getObjectId()}",
+                "method" => "DELETE"
+            );
+            $objects[] = $obj;
+        }
+
+        $response = LeanClient::batch($requests);
+
+        $errors = array();
+        forEach($objects as $i => $obj) {
+            if (isset($response[$i]["error"])) {
+                $errors[] = array("request" => $requests[$i],
+                                  "error"   => $response[$i]["error"]);
+            }
+        }
+        if (count($errors) > 0) {
+            throw new \LeanException("Batch requests error: " .
+                                      json_encode($errors));
+        }
+    }
 }
 
 ?>

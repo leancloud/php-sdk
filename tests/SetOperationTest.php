@@ -32,8 +32,9 @@ class SetOperationTest extends PHPUnit_Framework_TestCase {
 
         $date = new DateTime();
         $op   = new SetOperation("released", $date);
-        $this->assertEquals($op->encode()['__type'], "Date");
-        $this->assertEquals($op->encode()['iso'],
+        $out  = $op->encode();
+        $this->assertEquals($out['__type'], "Date");
+        $this->assertEquals($out['iso'],
                             LeanClient::formatDate($date));
     }
 

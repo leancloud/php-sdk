@@ -2,6 +2,8 @@
 
 namespace LeanCloud;
 
+use LeanCloud\LeanBytes;
+use LeanCloud\LeanObject;
 use LeanCloud\Operation\IOperation;
 
 /**
@@ -272,6 +274,7 @@ class LeanClient {
         $resp     = curl_exec($req);
         $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         $respType = curl_getinfo($req, CURLINFO_CONTENT_TYPE);
+        $error    = curl_errno($req);
         $errno    = curl_errno($req);
         curl_close($req);
 
@@ -281,7 +284,8 @@ class LeanClient {
           *  - rest api error
           */
         if ($errno > 0) {
-            throw new ErrorException("Failed to connect to API service.", $errno);
+            throw new \ErrorException("Network (curl) error: $errno $error",
+                                      $errno);
         }
         if (strpos($respType, "text/html") !== false) {
             throw new LeanException(-1, "Bad request");
@@ -354,7 +358,28 @@ class LeanClient {
     }
 
     /**
-     * Encode value to LeanCloud compatible type.
+     * Make a batch request with encoded requests.
+     *
+     * @param array $requests     Requests to make
+     * @param array $headers      Optional headers
+     * @param bool  $useMasterkey Use master key or not, optional
+     * @return array              JSON decoded associated array
+     * @throws ErrorException, LeanException
+     */
+    public static function batch($requests, $headers=array(), $useMasterKey=false) {
+        $response = LeanClient::post("/batch",
+                                     array("requests" => $requests),
+                                     $headers,
+                                     $useMasterKey);
+        if (count($requests) != count($response)) {
+            throw new LeanException("Number of resquest and response " .
+                                    "mismatch in batch operation!");
+        }
+        return $response;
+    }
+
+    /**
+     * Encode value according to LeanCloud spec.
      *
      * @param mixed $value
      * @return mixed
@@ -366,7 +391,10 @@ class LeanClient {
                    ($value instanceof \DateTimeImmutable)) {
             return array("__type" => "Date",
                          "iso"    => self::formatDate($value));
-        } else if ($value instanceof IOperation) {
+        } else if ($value instanceof LeanObject) {
+            return $value->getPointer();
+        } else if ($value instanceof IOperation ||
+                   $value instanceof LeanBytes) {
             return $value->encode();
         } else if (is_array($value)) {
             $res = array();
@@ -387,13 +415,59 @@ class LeanClient {
      * @return string
      */
     public static function formatDate($date) {
-        $s = $date->format("Y-m-d\TH:i:s.u");
-        // PHP does not support sub seconds well, it and always gives 6 zero
+        $utc = new \DateTime($date->format("c"));
+        $utc->setTimezone(new \DateTimezone("UTC"));
+        $iso = $utc->format("Y-m-d\TH:i:s.u");
+        // PHP does not support sub seconds well, it will always gives 6 zero
         // digits as microseconds. We chop 3 zeros off:
         //  `2015-09-18T08:06:20.000000Z` -> `2015-09-18T08:06:20.000Z`
-        $s = substr($s, 0, 23) . "Z";
-        return $s;
+        $iso = substr($iso, 0, 23) . "Z";
+        return $iso;
     }
+
+    /**
+     * Decode value from LeanCloud response.
+     *
+     * @param mixed $value
+     */
+    public static function decode($value) {
+        if (is_scalar($value)) {
+            return $value;
+        }
+        if (!isset($value["__type"])) {
+            $out = array();
+            forEach($value as $key => $val) {
+                $out[$key] = self::decode($val);
+            }
+            return $out;
+        }
+
+        // Parse different data type from server.
+        $type = $value["__type"];
+
+        if ($type == "Date") {
+            // return time in default time zone
+            return new \DateTime($value["iso"]);
+        }
+        if ($type == "Bytes") {
+            return LeanBytes::createFromBase64Data($value["base64"]);
+        }
+        if ($type == "GeoPoint") {}
+        if ($type == "File") {}
+        if ($type == "Pointer" || $type == "Object") {
+            $obj = LeanObject::create($value["className"], $value["objectId"]);
+            unset($value["__type"]);
+            unset($value["className"]);
+            if (!empty($value)) {
+                $obj->mergeAfterFetch($value);
+            }
+            return $obj;
+        }
+        if ($type == "Relation") {
+            return new LeanRelation(null, null, $value["className"]);
+        }
+    }
+
 }
 
 ?>

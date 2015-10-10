@@ -1,6 +1,9 @@
 <?php
 
 use LeanCloud\LeanClient;
+use LeanCloud\LeanObject;
+use LeanCloud\LeanBytes;
+use LeanCloud\LeanRelation;
 use LeanCloud\LeanException;
 
 class LeanClientTest extends PHPUnit_Framework_TestCase {
@@ -9,7 +12,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion("CN");
+        LeanClient::useRegion(getenv("LC_API_REGION"));
     }
 
     // TODO:
@@ -39,7 +42,9 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRequestUnauthorized() {
-        LeanClient::initialize(getenv("LEANCLOUD_APP_ID"), "invalid key", "invalid key");
+        LeanClient::initialize(getenv("LC_APP_ID"),
+                               "invalid key",
+                               "invalid master key");
         $this->setExpectedException("LeanCloud\LeanException", "Unauthorized");
         $data = LeanClient::request("POST",
                                     "/classes/TestObject",
@@ -114,6 +119,66 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $obj = LeanClient::get("/classes/TestObject/{$data['objectId']}");
         $this->assertEmpty($obj);
     }
+
+    public function testDecodeDate() {
+        $date = new DateTime();
+        $type = array("__type" => "Date",
+                      "iso" => LeanClient::formatDate($date));
+        $this->assertEquals($date, LeanClient::decode($type));
+    }
+
+    public function testDecodeDateWithTimeZone() {
+        $zones = array("Asia/Shanghai", "America/Los_Angeles",
+                       "Asia/Tokyo", "Europe/London");
+        forEach($zones as $zone) {
+            $date = new DateTime("now", new DateTimeZone($zone));
+            $type = array("__type" => "Date",
+                          "iso" => LeanClient::formatDate($date));
+            $this->assertEquals($date, LeanClient::decode($type));
+        }
+    }
+
+    public function testDecodeRelation() {
+        $type = array("__type" => "Relation",
+                      "className" => "TestObject");
+        $val  = LeanClient::decode($type);
+        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertEquals("TestObject", $val->getTargetClassName());
+    }
+
+    public function testDecodePointer() {
+        $type = array("__type" => "Pointer",
+                      "className" => "TestObject",
+                      "objectId" => "abc101");
+        $val  = LeanClient::decode($type);
+
+        $this->assertTrue($val instanceof LeanObject);
+        $this->assertEquals("TestObject", $val->getClassName());
+    }
+
+    public function testDecodeObject() {
+        $type = array("__type"    => "Object",
+                      "className" => "TestObject",
+                      "objectId"  => "abc101",
+                      "name"      => "alice",
+                      "tags"      => array("fiction", "bar"));
+        $val  = LeanClient::decode($type);
+
+        $this->assertTrue($val instanceof LeanObject);
+        $this->assertEquals("TestObject", $val->getClassName());
+        $this->assertEquals($type["name"], $val->get("name"));
+        $this->assertEquals($type["tags"], $val->get("tags"));
+    }
+
+    public function testDecodeBytes() {
+        $type = array("__type" => "Bytes",
+                      "base64" => base64_encode("Hello"));
+        $val = LeanClient::decode($type);
+        $this->assertTrue($val instanceof LeanBytes);
+        $this->assertEquals(array(72, 101, 108, 108, 111),
+                            $val->getByteArray());
+    }
+
 }
 
 ?>
