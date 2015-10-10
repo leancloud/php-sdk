@@ -19,7 +19,7 @@ use LeanCloud\Operation\IOperation;
  *     LeanClient::request("GET", "classes/{Object}/{id}", $payload=null,
  *                         $headers=null,
  *                         $useMasterKey=false);
- *     LeanClient::get("classes/{Object}/{id}", $headers=null);
+ *     LeanClient::get("classes/{Object}/{id}", $payload=null, $headers=null);
  *     LeanClient::put("classes/{Object}", $payload,
  *                      $headers=null,
  *                      $useMasterKey=false);
@@ -240,10 +240,10 @@ class LeanClient {
         $url  = self::getAPIEndPoint();
         $url .= $path;
 
+        $headers = empty($headers) ? array() : $headers;
         $headers_array = self::getRequestHeaders($headers, $useMasterKey);
-
         if (strpos($headers_array["Content-Type"], "/json") !== false) {
-            $data = json_encode($data);
+            $json = json_encode($data);
         }
 
         $headers = array_map(function($key, $val) { return "$key: $val";},
@@ -257,14 +257,20 @@ class LeanClient {
         curl_setopt($req, CURLOPT_TIMEOUT, self::$apiTimeout);
         // curl_setopt($req, CURLINFO_HEADER_OUT, true);
         switch($method) {
+            case "GET":
+                if ($data) {
+                    // append GET data as query string
+                    curl_setopt($req, CURLOPT_URL,
+                                $url ."?". http_build_query($data));
+                }
+                break;
             case "POST":
                 curl_setopt($req, CURLOPT_POST, 1);
-                curl_setopt($req, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($req, CURLOPT_POSTFIELDS, $json);
                 break;
             case "PUT":
+                curl_setopt($req, CURLOPT_POSTFIELDS, $json);
                 curl_setopt($req, CURLOPT_CUSTOMREQUEST, $method);
-                curl_setopt($req, CURLOPT_POSTFIELDS, $data);
-                break;
             case "DELETE":
                 curl_setopt($req, CURLOPT_CUSTOMREQUEST, $method);
                 break;
@@ -303,14 +309,15 @@ class LeanClient {
      * Issue GET request to LeanCloud
      *
      * @param string $path         Request path (without version string)
+     * @param string $data         Payload data
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      *
      * @return array               json decoded associated array
      * @throws ErrorException, LeanException
      */
-    public static function get($path, $headers=array(), $useMasterKey=false) {
-        return self::request("GET", $path, null, $headers, $useMasterKey);
+    public static function get($path, $data=null, $headers=array(), $useMasterKey=false) {
+        return self::request("GET", $path, $data, $headers, $useMasterKey);
     }
 
     /**
@@ -354,7 +361,7 @@ class LeanClient {
      * @throws ErrorException, LeanException
      */
     public static function delete($path, $headers=array(), $useMasterKey=false) {
-        return self::request("DELETE", $path, $headers, $useMasterKey);
+        return self::request("DELETE", $path, null, $headers, $useMasterKey);
     }
 
     /**
