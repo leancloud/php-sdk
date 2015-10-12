@@ -191,13 +191,13 @@ class LeanClient {
     }
 
     /**
-     * Build request headers from settings
+     * Build request headers from default settings
      *
-     * @param  array $headers      Additional headers
-     * @param  bool  $useMasterKey
+     * @param string $sessionToken Session token of a LeanUser
+     * @param bool   $useMasterKey
      * @return array
      */
-    private static function getRequestHeaders($headers, $useMasterKey) {
+    private static function buildHeaders($sessionToken, $useMasterKey) {
         $h = self::$default_headers;
 
         $h['X-LC-Prod'] = self::$useProduction ? 1 : 0;
@@ -206,16 +206,15 @@ class LeanClient {
         $key       = $useMasterKey ? self::$appMasterKey : self::$appKey;
         $sign      = md5($timestamp . $key);
         $h['X-LC-Sign'] = $sign . "," . $timestamp;
+
         if ($useMasterKey || self::$useMasterKey) {
             $h['X-LC-Sign'] .= ",master";
         }
 
-        if (!empty($headers)) {
-            $h = array_merge($h, $headers);
+        if ($sessionToken) {
+            $h['X-LC-Session'] = $sessionToken;
         }
 
-        // TODO: add current user session token
-        // $headers['X-LC-Session'] = user._session_token
         return $h;
     }
 
@@ -228,31 +227,38 @@ class LeanClient {
      * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param mixed  $data         Payload data
+     * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               json decoded associative array
      * @throws ErrorException, LeanException
      */
     public static function request($method, $path, $data,
+                                   $sessionToken=null,
                                    $headers=array(),
                                    $useMasterKey=false) {
         self::assertInitialized();
         $url  = self::getAPIEndPoint();
         $url .= $path;
 
-        $headers = empty($headers) ? array() : $headers;
-        $headers_array = self::getRequestHeaders($headers, $useMasterKey);
-        if (strpos($headers_array["Content-Type"], "/json") !== false) {
+        $defaultHeaders = self::buildHeaders($sessionToken, $useMasterKey);
+        if (empty($headers)) {
+            $headers = $defaultHeaders;
+        } else {
+            $headers = array_merge($defaultHeaders, $headers);
+        }
+        if (strpos($headers["Content-Type"], "/json") !== false) {
             $json = json_encode($data);
         }
 
-        $headers = array_map(function($key, $val) { return "$key: $val";},
-                             array_keys($headers_array),
-                             $headers_array);
+        // Build headers list in HTTP format
+        $headersList = array_map(function($key, $val) { return "$key: $val";},
+                                 array_keys($headers),
+                                 $headers);
 
         $req = curl_init($url);
         curl_setopt($req, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($req, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($req, CURLOPT_HTTPHEADER, $headersList);
         curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($req, CURLOPT_TIMEOUT, self::$apiTimeout);
         // curl_setopt($req, CURLINFO_HEADER_OUT, true);
@@ -310,14 +316,16 @@ class LeanClient {
      *
      * @param string $path         Request path (without version string)
      * @param string $data         Payload data
+     * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
-     *
      * @return array               json decoded associated array
      * @throws ErrorException, LeanException
      */
-    public static function get($path, $data=null, $headers=array(), $useMasterKey=false) {
-        return self::request("GET", $path, $data, $headers, $useMasterKey);
+    public static function get($path, $data=null, $sessionToken=null,
+                               $headers=array(), $useMasterKey=false) {
+        return self::request("GET", $path, $data, $sessionToken,
+                             $headers, $useMasterKey);
     }
 
     /**
@@ -325,14 +333,17 @@ class LeanClient {
      *
      * @param string $path         Request path (without version string)
      * @param string $data         Payload data
+     * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      *
      * @return array               json decoded associated array
      * @throws ErrorException, LeanException
      */
-    public static function post($path, $data, $headers=array(), $useMasterKey=false) {
-        return self::request("POST", $path, $data, $headers, $useMasterKey);
+    public static function post($path, $data, $sessionToken=null,
+                                $headers=array(), $useMasterKey=false) {
+        return self::request("POST", $path, $data, $sessionToken,
+                             $headers, $useMasterKey);
     }
 
     /**
@@ -340,42 +351,51 @@ class LeanClient {
      *
      * @param string $path         Request path (without version string)
      * @param string $data         Payload data
+     * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      *
      * @return array               json decoded associated array
      * @throws ErrorException, LeanException
      */
-    public static function put($path, $data, $headers=array(), $useMasterKey=false) {
-        return self::request("PUT", $path, $data, $headers, $useMasterKey);
+    public static function put($path, $data, $sessionToken=null,
+                               $headers=array(), $useMasterKey=false) {
+        return self::request("PUT", $path, $data, $sessionToken,
+                             $headers, $useMasterKey);
     }
 
     /**
      * Issue DELETE request to LeanCloud
      *
      * @param string $path         Request path (without version string)
+     * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      *
      * @return array               json decoded associated array
      * @throws ErrorException, LeanException
      */
-    public static function delete($path, $headers=array(), $useMasterKey=false) {
-        return self::request("DELETE", $path, null, $headers, $useMasterKey);
+    public static function delete($path, $sessionToken=null,
+                                  $headers=array(), $useMasterKey=false) {
+        return self::request("DELETE", $path, null, $sessionToken,
+                             $headers, $useMasterKey);
     }
 
     /**
      * Make a batch request with encoded requests.
      *
-     * @param array $requests     Requests to make
-     * @param array $headers      Optional headers
-     * @param bool  $useMasterkey Use master key or not, optional
+     * @param array  $requests     Requests to make
+     * @param string $sessionToken Session token of a LeanUser
+     * @param array  $headers      Optional headers
+     * @param bool   $useMasterkey Use master key or not, optional
      * @return array              JSON decoded associated array
      * @throws ErrorException, LeanException
      */
-    public static function batch($requests, $headers=array(), $useMasterKey=false) {
+    public static function batch($requests, $sessionToken=null,
+                                 $headers=array(), $useMasterKey=false) {
         $response = LeanClient::post("/batch",
                                      array("requests" => $requests),
+                                     $sessionToken,
                                      $headers,
                                      $useMasterKey);
         if (count($requests) != count($response)) {

@@ -199,7 +199,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $resp = LeanClient::get("/users/me",
                                 array("session_token" => $resp["sessionToken"]));
         $this->assertNotEmpty($resp["objectId"]);
-        LeanClient::delete("/users/{$id}", null, true);
+        LeanClient::delete("/users/{$id}", $resp["sessionToken"]);
 
         // Raise 211: Could not find user.
         $this->setExpectedException("LeanCloud\LeanException", null, 211);
