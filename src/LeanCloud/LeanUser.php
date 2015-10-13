@@ -131,8 +131,9 @@ class LeanUser extends LeanObject {
     public function updatePassword($old, $new) {
         if ($this->getObjectId()) {
             $path = "/users/{$this->getObjectId()}/updatePassword";
-            $resp = LeanClient::put(path, array("old_password" => $old,
-                                                "new_password" => $new));
+            $resp = LeanClient::put($path, array("old_password" => $old,
+                                                 "new_password" => $new),
+                                    $this->getSessionToken());
             $this->mergeAfterFetch($resp);
         } else {
             throw new LeanException("Cannot update password on new user.");
@@ -287,6 +288,110 @@ class LeanUser extends LeanObject {
             static::clearCurrentUser($user);
         }
     }
+
+    /**
+     * Log-in user by mobile phone and SMS code.
+     *
+     * Log-in user with SMS code, which can be requested by
+     * `requestLoginSmsCode`. It will set current user.
+     *
+     * @param string $phoneNumber Registered mobile phone number
+     * @param string $smsCode
+     * @return LeanUser
+     */
+    public static function logInWithSmsCode($phoneNumber, $smsCode) {
+        $params = array("mobilePhoneNumber" => $phoneNumber,
+                        "smsCode" => $smsCode);
+        $resp = LeanClient::get("/login", $params);
+        $user = new static();
+        static::saveCurrentUser($user);
+        return $user;
+    }
+
+    /**
+     * Request login SMS code
+     *
+     * Send user mobile phone a message with SMS code, which can be used
+     * for login then.
+     *
+     * @param string $phoneNumber Register mobile phone number
+     * @return null
+     */
+    public static function requestLoginSmsCode($phoneNumber) {
+        LeanClient::post("/requestLoginSmsCode",
+                         array("mobilePhoneNumber" => $phoneNumber))
+    }
+
+    /**
+     * Request email verify
+     *
+     * Send user an email to verify email.
+     *
+     * @param string $email
+     * @return null
+     */
+    public static function requestEmailVerify($email) {
+        LeanClient::post("/requestEmailVerify", array("email" => $email));
+    }
+
+    /**
+     * Request password reset by email
+     *
+     * @param string $email Registered email
+     * @return null
+     */
+    public static function requestPasswordReset($email) {
+        LeanClient::post("/requestPasswordReset", array("email" => $email));
+    }
+
+    /**
+     * Request password reset by SMS
+     *
+     * Send user mobile phone a message with SMS code.
+     *
+     * @param string $phoneNumber Registered mobile phone number
+     * @return null
+     */
+    public static function requestPasswordResetBySmsCode($phoneNumber) {
+        LeanClient::post("/requestPasswordResetBySmsCode",
+                         array("mobilePhoneNumber") => $phoneNumber);
+    }
+
+    /**
+     * Reset password by SMS code.
+     *
+     * @param string $smsCode
+     * @param string $newPassword
+     * @return null
+     */
+    public static function resetPasswordBySmsCode($smsCode, $newPassword) {
+        LeanClient::put("/resetPasswordBySmsCode/{$smsCode}",
+                        array("password" => $newPassword));
+    }
+
+    /**
+     * Request mobile phone verify.
+     *
+     * Send user mobile phone a message with SMS code.
+     *
+     * @param string $phoneNumber
+     * @return null
+     */
+    public static function requestMobilePhoneVerify($phoneNumber) {
+        LeanClient::post("/requestMobilePhoneVerify",
+                         array("mobilePhoneNumber" => $phoneNumber));
+    }
+
+    /**
+     * Verify mobile phone by SMS code
+     *
+     * @param string $smsCode
+     * @return null
+     */
+    public static function verifyMobilePhone($smsCode) {
+        LeanClient::post("/verifyMobilePhone/{$smsCode}", null);
+    }
+
 }
 
 // register it as sub-class of LeanObject

@@ -111,6 +111,27 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         $user->destroy();
     }
 
+    public function testUpdatePassword() {
+        $user = new LeanUser();
+        $user->setUsername("alice");
+        $user->setPassword("blabla");
+        $user->signUp();
+        $this->assertNotEmpty($user->getObjectId());
+        $this->assertNotEmpty($user->getSessionToken());
+        $id = $user->getObjectId();
+        $user->updatePassword("blabla", "yadayada");
+        $user = LeanUser::logIn("alice", "yadayada");
+        $this->assertEquals($id, $user->getObjectId());
+
+        $user->destroy();
+    }
+
+    public function testVerifyMobilePhone() {
+        // Ensure the post format is correct
+        $this->setExpectedException("LeanCloud\LeanException", null, 603);
+        LeanUser::verifyMobilePhone("000000");
+    }
+
 }
 
 ?>
