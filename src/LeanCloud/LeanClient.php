@@ -458,8 +458,12 @@ class LeanClient {
      * @param mixed $value
      */
     public static function decode($value) {
-        if (is_scalar($value)) {
+        if (is_null($value) || is_scalar($value)) {
             return $value;
+        }
+        if (isset($value["*"]) && isset($value["*"]["read"])) {
+            // skip ACL for now
+            return null;
         }
         if (!isset($value["__type"])) {
             $out = array();
