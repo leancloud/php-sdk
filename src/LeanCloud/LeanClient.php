@@ -412,7 +412,7 @@ class LeanClient {
      * @return mixed
      */
     public static function encode($value) {
-        if (is_scalar($value)) {
+        if (is_null($value) || is_scalar($value)) {
             return $value;
         } else if (($value instanceof \DateTime) ||
                    ($value instanceof \DateTimeImmutable)) {

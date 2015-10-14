@@ -10,6 +10,10 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
         LeanClient::useRegion(getenv("LC_API_REGION"));
+        $this->openToken = array();
+        $this->openToken["openid"]       = "0395BA18A";
+        $this->openToken["expires_in"]   = "36000";
+        $this->openToken["access_token"] = "QaQF4C0j5Th5ed331b56ddMwm8WC";
     }
 
     public function testSetGetFields() {
@@ -130,6 +134,48 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         // Ensure the post format is correct
         $this->setExpectedException("LeanCloud\LeanException", null, 603);
         LeanUser::verifyMobilePhone("000000");
+    }
+
+    public function testLogInWithLinkedService() {
+        $user = new LeanUser();
+        $user->setUsername("alice");
+        $user->setPassword("blabla");
+        $user->signUp();
+        $this->assertNotEmpty($user->getObjectId());
+
+        $user->linkWith("weixin", $this->openToken);
+        $auth = $user->get("authData");
+        $this->assertEquals($this->openToken, $auth["weixin"]);
+
+        $user2 = LeanUser::logInWith("weixin", $this->openToken);
+        $this->assertEquals("alice", $user2->getUsername());
+        $this->assertEquals($user->getSessionToken(),
+                            $user2->getSessionToken());
+
+        $user2->destroy();
+    }
+
+    public function testSignUpWithLinkedService() {
+        $user = LeanUser::logInWith("weixin", $this->openToken);
+        $this->assertNotEmpty($user->getSessionToken());
+        $this->assertNotEmpty($user->getObjectId());
+        $this->assertEquals($user, LeanUser::getCurrentUser());
+
+        $user->destroy();
+    }
+
+    public function testUnlinkService() {
+        $user = LeanUser::logInWith("weixin", $this->openToken);
+        $authData = $user->get("authData");
+        $this->assertEquals($this->openToken, $authData["weixin"]);
+        $user->unlinkWith("weixin");
+
+        // re-login with user session token
+        $user2    = LeanUser::become($user->getSessionToken());
+        $authData = $user2->get("authData");
+        $this->assertTrue(!isset($authData["weixin"]));
+
+        $user2->destroy();
     }
 
 }

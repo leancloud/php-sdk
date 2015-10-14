@@ -319,7 +319,7 @@ class LeanUser extends LeanObject {
      */
     public static function requestLoginSmsCode($phoneNumber) {
         LeanClient::post("/requestLoginSmsCode",
-                         array("mobilePhoneNumber" => $phoneNumber))
+                         array("mobilePhoneNumber" => $phoneNumber));
     }
 
     /**
@@ -354,7 +354,7 @@ class LeanUser extends LeanObject {
      */
     public static function requestPasswordResetBySmsCode($phoneNumber) {
         LeanClient::post("/requestPasswordResetBySmsCode",
-                         array("mobilePhoneNumber") => $phoneNumber);
+                         array("mobilePhoneNumber" => $phoneNumber));
     }
 
     /**
@@ -390,6 +390,87 @@ class LeanUser extends LeanObject {
      */
     public static function verifyMobilePhone($smsCode) {
         LeanClient::post("/verifyMobilePhone/{$smsCode}", null);
+    }
+
+
+
+    /*
+     * Link and unlink with 3rd party auth provider
+     *
+     * The auth data we work with has following structure in general:
+     *
+     *     {"authData": {
+     *             "provider-name": {
+     *                 "uid":          "...",
+     *                 "access_token": "...",
+     *                 "expires_in":   "..."
+     *             }
+     *         }
+     *     }
+     */
+
+    /**
+     * Log-in with 3rd party auth data
+     *
+     * Log-in with 3rd party provider auth data. If the auth data has been
+     * linked previously with user, it will login _as_ that user. Else a
+     * new user will be created with generated username. It will set
+     * current user.
+     *
+     * @param string $provider  Provider name
+     * @param array  $authToken Auth token
+     * @return LeanUser
+     */
+    public static function logInWith($provider, $authToken) {
+        $user = new static();
+        $user->linkWith($provider, $authToken);
+        static::saveCurrentUser($user);
+        return $user;
+    }
+
+    /**
+     * Link user with 3rd party provider
+     *
+     * @param string $provider  Provider name e.g. "weibo", "weixin"
+     * @param array  $authToken Array of id, token, and expiration info
+     * @return $this
+     */
+    public function linkWith($provider, $authToken) {
+        if (!is_string($provider) || empty($provider)) {
+            throw new \InvalidArgumentException("Provider name is invalid.");
+        }
+        $data = $this->get("authData");
+        if (!$data) {
+            $data = array();
+        }
+        $data[$provider] = $authToken;
+        $this->set("authData", $data);
+        parent::save();
+
+        return $this;
+    }
+
+    /**
+     * Unlink user with a provider
+     *
+     * @param string $provider Provider name
+     * @return $this
+     */
+    public function unlinkWith($provider) {
+        if (!is_string($provider) || empty($provider)) {
+            throw new \InvalidArgumentException("Provider name is invalid.");
+        }
+        if (!$this->getObjectId()) {
+            throw new LeanException("Cannot link unsaved user.");
+        }
+
+        $data = $this->get("authData");
+        if (isset($data[$provider])) {
+            $data[$provider] = null;
+            $this->set("authData", $data);
+            $this->save();
+        }
+        return $this;
     }
 
 }
