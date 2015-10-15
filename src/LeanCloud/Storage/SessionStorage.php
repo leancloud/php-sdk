@@ -79,4 +79,3 @@ class SessionStorage implements IStorage {
     }
 }
 
-?>

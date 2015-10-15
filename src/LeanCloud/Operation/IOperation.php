@@ -28,4 +28,4 @@ interface IOperation {
      */
     public function mergeWith($prevOp);
 }
-?>
+

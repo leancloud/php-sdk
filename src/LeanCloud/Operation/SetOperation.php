@@ -69,4 +69,3 @@ class SetOperation implements IOperation {
     }
 }
 
-?>

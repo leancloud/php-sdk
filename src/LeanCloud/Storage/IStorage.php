@@ -44,4 +44,3 @@ interface IStorage {
     public function clear();
 }
 
-?>

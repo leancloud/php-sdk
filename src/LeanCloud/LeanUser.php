@@ -475,4 +475,3 @@ class LeanUser extends LeanObject {
 // register it as sub-class of LeanObject
 LeanUser::registerClass();
 
-?>

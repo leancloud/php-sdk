@@ -10,4 +10,4 @@ class LeanException extends \Exception {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
-?>
+

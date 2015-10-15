@@ -23,4 +23,4 @@ class LeanRelationTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Test2Object", $out["className"]);
     }
 }
-?>
+
