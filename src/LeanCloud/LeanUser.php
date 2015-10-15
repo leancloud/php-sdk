@@ -458,7 +458,7 @@ class LeanUser extends LeanObject {
             throw new \InvalidArgumentException("Provider name is invalid.");
         }
         if (!$this->getObjectId()) {
-            throw new LeanException("Cannot link unsaved user.");
+            throw new LeanException("Cannot unlink with unsaved user.");
         }
 
         $data = $this->get("authData");

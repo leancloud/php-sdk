@@ -2,6 +2,7 @@
 
 use LeanCloud\LeanClient;
 use LeanCloud\LeanUser;
+use LeanCloud\LeanException;
 use LeanCloud\Storage\SessionStorage;
 
 class LeanUserTest extends PHPUnit_Framework_TestCase {
@@ -12,9 +13,23 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_MASTER_KEY"));
         LeanClient::useRegion(getenv("LC_API_REGION"));
         LeanClient::setStorage(new SessionStorage());
+
+        // create a default user
+        $user = new LeanUser();
+        $user->setUsername("alice");
+        $user->setPassword("blabla");
+        $user->signUp();
+    }
+
+    public static function tearDownAfterClass() {
+        // destroy default user
+        $user = LeanUser::logIn("alice", "blabla");
+        $user->destroy();
     }
 
     public function setUp() {
+        // logout current user if any
+        LeanUser::logOut();
         $this->openToken = array();
         $this->openToken["openid"]       = "0395BA18A";
         $this->openToken["expires_in"]   = "36000";
@@ -47,7 +62,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
 
     public function testUserSignUp() {
         $user = new LeanUser();
-        $user->setUsername("alice");
+        $user->setUsername("alice2");
         $user->setPassword("blabla");
 
         $user->signUp();
@@ -58,10 +73,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testUserUpdate() {
-        $user = new LeanUser();
-        $user->setUsername("alice");
-        $user->setPassword("blabla");
-        $user->signUp();
+        $user = LeanUser::logIn("alice", "blabla");
 
         $user->setEmail("alice@example.com");
         $user->set("age", 24);
@@ -71,65 +83,40 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         $user2 = LeanUser::become($user->getSessionToken());
         $this->assertEquals("alice@example.com", $user2->getEmail());
         $this->assertEquals(24, $user2->get("age"));
-
-        $user->destroy();
     }
 
     public function testUserLogIn() {
-        $user = new LeanUser();
-        $user->setUsername("alice");
-        $user->setPassword("blabla");
-        $user->signUp();
-        $this->assertNotEmpty($user->getSessionToken());
+        $user = LeanUser::logIn("alice", "blabla");
 
-        $user2 = LeanUser::logIn("alice", "blabla");
-        $this->assertEquals($user->getObjectId(), $user2->getObjectId());
-        $this->assertEquals($user2, LeanUser::getCurrentUser());
-
-        $user->destroy();
+        $this->assertNotEmpty($user->getObjectId());
+        $this->assertEquals($user, LeanUser::getCurrentUser());
     }
 
     public function testBecome() {
-        $user = new LeanUser();
-        $user->setUsername("alice");
-        $user->setPassword("blabla");
-        $user->signUp();
-        $this->assertNotEmpty($user->getSessionToken());
+        $user = LeanUser::logIn("alice", "blabla");
 
         $user2 = LeanUser::become($user->getSessionToken());
-        $this->assertEquals($user->getObjectId(), $user2->getObjectId());
+        $this->assertNotEmpty($user2->getObjectId());
         $this->assertEquals($user2, LeanUser::getCurrentUser());
-
-        $user->destroy();
     }
 
     public function testLogOut() {
-        $user = new LeanUser();
-        $user->setUsername("alice");
-        $user->setPassword("blabla");
-        $user->signUp();
-        $this->assertNotEmpty($user->getSessionToken());
-
-        $user2 = LeanUser::logIn("alice", "blabla");
-        $this->assertEquals($user2, LeanUser::getCurrentUser());
+        $user = LeanUser::logIn("alice", "blabla");
+        $this->assertEquals($user, LeanUser::getCurrentUser());
         LeanUser::logOut();
         $this->assertNull(LeanUser::getCurrentUser());
-
-        // re-login so we can delete user
-        LeanUser::become($user->getSessionToken());
-        $user->destroy();
     }
 
     public function testUpdatePassword() {
         $user = new LeanUser();
-        $user->setUsername("alice");
+        $user->setUsername("alice3");
         $user->setPassword("blabla");
         $user->signUp();
         $this->assertNotEmpty($user->getObjectId());
         $this->assertNotEmpty($user->getSessionToken());
         $id = $user->getObjectId();
         $user->updatePassword("blabla", "yadayada");
-        $user = LeanUser::logIn("alice", "yadayada");
+        $user = LeanUser::logIn("alice3", "yadayada");
         $this->assertEquals($id, $user->getObjectId());
 
         $user->destroy();
@@ -142,22 +129,19 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testLogInWithLinkedService() {
-        $user = new LeanUser();
-        $user->setUsername("alice");
-        $user->setPassword("blabla");
-        $user->signUp();
-        $this->assertNotEmpty($user->getObjectId());
+        $user = LeanUser::logIn("alice", "blabla");
 
         $user->linkWith("weixin", $this->openToken);
         $auth = $user->get("authData");
         $this->assertEquals($this->openToken, $auth["weixin"]);
 
         $user2 = LeanUser::logInWith("weixin", $this->openToken);
-        $this->assertEquals("alice", $user2->getUsername());
+        $this->assertEquals($user->getUsername(),
+                            $user2->getUsername());
         $this->assertEquals($user->getSessionToken(),
                             $user2->getSessionToken());
 
-        $user2->destroy();
+        $user2->unlinkWith("weixin");
     }
 
     public function testSignUpWithLinkedService() {
@@ -171,12 +155,13 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
 
     public function testUnlinkService() {
         $user = LeanUser::logInWith("weixin", $this->openToken);
+        $token = $user->getSessionToken();
         $authData = $user->get("authData");
         $this->assertEquals($this->openToken, $authData["weixin"]);
         $user->unlinkWith("weixin");
 
         // re-login with user session token
-        $user2    = LeanUser::become($user->getSessionToken());
+        $user2    = LeanUser::become($token);
         $authData = $user2->get("authData");
         $this->assertTrue(!isset($authData["weixin"]));
 
