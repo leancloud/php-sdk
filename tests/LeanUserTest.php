@@ -14,17 +14,24 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         LeanClient::useRegion(getenv("LC_API_REGION"));
         LeanClient::setStorage(new SessionStorage());
 
-        // create a default user
+        // make a default user so we can login
         $user = new LeanUser();
         $user->setUsername("alice");
         $user->setPassword("blabla");
-        $user->signUp();
+        try {
+            $user->signUp();
+        } catch (LeanException $ex) {
+            // skip
+        }
     }
 
     public static function tearDownAfterClass() {
         // destroy default user
-        $user = LeanUser::logIn("alice", "blabla");
-        $user->destroy();
+        try {
+            $user = LeanUser::logIn("alice", "blabla");
+        } catch (LeanException $ex) {
+            $user->destroy();
+        }
     }
 
     public function setUp() {
