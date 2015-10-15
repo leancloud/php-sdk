@@ -7,7 +7,7 @@ class LeanException extends \Exception {
     }
 
     public function __toString() {
-        return __CLASS . ": [{$this->code}]: {$this->message}\n";
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
 ?>
