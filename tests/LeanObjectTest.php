@@ -3,6 +3,7 @@
 use LeanCloud\LeanObject;
 use LeanCloud\LeanClient;
 use LeanCloud\LeanRelation;
+use LeanCloud\Storage\SessionStorage;
 
 class Movie extends LeanObject {
     protected static $className = "Movie";
@@ -10,12 +11,13 @@ class Movie extends LeanObject {
 Movie::registerClass();
 
 class LeanObjectTest extends PHPUnit_Framework_TestCase {
-    public function setUp() {
+    public static function setUpBeforeClass() {
         LeanClient::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
         LeanClient::useRegion(getenv("LC_API_REGION"));
+        LeanClient::setStorage(new SessionStorage());
     }
 
     public function testInitializePlainObjectWithoutName() {

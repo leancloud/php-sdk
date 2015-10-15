@@ -6,7 +6,7 @@ use LeanCloud\LeanRelation;
 use LeanCloud\Operation\RelationOperation;
 
 class RelationOperationTest extends PHPUnit_Framework_TestCase {
-    public function setUp() {
+    public static function setUpBeforeClass() {
         LeanClient::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),

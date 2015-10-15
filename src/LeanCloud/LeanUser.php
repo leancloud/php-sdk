@@ -183,7 +183,7 @@ class LeanUser extends LeanObject {
      * @return null
      */
     protected static function setCurrentSessionToken($token) {
-        $_SESSION["LC_SessionToken"] = $token;
+        LeanClient::getStorage()->set("LC_SessionToken", $token);
     }
 
     /**
@@ -192,10 +192,7 @@ class LeanUser extends LeanObject {
      * @return string
      */
     public static function getCurrentSessionToken() {
-        if (isset($_SESSION["LC_SessionToken"])) {
-            return $_SESSION["LC_SessionToken"];
-        }
-        return null;
+        return LeanClient::getStorage()->get("LC_SessionToken");
     }
 
     /**

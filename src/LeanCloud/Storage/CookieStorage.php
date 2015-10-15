@@ -5,8 +5,15 @@ namespace LeanCloud\Storage;
 /**
  * Cookie Storage
  *
- * Persist key value in browser cookies, note there is limit on how many
- * keys and how many bytes per value could have.
+ * Persist key value in client (web browser) cookies.
+ *
+ * Notes:
+ *
+ * 1. Since it uses PHP built-in setcookie, set value will fail
+ *    after headers being sent.
+ * 2. There are limits on number of bytes per cookie, and number of
+ *    keys per client.
+ * 3. And other caveats with setcookie.
  *
  * @see http://php.net/manual/en/function.setcookie.php
  */

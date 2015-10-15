@@ -2,14 +2,19 @@
 
 use LeanCloud\LeanClient;
 use LeanCloud\LeanUser;
+use LeanCloud\Storage\SessionStorage;
 
 class LeanUserTest extends PHPUnit_Framework_TestCase {
-    public function setUp() {
+    public static function setUpBeforeClass() {
         LeanClient::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
         LeanClient::useRegion(getenv("LC_API_REGION"));
+        LeanClient::setStorage(new SessionStorage());
+    }
+
+    public function setUp() {
         $this->openToken = array();
         $this->openToken["openid"]       = "0395BA18A";
         $this->openToken["expires_in"]   = "36000";

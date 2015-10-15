@@ -5,6 +5,8 @@ namespace LeanCloud;
 use LeanCloud\LeanBytes;
 use LeanCloud\LeanObject;
 use LeanCloud\Operation\IOperation;
+use LeanCloud\Storage\IStorage;
+use LeanCloud\Storage\SessionStorage;
 
 /**
  * LeanClient - HTTP LeanClient talking to LeanCloud REST API
@@ -36,6 +38,13 @@ class LeanClient {
      * @var string
      */
     private static $versionString = '0.1.0';
+
+    /**
+     * Persistent key-value storage
+     *
+     * @var IStorage
+     */
+    private static $storage;
 
     /**
      * API Endpoints for Regions
@@ -128,6 +137,11 @@ class LeanClient {
             'Content-Type' => 'application/json;charset=utf-8',
             'User-Agent'   => 'LeanCloud PHP SDK ' . self::$versionString
         );
+
+        // Use session storage by default
+        if (!self::$storage) {
+            self::$storage = new SessionStorage();
+        }
     }
 
     /**
@@ -497,6 +511,27 @@ class LeanClient {
         if ($type == "Relation") {
             return new LeanRelation(null, null, $value["className"]);
         }
+    }
+
+    /**
+     * Get storage
+     *
+     * @return IStorage
+     */
+    public static function getStorage() {
+        return self::$storage;
+    }
+
+    /**
+     * Set storage
+     *
+     * It unset the storage if $storage is null.
+     *
+     * @param IStorage $storage
+     * @return null
+     */
+    public static function setStorage($storage) {
+        self::$storage = $storage;
     }
 
 }

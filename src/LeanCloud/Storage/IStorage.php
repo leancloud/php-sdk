@@ -5,7 +5,10 @@ namespace LeanCloud\Storage;
 /**
  * Storage Interface
  *
- * Simple key-value storage interface for persistence, such as session token.
+ * Simple key-value storage interface for persisting session related
+ * data. At SDK level, it is attached to LeanClient, and used for
+ * storing session token of a logged-in LeanUser.
+ *
  */
 interface IStorage {
     /**
