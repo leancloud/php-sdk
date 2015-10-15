@@ -189,7 +189,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
     }
 
     public function testUserLogin() {
-        $data = array("username" => "alice",
+        $data = array("username" => "testuser",
                       "password" => "5akf#a?^G",
                       "phone" => "18612340000");
         $resp = LeanClient::post("/users", $data);
