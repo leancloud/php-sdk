@@ -3,6 +3,8 @@
 use LeanCloud\LeanClient;
 use LeanCloud\LeanObject;
 use LeanCloud\LeanBytes;
+use LeanCloud\LeanUser;
+use LeanCloud\LeanFile;
 use LeanCloud\LeanRelation;
 use LeanCloud\LeanException;
 use LeanCloud\Storage\SessionStorage;
@@ -181,6 +183,29 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                             $val->getByteArray());
     }
 
+    public function testDecodeUserObject() {
+        $type = array("__type"    => "Object",
+                      "className" => "_User",
+                      "objectId"  => "abc101",
+                      "username"  => "alice",
+                      "email"     => "alice@example.com");
+        $val  = LeanClient::decode($type);
+
+        $this->assertTrue($val instanceof LeanUser);
+        $this->assertEquals($type["objectId"], $val->getObjectId());
+        $this->assertEquals($type["username"], $val->getUsername());
+        $this->assertEquals($type["email"], $val->getEmail());
+    }
+
+    public function testDecodeUserPointer() {
+        $type = array("__type"    => "Pointer",
+                      "className" => "_User",
+                      "objectId"  => "abc101");
+        $val  = LeanClient::decode($type);
+
+        $this->assertTrue($val instanceof LeanUser);
+        $this->assertEquals($type["objectId"], $val->getObjectId());
+    }
 }
 
 

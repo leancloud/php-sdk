@@ -143,6 +143,9 @@ class LeanClient {
         if (!self::$storage) {
             self::$storage = new SessionStorage();
         }
+
+        // register LeanUser for object storage
+        LeanUser::registerClass();
     }
 
     /**
