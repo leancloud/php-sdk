@@ -34,11 +34,11 @@ use LeanCloud\Storage\SessionStorage;
 
 class LeanClient {
     /**
-     * LeanClient version string
+     * Client version
      *
      * @var string
      */
-    private static $versionString = '0.1.0';
+    private static $version = '0.1.0';
 
     /**
      * Persistent key-value storage
@@ -136,7 +136,7 @@ class LeanClient {
         self::$default_headers = array(
             'X-LC-Id' => self::$appId,
             'Content-Type' => 'application/json;charset=utf-8',
-            'User-Agent'   => 'LeanCloud PHP SDK ' . self::$versionString
+            'User-Agent'   => self::getVersionString()
         );
 
         // Use session storage by default
@@ -159,6 +159,10 @@ class LeanClient {
             throw $e;
         }
         return true;
+    }
+
+    private static function getVersionString() {
+        return "LeanCloud PHP SDK " . self::$version;
     }
 
     /**
@@ -495,6 +499,7 @@ EOT;
         $params   = array("token" => $token, "key" => $name);
         $body     = static::multipartEncode($file, $params, $boundary);
 
+        $headers[] = "User-Agent: " . self::getVersionString();
         $headers[] = "Content-Type: multipart/form-data;" .
                      " boundary={$boundary}";
         $headers[] = "Content-Length: " . strlen($body);
