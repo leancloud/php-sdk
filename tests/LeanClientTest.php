@@ -206,6 +206,19 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($val instanceof LeanUser);
         $this->assertEquals($type["objectId"], $val->getObjectId());
     }
+
+    public function testDecodeFile() {
+        $type = array("__type"    => "File",
+                      "objectId"  => "abc101",
+                      "name"      => "favicon.ico",
+                      "url" => "https://leancloud.cn/favicon.ico");
+        $val  = LeanClient::decode($type);
+
+        $this->assertTrue($val instanceof LeanFile);
+        $this->assertEquals($type["objectId"], $val->getObjectId());
+        $this->assertEquals($type["name"], $val->getName());
+        $this->assertEquals($type["url"],  $val->getUrl());
+    }
 }
 
 
