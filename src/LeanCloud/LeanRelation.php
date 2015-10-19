@@ -121,4 +121,3 @@ class LeanRelation {
     public function query() {}
 }
 
-?>

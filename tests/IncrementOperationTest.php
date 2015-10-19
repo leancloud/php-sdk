@@ -75,4 +75,4 @@ class IncrementOperationTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($op2->getValue(), 2);
     }
 }
-?>
+

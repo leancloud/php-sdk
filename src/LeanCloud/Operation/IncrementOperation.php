@@ -89,4 +89,3 @@ class IncrementOperation implements IOperation {
     }
 }
 
-?>

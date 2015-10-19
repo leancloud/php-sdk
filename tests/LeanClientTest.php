@@ -5,6 +5,7 @@ use LeanCloud\LeanObject;
 use LeanCloud\LeanBytes;
 use LeanCloud\LeanRelation;
 use LeanCloud\LeanException;
+use LeanCloud\Storage\SessionStorage;
 
 class LeanClientTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
@@ -51,6 +52,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                                     array("name" => "alice",
                                           "story" => "in wonderland"));
         LeanClient::delete("/classes/TestObject/{$data['objectId']}");
+
     }
 
     public function testRequestTestObject() {
@@ -181,4 +183,4 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
 
 }
 
-?>
+

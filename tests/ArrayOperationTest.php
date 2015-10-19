@@ -269,4 +269,4 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($op2 instanceof DeleteOperation);
     }
 }
-?>
+

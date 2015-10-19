@@ -416,7 +416,8 @@ class LeanObject {
             $objects[] = $obj;
         }
 
-        $response = LeanClient::batch($requests);
+        $sessionToken = LeanUser::getCurrentSessionToken();
+        $response = LeanClient::batch($requests, $sessionToken);
 
         $errors = array();
         forEach($objects as $i => $obj) {
@@ -606,7 +607,8 @@ class LeanObject {
             $objects[]  = $obj;
         }
 
-        $response = LeanClient::batch($requests);
+        $sessionToken = LeanUser::getCurrentSessionToken();
+        $response = LeanClient::batch($requests, $sessionToken);
 
         // TODO: append remaining unsaved items to errors, so user
         // knows all objects that failed to save?
@@ -656,7 +658,8 @@ class LeanObject {
             $objects[] = $obj;
         }
 
-        $response = LeanClient::batch($requests);
+        $sessionToken = LeanUser::getCurrentSessionToken();
+        $response = LeanClient::batch($requests, $sessionToken);
 
         $errors = array();
         forEach($objects as $i => $obj) {
@@ -666,10 +669,9 @@ class LeanObject {
             }
         }
         if (count($errors) > 0) {
-            throw new \LeanException("Batch requests error: " .
+            throw new LeanException("Batch requests error: " .
                                       json_encode($errors));
         }
     }
 }
 
-?>

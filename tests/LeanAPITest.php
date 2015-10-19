@@ -96,16 +96,37 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
     }
 
     public function testAddRelation() {
+        $adds = array("__op" => "AddRelation",
+                      "objects" => array(
+                          array("__type" => "Pointer",
+                                "className" => "TestObject",
+                                "objectId" => "abc001")));
         $obj = array("name" => "alice",
-                     "likes" => array("__op" => "AddRelation",
-                                      "objects" => array(
-                                          array("__type" => "Pointer",
-                                                "className" => "TestObject",
-                                                "objectId" => "3a43bcbc3"))));
+                     "likes" => $adds);
         $resp = LeanClient::post("/classes/TestObject", $obj);
         $this->assertNotEmpty($resp["objectId"]);
 
         LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
+    }
+
+    public function testRelationBatchOp() {
+        $adds = array("__op" => "AddRelation",
+                      "objects" => array(
+                          array("__type" => "Pointer",
+                                "className" => "TestObject",
+                                "objectId" => "abc001")));
+        $removes = array("__op" => "RemoveRelation",
+                      "objects" => array(
+                          array("__type" => "Pointer",
+                                "className" => "TestObject",
+                                "objectId" => "abc002")));
+        $obj = array("name" => "alice",
+                     "likes" => array("__op" => "Batch",
+                                      "ops" => array($adds, $removes)));
+        $this->setExpectedException("LeanCloud\LeanException", null, 301);
+        $resp = LeanClient::post("/classes/TestObject", $obj);
+        // $this->assertNotEmpty($resp["objectId"]);
+        // LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
     /**
@@ -167,5 +188,24 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
+    public function testUserLogin() {
+        $data = array("username" => "testuser",
+                      "password" => "5akf#a?^G",
+                      "phone" => "18612340000");
+        $resp = LeanClient::post("/users", $data);
+        $this->assertNotEmpty($resp["objectId"]);
+        $this->assertNotEmpty($resp["sessionToken"]);
+        $id = $resp["objectId"];
+        $resp = LeanClient::get("/users/me",
+                                array("session_token" => $resp["sessionToken"]));
+        $this->assertNotEmpty($resp["objectId"]);
+        LeanClient::delete("/users/{$id}", $resp["sessionToken"]);
+
+        // Raise 211: Could not find user.
+        $this->setExpectedException("LeanCloud\LeanException", null, 211);
+        $resp = LeanClient::get("/users/me",
+                                array("session_token" => "non-existent-token"));
+    }
+
 }
-?>
+

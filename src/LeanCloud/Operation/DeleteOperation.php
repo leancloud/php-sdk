@@ -56,4 +56,4 @@ class DeleteOperation implements IOperation {
         return $this;
     }
 }
-?>
+

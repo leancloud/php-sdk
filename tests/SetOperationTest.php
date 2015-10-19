@@ -55,4 +55,3 @@ class SetOperationTest extends PHPUnit_Framework_TestCase {
 
 }
 
-?>

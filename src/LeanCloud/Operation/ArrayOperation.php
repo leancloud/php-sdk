@@ -214,4 +214,3 @@ class ArrayOperation implements IOperation {
     }
 }
 
-?>
