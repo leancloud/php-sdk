@@ -300,7 +300,8 @@ class LeanFile {
      * @return bool
      */
     public function isDirty() {
-        return empty($this->getObjectId());
+        $id = $this->getObjectId();
+        return empty($id);
     }
 
     /**
