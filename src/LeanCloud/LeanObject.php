@@ -301,11 +301,11 @@ class LeanObject {
     }
 
     /**
-     * Has changes or not.
+     * If there are unsaved operations.
      *
      * @return bool
      */
-    public function hasChanges() {
+    public function isDirty() {
         // TODO: check children too?
         return !empty($this->_operationSet);
     }
@@ -326,7 +326,7 @@ class LeanObject {
      * @throws ErrorException When save fialed
      */
     public function save() {
-        if (!$this->hasChanges()) {return;}
+        if (!$this->isDirty()) {return;}
         return self::saveAll(array($this));
     }
 
@@ -521,7 +521,7 @@ class LeanObject {
                        function($val) use (&$unsavedChildren) {
                            if (($val instanceof LeanObject) ||
                                ($val instanceof LeanFile)) {
-                               if ($val->hasChanges()) {
+                               if ($val->isDirty()) {
                                    $unsavedChildren[] = $val;
                                }
                            }
@@ -578,7 +578,7 @@ class LeanObject {
         $remaining = array(); // remaining objects to save
         $count     = 0;
         forEach($objects as $obj) {
-            if (!$obj->hasChanges()) {
+            if (!$obj->isDirty()) {
                 continue;
             }
             if ($count > $batchSize) {

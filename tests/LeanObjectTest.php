@@ -80,7 +80,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj->save();
         $this->assertNotEmpty($obj->getObjectId());
         $this->assertNotEmpty($obj->getCreatedAt());
-        $this->assertFalse($obj->hasChanges());
+        $this->assertFalse($obj->isDirty());
 
         $this->assertEquals($obj->get("score"), 81);
         $obj->destroy();
