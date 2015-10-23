@@ -454,7 +454,14 @@ class LeanObject {
         return self::destroyAll(array($this));
     }
 
-    public function query() {}
+    /**
+     * Return query object based on the object class
+     *
+     * @return LeanQuery
+     */
+    public function getQuery() {
+        return new LeanQuery($this->getClassName());
+    }
 
     /**
      * Get (or build) relation on field
