@@ -42,6 +42,20 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         $obj->destroy();
     }
 
+    public function testGetById() {
+        $obj = new LeanObject("TestObject");
+        $id  = microtime();
+        $obj->set("testid", $id);
+        $obj->save();
+
+        $query = new LeanQuery("TestObject");
+        $obj2  = $query->get($obj->getObjectId());
+        $this->assertEquals($obj->get("testid"),
+                            $obj2->get("testid"));
+
+        $obj->destroy();
+    }
+
     public function testFind() {
         $obj = new LeanObject("TestObject");
         $id  = microtime();

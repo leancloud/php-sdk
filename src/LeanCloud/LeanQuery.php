@@ -597,12 +597,23 @@ class LeanQuery {
     }
 
     /**
+     * Query object by id
+     *
+     * @param string $objectId
+     * @return LeanObject
+     */
+    public function get($objectId) {
+        $this->equalTo('objectId', $objectId);
+        return $this->first();
+    }
+
+    /**
      * Find the first object by the query
      *
      * @return LeanObject
      */
     public function first() {
-        $objects = $this->find(0, 1);
+        $objects = $this->find($this->skip, 1);
         if (empty($objects)) {
             throw new LeanException("Object not found.", 101);
         }
