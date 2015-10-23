@@ -4,6 +4,7 @@ namespace LeanCloud;
 
 use LeanCloud\LeanBytes;
 use LeanCloud\LeanObject;
+use LeanCloud\LeanFile;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Storage\IStorage;
 use LeanCloud\Storage\SessionStorage;
@@ -33,11 +34,11 @@ use LeanCloud\Storage\SessionStorage;
 
 class LeanClient {
     /**
-     * LeanClient version string
+     * Client version
      *
      * @var string
      */
-    private static $versionString = '0.1.0';
+    private static $version = '0.1.0';
 
     /**
      * Persistent key-value storage
@@ -135,13 +136,16 @@ class LeanClient {
         self::$default_headers = array(
             'X-LC-Id' => self::$appId,
             'Content-Type' => 'application/json;charset=utf-8',
-            'User-Agent'   => 'LeanCloud PHP SDK ' . self::$versionString
+            'User-Agent'   => self::getVersionString()
         );
 
         // Use session storage by default
         if (!self::$storage) {
             self::$storage = new SessionStorage();
         }
+
+        // register LeanUser for object storage
+        LeanUser::registerClass();
     }
 
     /**
@@ -155,6 +159,10 @@ class LeanClient {
             throw $e;
         }
         return true;
+    }
+
+    private static function getVersionString() {
+        return "LeanCloud PHP SDK " . self::$version;
     }
 
     /**
@@ -420,6 +428,114 @@ class LeanClient {
     }
 
     /**
+     * Encode file with params in multipart format.
+     *
+     * @param array $file      Arry of file attributes
+     * @param array $params    Key-value params
+     * @param string $boundary Boundary string used for frontier
+     * @return string          Multipart encoded string
+     */
+    public static function multipartEncode($file, $params,
+                                            $boundary=null) {
+        if (!$boundary) {
+            $boundary = md5(microtime());
+        }
+
+        $body = "";
+        forEach($params as $key => $val) {
+            $body .= <<<EOT
+--{$boundary}
+Content-Disposition: form-data; name="{$key}"
+
+{$val}
+
+EOT;
+        }
+
+        if (!empty($file)) {
+            $mimeType = "application/octet-stream";
+            if (isset($file["mimeType"])) {
+                $mimeType = $file["mimeType"];
+            }
+            // escape quotes in file name
+            $filename = filter_var($file["name"],
+                                   FILTER_SANITIZE_MAGIC_QUOTES);
+
+            $body .= <<<EOT
+--{$boundary}
+Content-Disposition: form-data; name="file"; filename="{$filename}"
+Content-Type: {$mimeType}
+
+{$file['content']}
+
+EOT;
+        }
+
+        // append end frontier
+        $body .=<<<EOT
+--{$boundary}
+
+EOT;
+
+        return $body;
+    }
+
+    /**
+     * Upload file content to Qiniu storage
+     *
+     * @param string $token    Qiniu token
+     * @param string $content  File content
+     * @param string $name     File name
+     * @param string $mimeType MIME type of file
+     * @return array           JSON response from qiniu
+     * @throws LeanException, ErrorException
+     */
+    public static function uploadToQiniu($token, $content, $name,
+                                          $mimeType=null) {
+        $boundary = md5(microtime());
+        $file     = array("name"     => $name,
+                          "content"  => $content,
+                          "mimeType" => $mimeType);
+        $params   = array("token" => $token, "key" => $name);
+        $body     = static::multipartEncode($file, $params, $boundary);
+
+        $headers[] = "User-Agent: " . self::getVersionString();
+        $headers[] = "Content-Type: multipart/form-data;" .
+                     " boundary={$boundary}";
+        $headers[] = "Content-Length: " . strlen($body);
+
+        $ch = curl_init("http://upload.qiniu.com");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        $resp     = curl_exec($ch);
+        $respCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $respType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $error    = curl_errno($ch);
+        $errno    = curl_errno($ch);
+        curl_close($ch);
+
+        /** type of error:
+         *  - curl error
+         *  - http status error 4xx, 5xx
+         *  - rest api error
+         */
+        if ($errno > 0) {
+            throw new \ErrorException("curl error: $errno $error",
+                                      $errno);
+        }
+
+        $data = json_decode($resp, true);
+        if (isset($data["error"])) {
+            $code = isset($data["code"]) ? $data["code"] : -1;
+            throw new LeanException("{$code} {$data['error']}", $code);
+        }
+        return $data;
+    }
+
+    /**
      * Encode value according to LeanCloud spec.
      *
      * @param mixed $value
@@ -498,7 +614,11 @@ class LeanClient {
             return LeanBytes::createFromBase64Data($value["base64"]);
         }
         if ($type == "GeoPoint") {}
-        if ($type == "File") {}
+        if ($type == "File") {
+            $file = new LeanFile($value["name"]);
+            $file->mergeAfterFetch($value);
+            return $file;
+        }
         if ($type == "Pointer" || $type == "Object") {
             $obj = LeanObject::create($value["className"], $value["objectId"]);
             unset($value["__type"]);
@@ -532,6 +652,18 @@ class LeanClient {
      */
     public static function setStorage($storage) {
         self::$storage = $storage;
+    }
+
+    /**
+     * Generate a random float between [$min, $max).
+     *
+     * @param float $min
+     * @param float $max
+     * @return float
+     */
+    public static function randomFloat($min=0, $max=1) {
+        $M = mt_getrandmax();
+        return $min + (mt_rand(0, $M - 1) / $M) * ($max - $min);
     }
 
 }
