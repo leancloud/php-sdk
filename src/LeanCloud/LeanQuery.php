@@ -50,6 +50,13 @@ class LeanQuery {
      * @var array
      */
     private $order;
+
+    /**
+     * Extra option as query request params
+     *
+     * @var array
+     */
+    private $extraOption;
     
     /**
      * Initilize query
@@ -70,6 +77,7 @@ class LeanQuery {
         $this->order   = array();
         $this->limit   = -1;
         $this->skip    = 0;
+        $this->extraOption = array();
     }
 
     /**
@@ -569,12 +577,31 @@ class LeanQuery {
     }
 
     /**
+     * Add extra option in query request
+     *
+     * Extra options will be appended as request params when
+     * sending query to cloud.
+     *
+     * @param string $key
+     * @param mixed  $val
+     * @return $this
+     */
+    public function addOption($key, $val) {
+        $this->extraOption[$key] = $val;
+        return $this;
+    }
+
+    /**
      * Encode query to JSON representation
      *
      * @return array
      */
     public function encode() {
         $out = array();
+        if (!empty($this->extraOption)) {
+            // extraOption has lower precedence than preserved query params
+            $out = $this->extraOption;
+        }
         if (!empty($this->where)) {
             $out["where"]   = json_encode($this->where);
         }

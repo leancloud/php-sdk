@@ -115,9 +115,32 @@ class LeanRelation {
     }
 
     /**
-     * Get query of this relation
+     * Query on the target class of relation
      *
+     * @return LeanQuery
      */
-    public function query() {}
+    public function getQuery() {
+        if ($this->targetClassName) {
+            $query = new LeanQuery($this->targetClassName);
+        } else {
+            $query = new LeanQuery($this->parent->getClassName());
+            $query->addOption("redirectClassNameForKey", $this->key);
+        }
+        $query->relatedTo($this->key, $this->parent);
+        return $query;
+    }
+
+    /**
+     * Query on the parent class where child is in the relation
+     *
+     * @param LeanObject $child  Child object (with id).
+     * @return LeanQuery
+     */
+    public function getReverseQuery(LeanObject $child) {
+        $query = new LeanQuery($this->parent->getClassName());
+        $query->equalTo($this->key, $child->getPointer());
+        return $query;
+    }
+
 }
 

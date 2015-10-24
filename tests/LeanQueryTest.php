@@ -71,6 +71,22 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         $obj->destroy();
     }
 
+    public function testAddExtraOption() {
+        $query = new LeanQuery("TestObject");
+        $query->equalTo("testid", microtime());
+        $query->addOption("redirectClassNameForKey", "relationKey");
+        $out = $query->encode();
+        $this->assertEquals("relationKey", $out["redirectClassNameForKey"]);
+    }
+
+    public function testAddExtraOptionCannotOverwitePreservedOption() {
+        $query = new LeanQuery("TestObject");
+        $query->skip(100);
+        $query->addOption("skip", 50);
+        $out = $query->encode();
+        $this->assertEquals(100, $out["skip"]);
+    }
+
     public function testEqualTo() {
         $query = new LeanQuery("TestObject");
         $query->equalTo("age", 24);
