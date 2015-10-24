@@ -1,4 +1,7 @@
 test:
 	vendor/bin/phpunit --bootstrap src/autoload.php tests
 
-.PHONY: test
+doc:
+	vendor/bin/apigen generate --source src --destination docs
+
+.PHONY: test doc
