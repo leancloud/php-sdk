@@ -122,9 +122,10 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($user->getObjectId());
         $this->assertNotEmpty($user->getSessionToken());
         $id = $user->getObjectId();
+        $token = $user->getSessionToken();
         $user->updatePassword("blabla", "yadayada");
-        $user = LeanUser::logIn("alice3", "yadayada");
-        $this->assertEquals($id, $user->getObjectId());
+        // session token should be refreshed
+        $this->assertNotEquals($token, $user->getSessionToken());
 
         $user->destroy();
     }
