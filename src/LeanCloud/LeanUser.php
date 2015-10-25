@@ -135,6 +135,7 @@ class LeanUser extends LeanObject {
                                                  "new_password" => $new),
                                     $this->getSessionToken());
             $this->mergeAfterFetch($resp);
+            static::saveCurrentUser($this);
         } else {
             throw new CloudException("Cannot update password on new user.");
         }
