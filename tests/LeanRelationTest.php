@@ -3,6 +3,13 @@
 use LeanCloud\LeanObject;
 use LeanCloud\LeanRelation;
 
+/**
+ * Test on LeanRelation
+ *
+ * For all the test cases, suppose TestObject has a relation field
+ * `likes`, where it keeps Users who liked the test object.
+ *
+ */
 class LeanRelationTest extends PHPUnit_Framework_TestCase {
     public function testRelationEncode() {
         $obj = new LeanObject("TestObject");
@@ -17,10 +24,38 @@ class LeanRelationTest extends PHPUnit_Framework_TestCase {
         $out = $rel->encode();
         $this->assertEquals("Relation", $out["__type"]);
 
-        $child1 = new LeanObject("Test2Object", "abc101");
+        $child1 = new LeanObject("User", "abc101");
         $rel->add($child1);
         $out = $rel->encode();
-        $this->assertEquals("Test2Object", $out["className"]);
+        $this->assertEquals("User", $out["className"]);
+    }
+
+    public function testGetRelationOnTargetClass() {
+        $obj = new LeanObject("TestObject", "id123");
+        $rel = new LeanRelation($obj, "likes", "User");
+        $query = $rel->getQuery();
+        $this->assertEquals("User", $query->getClassName());
+    }
+
+    public function testGetRelationQueryWithoutTargetClass() {
+        $obj = new LeanObject("TestObject", "id123");
+        $rel = new LeanRelation($obj, "likes");
+        $query = $rel->getQuery();
+
+        // the query should be made against the parent class, with
+        // redirect key being set, so it will be redirected to target
+        // class.
+        $this->assertEquals("TestObject", $query->getClassName());
+        $out = $query->encode();
+        $this->assertEquals("likes", $out["redirectClassNameForKey"]);
+    }
+
+    public function getReverseQueryOnChildObject() {
+        $obj = new LeanObject("TestObject", "id123");
+        $rel = new LeanRelation($obj, "likes", "User");
+        $child = new LeanObject("User", "id124");
+        $query = $rel->getReverseQuery($child);
+        $this->assertEquals("TestObject", $query->getClassName());
     }
 }
 
