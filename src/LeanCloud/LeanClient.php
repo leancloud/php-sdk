@@ -152,11 +152,12 @@ class LeanClient {
      * Assert client correctly initialized.
      */
     private static function assertInitialized() {
-        $e = new \RuntimeException("LeanClient is not adequately initialized, please use LeanClient::initialize to initialize it.");
         if (!isset(self::$appId) &&
             !isset(self::$appKey) &&
             !isset(self::$appMasterKey)) {
-            throw $e;
+            throw new \RuntimeException("Client is not initialized, " .
+                                        "please specify application key " .
+                                        "with LeanClient::initialize.");
         }
         return true;
     }
@@ -318,11 +319,12 @@ class LeanClient {
           *  - rest api error
           */
         if ($errno > 0) {
-            throw new \RuntimeException("Network (curl) error: $errno $error",
-                                      $errno);
+            throw new \RuntimeException("CURL connection ($url) error: " .
+                                        "$errno $error",
+                                        $errno);
         }
         if (strpos($respType, "text/html") !== false) {
-            throw new CloudException(-1, "Bad request");
+            throw new CloudException("Bad request", -1);
         }
 
         $data = json_decode($resp, true);
@@ -504,7 +506,8 @@ EOT;
                      " boundary={$boundary}";
         $headers[] = "Content-Length: " . strlen($body);
 
-        $ch = curl_init("http://upload.qiniu.com");
+        $url = "http://upload.qiniu.com";
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -523,8 +526,9 @@ EOT;
          *  - rest api error
          */
         if ($errno > 0) {
-            throw new \RuntimeException("curl error: $errno $error",
-                                      $errno);
+            throw new \RuntimeException("CURL connection ($url) error: " .
+                                        "$errno $error",
+                                        $errno);
         }
 
         $data = json_decode($resp, true);
