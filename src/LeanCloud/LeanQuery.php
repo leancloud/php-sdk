@@ -69,7 +69,7 @@ class LeanQuery {
         } else if (is_subclass_of($queryClass, "LeanObject")) {
             $this->className = $queryClass::$className;
         } else {
-            throw new \IllegalArgumentException("Query class invalid.");
+            throw new \InvalidArgumentException("Query class invalid.");
         }
         $this->where   = array();
         $this->select  = array();

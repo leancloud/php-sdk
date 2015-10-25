@@ -434,7 +434,8 @@ class LeanUser extends LeanObject {
      */
     public function linkWith($provider, $authToken) {
         if (!is_string($provider) || empty($provider)) {
-            throw new \InvalidArgumentException("Provider name is invalid.");
+            throw new \InvalidArgumentException("Provider name can only " .
+                                                "be string.");
         }
         $data = $this->get("authData");
         if (!$data) {
@@ -455,10 +456,11 @@ class LeanUser extends LeanObject {
      */
     public function unlinkWith($provider) {
         if (!is_string($provider) || empty($provider)) {
-            throw new \InvalidArgumentException("Provider name is invalid.");
+            throw new \InvalidArgumentException("Provider name can only " .
+                                                "be string.");
         }
         if (!$this->getObjectId()) {
-            throw new CloudException("Cannot unlink with unsaved user.");
+            throw new \RuntimeException("Cannot unlink with unsaved user.");
         }
 
         $data = $this->get("authData");

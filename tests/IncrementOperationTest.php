@@ -30,7 +30,7 @@ class IncrementOperationTest extends PHPUnit_Framework_TestCase {
 
     public function testIncrementNonNumericAmount() {
         $this->setExpectedException("InvalidArgumentException",
-                                    "Increment amount must be numeric.");
+                                    "Operand must be number.");
         $op  = new IncrementOperation("score", "a");
     }
 

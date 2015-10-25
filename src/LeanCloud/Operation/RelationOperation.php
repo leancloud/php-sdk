@@ -47,7 +47,7 @@ class RelationOperation implements IOperation {
      */
     public function __construct($key, $adds, $removes) {
         if (empty($adds) && empty($removes)) {
-            throw new \RuntimeException("Invalid operands.");
+            throw new \InvalidArgumentException("Operands are empty.");
         }
         $this->key   = $key;
         // The op order here ensures add wins over remove
@@ -113,12 +113,12 @@ class RelationOperation implements IOperation {
         }
         forEach($objects as $obj) {
             if (!$obj->getObjectId()) {
-                throw new \RuntimeException("Unsaved object(s) cannot be " .
-                                          "added to relation.");
+                throw new \RuntimeException("Cannot add unsaved object" .
+                                            " to relation.");
             }
             if ($obj->getClassName() !== $this->targetClassName) {
-                throw new \RuntimeException("Objects in a relation are not " .
-                                          "of same type.");
+                throw new \RuntimeException("Object type incompatible" .
+                                            " with relation.");
             }
             if (isset($this->objects_to_remove[$obj->getObjectID()])) {
                 unset($this->objects_to_remove[$obj->getObjectID()]);
@@ -140,12 +140,12 @@ class RelationOperation implements IOperation {
         }
         forEach($objects as $obj) {
             if (!$obj->getObjectId()) {
-                throw new \RuntimeException("Unsaved object(s) cannot be " .
-                                          "removed from relation.");
+                throw new \RuntimeException("Cannot remove unsaved object" .
+                                            " from relation.");
             }
             if ($obj->getClassName() !== $this->targetClassName) {
-                throw new \RuntimeException("Objects in a relation are not " .
-                                          "of same type.");
+                throw new \RuntimeException("Object type incompatible" .
+                                            " with relation.");
             }
             if (isset($this->objects_to_add[$obj->getObjectID()])) {
                 unset($this->objects_to_add[$obj->getObjectID()]);
@@ -168,8 +168,8 @@ class RelationOperation implements IOperation {
                                     $this->getTargetClassName());
         }
         if (!($relation instanceof LeanRelation)) {
-            throw new \RuntimeException("Operation incompatible to previous " .
-                                      "value.");
+            throw new \RuntimeException("Operation incompatible with " .
+                                        "previous value.");
         }
         // TODO: check target class
         return $relation;
@@ -192,8 +192,8 @@ class RelationOperation implements IOperation {
                                    $prevOp->objects_to_remove);
             return new RelationOperation($this->getKey(), $adds, $removes);
         } else {
-            throw new \RuntimeException("Operation incompatible to previous " .
-                                      "operation.");
+            throw new \RuntimeException("Operation incompatible with " .
+                                        "previous one.");
         }
     }
 }

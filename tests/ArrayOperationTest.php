@@ -5,14 +5,14 @@ use LeanCloud\Operation\DeleteOperation;
 
 class ArrayOperationTest extends PHPUnit_Framework_TestCase {
     public function testInvalidOp() {
-        $this->setExpectedException("RuntimeException",
-                                    "Operation on array not supported: Set");
+        $this->setExpectedException("InvalidArgumentException",
+                                    "Operation on array not supported: Set.");
         new ArrayOperation("tags", array("frontend", "javascript"), "Set");
     }
 
     public function testInvalidArray() {
         $this->setExpectedException("InvalidArgumentException",
-                                    "Provided value is not array.");
+                                    "Operand must be array.");
         new ArrayOperation("tags", "frontend", "Add");
     }
 
@@ -43,7 +43,7 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
     public function testApplyAddToNonArray() {
         $op = new ArrayOperation("tags", array("frontend", "javascript"), "Add");
         $this->setExpectedException("RuntimeException",
-                                    "Array operation incompatible with ".
+                                    "Operation incompatible with ".
                                     "previous value.");
         $op->applyOn(42);
     }
@@ -67,7 +67,7 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
         $op = new ArrayOperation("tags", array("frontend", "javascript"),
                                  "AddUnique");
         $this->setExpectedException("RuntimeException",
-                                    "Array operation incompatible with ".
+                                    "Operation incompatible with ".
                                     "previous value.");
         $op->applyOn(42);
     }
@@ -104,7 +104,7 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
         $op = new ArrayOperation("tags", array("frontend", "javascript"),
                                  "Remove");
         $this->setExpectedException("RuntimeException",
-                                    "Array operation incompatible with ".
+                                    "Operation incompatible with ".
                                     "previous value.");
         $op->applyOn(1.1);
     }
@@ -134,7 +134,7 @@ class ArrayOperationTest extends PHPUnit_Framework_TestCase {
     public function testMergeToIncompatibleSetOperation() {
         $op = new ArrayOperation("tags", array("frontend", "javascript"), "Add");
         $this->setExpectedException("RuntimeException",
-                                    "Array operation incompatible " .
+                                    "Operation incompatible " .
                                     "with previous value.");
         $op2 = $op->mergeWith(new SetOperation("tags", 42));
     }

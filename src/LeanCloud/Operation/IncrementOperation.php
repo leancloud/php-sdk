@@ -18,7 +18,7 @@ class IncrementOperation implements IOperation {
 
     public function __construct($key, $val) {
         if (!is_numeric($val)) {
-            throw new \InvalidArgumentException("Increment amount must be numeric.");
+            throw new \InvalidArgumentException("Operand must be number.");
         }
         $this->key   = $key;
         $this->value = $val;

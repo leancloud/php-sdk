@@ -175,7 +175,7 @@ class LeanClient {
      */
     public static function useRegion($region) {
         if (!isset(self::$api[$region])) {
-            throw new \RuntimeException("Invalid API region: " . $region);
+            throw new \RuntimeException("Invalid API region: {$region}.");
         }
         self::$apiRegion = $region;
     }

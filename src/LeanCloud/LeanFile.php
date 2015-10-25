@@ -174,14 +174,14 @@ class LeanFile {
     public function getThumbUrl($width, $height, $quality=100,
                                    $scaleToFit=true, $format="png") {
         if (!$this->getUrl()) {
-            throw new \RuntimeException("URL not available.");
+            throw new \RuntimeException("File resource not available.");
         }
         if ($width < 0 || $height < 0) {
-            throw new \IllegalArgumentException("Width or height must".
+            throw new \InvalidArgumentException("Width or height must".
                                                 " be positve.");
         }
         if ($quality > 100 || $quality < 0) {
-            throw new \IllegalArgumentException("Quality must be between".
+            throw new \InvalidArgumentException("Quality must be between".
                                                 " 0 and 100.");
         }
         $mode = $scaleToFit ? 2 : 1;
