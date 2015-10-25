@@ -36,12 +36,12 @@ class ArrayOperation implements IOperation {
      * @param string $key     Field key
      * @param array  $val     Array of values to add or remove
      * @param string $opType  One of Add, AddUnique, Remove
-     * @throws ErrorException           When operation not supported
+     * @throws RuntimeException           When operation not supported
      *         InvalidArgumentException If $val is not array
      */
     public function __construct($key, $val, $opType) {
         if (!in_array($opType, array("Add", "AddUnique", "Remove"))) {
-            throw new \ErrorException("Operation on array not supported: {$opType}");
+            throw new \RuntimeException("Operation on array not supported: {$opType}");
         }
         if (!is_array($val)) {
             throw new \InvalidArgumentException("Provided value is not array.");
@@ -153,13 +153,13 @@ class ArrayOperation implements IOperation {
      *
      * @param  array $oldval Old array
      * @return array
-     * @throws ErrorException When old value is not array.
+     * @throws RuntimeException When old value is not array.
      */
     public function applyOn($oldval) {
         if (!$oldval) { $oldval = array();}
 
         if (!is_array($oldval)) {
-            throw new \ErrorException("Array operation incompatible" .
+            throw new \RuntimeException("Array operation incompatible" .
                                       " with previous value.");
         }
 
@@ -173,7 +173,7 @@ class ArrayOperation implements IOperation {
         if ($this->getOpType() === "Remove") {
             return $this->remove($oldval);
         }
-        throw new \ErrorException("Unknown operation to apply.");
+        throw new \RuntimeException("Unknown operation to apply.");
     }
 
     /**
@@ -187,7 +187,7 @@ class ArrayOperation implements IOperation {
             return $this;
         } else if ($prevOp instanceof SetOperation) {
             if (!is_array($prevOp->getValue())) {
-                throw new \ErrorException("Array operation incompatible " .
+                throw new \RuntimeException("Array operation incompatible " .
                                           "with previous value.");
             }
             return new SetOperation($this->key,
@@ -209,7 +209,7 @@ class ArrayOperation implements IOperation {
                 return new SetOperation($this->getKey(), $this->applyOn(null));
             }
         } else {
-            throw new \ErrorException("Operation incompatible to previous one.");
+            throw new \RuntimeException("Operation incompatible to previous one.");
         }
     }
 }

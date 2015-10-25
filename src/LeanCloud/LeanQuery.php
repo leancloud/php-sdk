@@ -535,7 +535,7 @@ class LeanQuery {
         $conds = array(); // where conditions
         forEach($queries as $q) {
             if ($q->getClassName() != $className) {
-                throw new \ErrorException("Query class incompatible.");
+                throw new \RuntimeException("Query class incompatible.");
             }
             $conds[] = $q->where;
         }
@@ -642,7 +642,7 @@ class LeanQuery {
     public function first() {
         $objects = $this->find($this->skip, 1);
         if (empty($objects)) {
-            throw new LeanException("Object not found.", 101);
+            throw new CloudException("Object not found.", 101);
         }
         return $objects[0];
     }

@@ -1,6 +1,6 @@
 <?php
 use LeanCloud\LeanClient;
-use LeanCloud\LeanException;
+use LeanCloud\CloudException;
 
 /**
  * Testing API behaviors
@@ -19,7 +19,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $obj = array("name" => "alice");
         $resp = LeanClient::post("/classes/TestObject", $obj);
 
-        $this->setExpectedException("LeanCloud\LeanException",
+        $this->setExpectedException("LeanCloud\CloudException",
                                     "111 Invalid value type for field", 111);
         $resp2 = LeanClient::put("/classes/TestObject/" . $resp["objectId"],
                                  array("name" => array("__op" => "Increment",
@@ -87,7 +87,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($resp["objectId"]);
 
         // Add hash pair to hash field is not valid
-        $this->setExpectedException("LeanCloud\LeanException", null, 1);
+        $this->setExpectedException("LeanCloud\CloudException", null, 1);
         $resp2 = LeanClient::put("/classes/TestObject/{$resp["objectId"]}",
                                  array("attr" => array(
                                      "__op" => "add",
@@ -123,7 +123,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $obj = array("name" => "alice",
                      "likes" => array("__op" => "Batch",
                                       "ops" => array($adds, $removes)));
-        $this->setExpectedException("LeanCloud\LeanException", null, 301);
+        $this->setExpectedException("LeanCloud\CloudException", null, 301);
         $resp = LeanClient::post("/classes/TestObject", $obj);
         // $this->assertNotEmpty($resp["objectId"]);
         // LeanClient::delete("/classes/TestObject/{$resp['objectId']}");
@@ -148,7 +148,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $obj     = array("tags" => array("__op" => "Batch",
                                          "ops"  => array($adds, $removes)));
 
-        $this->setExpectedException("LeanCloud\LeanException", null, 301);
+        $this->setExpectedException("LeanCloud\CloudException", null, 301);
         $resp = LeanClient::put("/classes/TestObject/{$resp['objectId']}",
                                 $obj);
 
@@ -202,7 +202,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         LeanClient::delete("/users/{$id}", $resp["sessionToken"]);
 
         // Raise 211: Could not find user.
-        $this->setExpectedException("LeanCloud\LeanException", null, 211);
+        $this->setExpectedException("LeanCloud\CloudException", null, 211);
         $resp = LeanClient::get("/users/me",
                                 array("session_token" => "non-existent-token"));
     }

@@ -56,7 +56,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
 
         forEach($setOps as $key => $val) {
             try { $movie->set($key, $val); }
-            catch (ErrorException $exp) {
+            catch (RuntimeException $exp) {
                 continue;
             }
             $this->fail("Set on preserved key {$key} should throw exception.");
@@ -225,7 +225,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($obj->getObjectId());
         $obj->destroy();
 
-        $this->setExpectedException("LeanCloud\LeanException");
+        $this->setExpectedException("LeanCloud\CloudException");
         $obj->fetch();
     }
 
@@ -327,7 +327,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $a->set("likes", array($b, "foo"));
         $b->set("likes", array($c, 42));
 
-        $this->setExpectedException("ErrorException",
+        $this->setExpectedException("RuntimeException",
                                     "Object without ID cannot be serialized.");
         $a->save();
     }

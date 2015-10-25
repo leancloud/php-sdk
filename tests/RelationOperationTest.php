@@ -15,7 +15,7 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testBothEmpty() {
-        $this->setExpectedException("ErrorException",
+        $this->setExpectedException("RuntimeException",
                                     "Invalid operands.");
         $op = new RelationOperation("foo", array(), null);
     }
@@ -30,7 +30,7 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
 
     public function testAddUnsavedObjects() {
         $child1 = new LeanObject("TestObject");
-        $this->setExpectedException("ErrorException",
+        $this->setExpectedException("RuntimeException",
                                     "Unsaved object(s) cannot be added " .
                                     "to relation.");
         $op = new RelationOperation("foo", array($child1), null);
@@ -96,7 +96,7 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     public function testMultipleClassesNotAllowed() {
         $child1 = new LeanObject("TestObject",  "abc101");
         $child2 = new LeanObject("Test2Object", "bac102");
-        $this->setExpectedException("ErrorException",
+        $this->setExpectedException("RuntimeException",
                                     "Objects in a relation are not of " .
                                     "same type.");
         $op = new RelationOperation("foo",

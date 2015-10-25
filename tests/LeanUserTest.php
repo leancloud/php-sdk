@@ -2,7 +2,7 @@
 
 use LeanCloud\LeanClient;
 use LeanCloud\LeanUser;
-use LeanCloud\LeanException;
+use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
 
 class LeanUserTest extends PHPUnit_Framework_TestCase {
@@ -20,7 +20,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         $user->setPassword("blabla");
         try {
             $user->signUp();
-        } catch (LeanException $ex) {
+        } catch (CloudException $ex) {
             // skip
         }
     }
@@ -29,7 +29,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         // destroy default user
         try {
             $user = LeanUser::logIn("alice", "blabla");
-        } catch (LeanException $ex) {
+        } catch (CloudException $ex) {
             $user->destroy();
         }
     }
@@ -62,7 +62,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         $user = new LeanUser();
         $user->setUsername("alice");
         $user->setPassword("blabla");
-        $this->setExpectedException("LeanCloud\LeanException",
+        $this->setExpectedException("LeanCloud\CloudException",
                                     "Cannot save new user, please signUp first.");
         $user->save();
     }
@@ -131,7 +131,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
 
     public function testVerifyMobilePhone() {
         // Ensure the post format is correct
-        $this->setExpectedException("LeanCloud\LeanException", null, 603);
+        $this->setExpectedException("LeanCloud\CloudException", null, 603);
         LeanUser::verifyMobilePhone("000000");
     }
 

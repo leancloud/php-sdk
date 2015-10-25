@@ -23,7 +23,7 @@ class IncrementOperationTest extends PHPUnit_Framework_TestCase {
 
     public function testIncrementOnString() {
         $op = new IncrementOperation("score", 1);
-        $this->setExpectedException("ErrorException",
+        $this->setExpectedException("RuntimeException",
                                     "Operation incompatible with previous value.");
         $op->applyOn("alice");
     }

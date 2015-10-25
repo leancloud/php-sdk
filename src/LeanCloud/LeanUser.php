@@ -3,7 +3,7 @@ namespace LeanCloud;
 
 use LeanCloud\LeanClient;
 use LeanCloud\LeanObject;
-use LeanCloud\LeanException;
+use LeanCloud\CloudException;
 
 /**
  * User representation for LeanCloud User
@@ -95,11 +95,11 @@ class LeanUser extends LeanObject {
      * It will also auto-login and set current user.
      *
      * @return null
-     * @throws LeanException if invalid
+     * @throws CloudException if invalid
      */
     public function signUp() {
         if ($this->getObjectId()) {
-            throw new LeanException("User has already signed up.");
+            throw new CloudException("User has already signed up.");
         }
         parent::save();
         static::saveCurrentUser($this);
@@ -109,13 +109,13 @@ class LeanUser extends LeanObject {
      * Save a signed-up user
      *
      * @return null
-     * @throws LeanException
+     * @throws CloudException
      */
     public function save() {
         if ($this->getObjectId()) {
             parent::save();
         } else {
-            throw new LeanException("Cannot save new user, please signUp ".
+            throw new CloudException("Cannot save new user, please signUp ".
                                     "first.");
         }
     }
@@ -126,7 +126,7 @@ class LeanUser extends LeanObject {
      * @param string $old Old password
      * @param string $new New password
      * @return null
-     * @throws LeanException
+     * @throws CloudException
      */
     public function updatePassword($old, $new) {
         if ($this->getObjectId()) {
@@ -136,7 +136,7 @@ class LeanUser extends LeanObject {
                                     $this->getSessionToken());
             $this->mergeAfterFetch($resp);
         } else {
-            throw new LeanException("Cannot update password on new user.");
+            throw new CloudException("Cannot update password on new user.");
         }
     }
 
@@ -238,7 +238,7 @@ class LeanUser extends LeanObject {
      *
      * @param string $token Session token
      * @return LeanUser
-     * @throws LeanException
+     * @throws CloudException
      */
     public static function become($token) {
         $resp = LeanClient::get("/users/me",
@@ -258,7 +258,7 @@ class LeanUser extends LeanObject {
      * @param string $username
      * @param string $password
      * @return LeanUser
-     * @throws LeanException
+     * @throws CloudException
      */
     public static function logIn($username, $password) {
         $resp = LeanClient::post("/login", array("username" => $username,
@@ -279,7 +279,7 @@ class LeanUser extends LeanObject {
         if ($user) {
             try {
                 LeanClient::post("/logout", null, $user->getSessionToken());
-            } catch (LeanException $exp) {
+            } catch (CloudException $exp) {
                 // skip
             }
             static::clearCurrentUser($user);
@@ -458,7 +458,7 @@ class LeanUser extends LeanObject {
             throw new \InvalidArgumentException("Provider name is invalid.");
         }
         if (!$this->getObjectId()) {
-            throw new LeanException("Cannot unlink with unsaved user.");
+            throw new CloudException("Cannot unlink with unsaved user.");
         }
 
         $data = $this->get("authData");

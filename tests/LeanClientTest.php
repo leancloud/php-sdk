@@ -6,7 +6,7 @@ use LeanCloud\LeanBytes;
 use LeanCloud\LeanUser;
 use LeanCloud\LeanFile;
 use LeanCloud\LeanRelation;
-use LeanCloud\LeanException;
+use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
 
 class LeanClientTest extends PHPUnit_Framework_TestCase {
@@ -29,7 +29,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testUseInvalidRegion() {
-        $this->setExpectedException("ErrorException", "Invalid API region");
+        $this->setExpectedException("RuntimeException", "Invalid API region");
         LeanClient::useRegion("cn-bla");
     }
 
@@ -48,7 +48,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         LeanClient::initialize(getenv("LC_APP_ID"),
                                "invalid key",
                                "invalid master key");
-        $this->setExpectedException("LeanCloud\LeanException", "Unauthorized");
+        $this->setExpectedException("LeanCloud\CloudException", "Unauthorized");
         $data = LeanClient::request("POST",
                                     "/classes/TestObject",
                                     array("name" => "alice",

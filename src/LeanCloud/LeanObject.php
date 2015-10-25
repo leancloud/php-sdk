@@ -93,7 +93,7 @@ class LeanObject {
      *
      * It is only callable on sub-class.
      *
-     * @throws ErrorException
+     * @throws RuntimeException
      */
     public static function registerClass() {
         if (isset(static::$className)) {
@@ -102,14 +102,14 @@ class LeanObject {
             if (isset(self::$_registeredClasses[$name])) {
                 $prevClass = self::$_registeredClasses[$name];
                 if ($class !== $prevClass) {
-                    throw new \ErrorException("className '$name' " .
+                    throw new \RuntimeException("className '$name' " .
                                               "has already been registered.");
                 }
             } else {
                 self::$_registeredClasses[static::$className] = get_called_class();
             }
         } else {
-            throw new \ErrorException("Cannot register class without " .
+            throw new \RuntimeException("Cannot register class without " .
                                       "::className.");
         }
     }
@@ -139,7 +139,7 @@ class LeanObject {
      */
     public function getPointer() {
         if (!$this->getObjectId()) {
-            throw new \ErrorException("Object without ID cannot " .
+            throw new \RuntimeException("Object without ID cannot " .
                                       "be serialized.");
         }
         return array(
@@ -177,11 +177,11 @@ class LeanObject {
      * @param string $key field key
      * @param mixed  $val field value
      * @return void
-     * @throws ErrorException
+     * @throws RuntimeException
      */
     public function set($key, $val) {
         if (in_array($key, array("objectId", "createdAt", "updatedAt"))) {
-            throw new \ErrorException("Preserved field could not be set.");
+            throw new \RuntimeException("Preserved field could not be set.");
         }
         if (!($val instanceof IOperation)) {
             $val = new SetOperation($key, $val);
@@ -268,7 +268,7 @@ class LeanObject {
      * @param  string $key Field key
      * @param  miexed $val Object to add
      * @return void
-     * @throws ErrorException When adding to non-array field
+     * @throws RuntimeException When adding to non-array field
      */
     public function add($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Add"));
@@ -280,7 +280,7 @@ class LeanObject {
      * @param string $key Field key
      * @param mixed  $val Object to add
      * @return void
-     * @throws ErrorException When adding to non-array field
+     * @throws RuntimeException When adding to non-array field
      */
     public function addUnique($key, $val) {
         $this->_applyOperation(new ArrayOperation($key,
@@ -294,7 +294,7 @@ class LeanObject {
      * @param string $key Field key
      * @param mixed  $val Object to remove
      * @return void
-     * @throws ErrorException When removing from non-array field
+     * @throws RuntimeException When removing from non-array field
      */
     public function remove($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Remove"));
@@ -323,7 +323,7 @@ class LeanObject {
      * Save object and its children objects and files
      *
      * @return void
-     * @throws ErrorException When save fialed
+     * @throws RuntimeException When save fialed
      */
     public function save() {
         if (!$this->isDirty()) {return;}
@@ -380,7 +380,7 @@ class LeanObject {
      * Local unsaved changes will be **discarded**.
      *
      * @return bool False if object not found.
-     * @throws ErrorException, LeanException
+     * @throws RuntimeException, CloudException
      */
     public function fetch() {
         static::fetchAll(array($this));
@@ -391,14 +391,14 @@ class LeanObject {
      *
      * @param array $objects Objects to fetch.
      * @return ???
-     * @throws ErrorException
-     *         LeanException
+     * @throws RuntimeException
+     *         CloudException
      */
     public function fetchAll($objects) {
         $batch = array();
         forEach($objects as $obj) {
             if (!$obj->getObjectId()) {
-                throw new \ErrorException("Cannot fetch object without ID.");
+                throw new \RuntimeException("Cannot fetch object without ID.");
             }
             // remove duplicate objects by id
             $batch[$obj->getObjectId()] = $obj;
@@ -434,7 +434,7 @@ class LeanObject {
             }
         }
         if (count($errors) > 0) {
-            throw new LeanException("Batch requests error: " .
+            throw new CloudException("Batch requests error: " .
                                     json_encode($errors));
         }
     }
@@ -445,7 +445,7 @@ class LeanObject {
      * It does and only destroy current object.
      *
      * @return bool True if success
-     * @throws LeanException
+     * @throws CloudException
      */
     public function destroy() {
         if (!$this->getObjectId()) {
@@ -468,7 +468,7 @@ class LeanObject {
      *
      * @param  string $key Field key
      * @return LeanRelation
-     * @throws ErrorException When it is not relation field
+     * @throws RuntimeException When it is not relation field
      */
     public function getRelation($key) {
         $val = isset($this->_data[$key]) ? $this->_data[$key] : null;
@@ -477,7 +477,7 @@ class LeanObject {
                 $val->setParentAndKey($this, $key);
                 return $val;
             } else {
-                throw new \ErrorException("Field {$key} is not relation.");
+                throw new \RuntimeException("Field {$key} is not relation.");
             }
         }
         return new LeanRelation($this, $key);
@@ -541,7 +541,7 @@ class LeanObject {
      *
      * @param  array $objects Array of objects to save
      * @return void
-     * @throws ErrorException When save failed
+     * @throws RuntimeException When save failed
      */
     public static function saveAll($objects) {
         if (empty($objects)) { return; }
@@ -577,7 +577,7 @@ class LeanObject {
      * @param array $objects   Array of objects to save
      * @param int   $batchSize Number of objects to save per batch
      * @return void
-     * @throws ErrorException When save failed
+     * @throws RuntimeException When save failed
      */
     private static function batchSave($objects, $batchSize=20) {
         if (empty($objects)) { return; }
@@ -629,7 +629,7 @@ class LeanObject {
             }
         }
         if (count($errors) > 0) {
-            throw new LeanException("Batch requests error: " .
+            throw new CloudException("Batch requests error: " .
                                       json_encode($errors));
         }
 
@@ -647,7 +647,7 @@ class LeanObject {
         $batch = array();
         forEach($objects as $obj) {
             if (!$obj->getObjectId()) {
-                throw new \ErrorException("Cannot destroy object without ID");
+                throw new \RuntimeException("Cannot destroy object without ID");
             }
             // Remove duplicate objects by ID
             $batch[$obj->getObjectId()] = $obj;
@@ -676,7 +676,7 @@ class LeanObject {
             }
         }
         if (count($errors) > 0) {
-            throw new LeanException("Batch requests error: " .
+            throw new CloudException("Batch requests error: " .
                                       json_encode($errors));
         }
     }
