@@ -3,7 +3,7 @@ namespace LeanCloud;
 
 use LeanCloud\LeanObject;
 use LeanCloud\LeanClient;
-use LeanCloud\LeanException;
+use LeanCloud\CloudException;
 use LeanCloud\MIMEType;
 
 /**
@@ -98,12 +98,12 @@ class LeanFile {
      * @param string $filepath Absolute file path
      * @param string $mimeType
      * @return LeanFile
-     * @throws ErrorException When failed to read file.
+     * @throws RuntimeException When failed to read file.
      */
     public static function createWithLocalFile($filepath, $mimeType=null) {
         $content = file_get_contents($filepath);
         if ($content === false) {
-            throw new \ErrorException("Read file error at $filepath");
+            throw new \RuntimeException("Read file error at $filepath");
         }
         return static::createWithData(basename($filepath), $content, $mimeType);
     }
@@ -174,14 +174,14 @@ class LeanFile {
     public function getThumbUrl($width, $height, $quality=100,
                                    $scaleToFit=true, $format="png") {
         if (!$this->getUrl()) {
-            throw new \ErrorException("URL not available.");
+            throw new \RuntimeException("File resource not available.");
         }
         if ($width < 0 || $height < 0) {
-            throw new \IllegalArgumentException("Width or height must".
+            throw new \InvalidArgumentException("Width or height must".
                                                 " be positve.");
         }
         if ($quality > 100 || $quality < 0) {
-            throw new \IllegalArgumentException("Quality must be between".
+            throw new \InvalidArgumentException("Quality must be between".
                                                 " 0 and 100.");
         }
         $mode = $scaleToFit ? 2 : 1;
@@ -373,7 +373,7 @@ class LeanFile {
      */
     public function encode() {
         if (!$this->getObjectId()) {
-            throw new \ErrorException("Cannot serialize unsaved file.");
+            throw new \RuntimeException("Cannot serialize unsaved file.");
         }
         return array(
             "__type" => "File",

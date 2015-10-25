@@ -100,7 +100,7 @@ class CookieStorage implements IStorage {
      * @return null
      */
     public function clear() {
-        throw new \ErrorException("Not implemented error.");
+        throw new \RuntimeException("Not implemented error.");
     }
 }
 

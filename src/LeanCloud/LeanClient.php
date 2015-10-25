@@ -38,7 +38,7 @@ class LeanClient {
      *
      * @var string
      */
-    private static $version = '0.1.0';
+    private static $version = '0.9.0';
 
     /**
      * Persistent key-value storage
@@ -152,11 +152,12 @@ class LeanClient {
      * Assert client correctly initialized.
      */
     private static function assertInitialized() {
-        $e = new \ErrorException("LeanClient is not adequately initialized, please use LeanClient::initialize to initialize it.");
         if (!isset(self::$appId) &&
             !isset(self::$appKey) &&
             !isset(self::$appMasterKey)) {
-            throw $e;
+            throw new \RuntimeException("Client is not initialized, " .
+                                        "please specify application key " .
+                                        "with LeanClient::initialize.");
         }
         return true;
     }
@@ -174,7 +175,7 @@ class LeanClient {
      */
     public static function useRegion($region) {
         if (!isset(self::$api[$region])) {
-            throw new \ErrorException("Invalid API region: " . $region);
+            throw new \RuntimeException("Invalid API region: {$region}.");
         }
         self::$apiRegion = $region;
     }
@@ -253,7 +254,7 @@ class LeanClient {
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               json decoded associative array
-     * @throws ErrorException, LeanException
+     * @throws RuntimeException, CloudException
      */
     public static function request($method, $path, $data,
                                    $sessionToken=null,
@@ -318,17 +319,18 @@ class LeanClient {
           *  - rest api error
           */
         if ($errno > 0) {
-            throw new \ErrorException("Network (curl) error: $errno $error",
-                                      $errno);
+            throw new \RuntimeException("CURL connection ($url) error: " .
+                                        "$errno $error",
+                                        $errno);
         }
         if (strpos($respType, "text/html") !== false) {
-            throw new LeanException(-1, "Bad request");
+            throw new CloudException("Bad request", -1);
         }
 
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
             $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new LeanException("{$code} {$data['error']}", $code);
+            throw new CloudException("{$code} {$data['error']}", $code);
         }
         return $data;
     }
@@ -342,7 +344,7 @@ class LeanClient {
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               json decoded associated array
-     * @throws ErrorException, LeanException
+     * @throws RuntimeException, CloudException
      */
     public static function get($path, $data=null, $sessionToken=null,
                                $headers=array(), $useMasterKey=false) {
@@ -360,7 +362,7 @@ class LeanClient {
      * @param bool   $useMasterkey Use master key or not, optional
      *
      * @return array               json decoded associated array
-     * @throws ErrorException, LeanException
+     * @throws RuntimeException, CloudException
      */
     public static function post($path, $data, $sessionToken=null,
                                 $headers=array(), $useMasterKey=false) {
@@ -378,7 +380,7 @@ class LeanClient {
      * @param bool   $useMasterkey Use master key or not, optional
      *
      * @return array               json decoded associated array
-     * @throws ErrorException, LeanException
+     * @throws RuntimeException, CloudException
      */
     public static function put($path, $data, $sessionToken=null,
                                $headers=array(), $useMasterKey=false) {
@@ -395,7 +397,7 @@ class LeanClient {
      * @param bool   $useMasterkey Use master key or not, optional
      *
      * @return array               json decoded associated array
-     * @throws ErrorException, LeanException
+     * @throws RuntimeException, CloudException
      */
     public static function delete($path, $sessionToken=null,
                                   $headers=array(), $useMasterKey=false) {
@@ -411,7 +413,7 @@ class LeanClient {
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array              JSON decoded associated array
-     * @throws ErrorException, LeanException
+     * @throws RuntimeException, CloudException
      */
     public static function batch($requests, $sessionToken=null,
                                  $headers=array(), $useMasterKey=false) {
@@ -421,7 +423,7 @@ class LeanClient {
                                      $headers,
                                      $useMasterKey);
         if (count($requests) != count($response)) {
-            throw new LeanException("Number of resquest and response " .
+            throw new CloudException("Number of resquest and response " .
                                     "mismatch in batch operation!");
         }
         return $response;
@@ -488,7 +490,7 @@ EOT;
      * @param string $name     File name
      * @param string $mimeType MIME type of file
      * @return array           JSON response from qiniu
-     * @throws LeanException, ErrorException
+     * @throws CloudException, RuntimeException
      */
     public static function uploadToQiniu($token, $content, $name,
                                           $mimeType=null) {
@@ -504,7 +506,8 @@ EOT;
                      " boundary={$boundary}";
         $headers[] = "Content-Length: " . strlen($body);
 
-        $ch = curl_init("http://upload.qiniu.com");
+        $url = "http://upload.qiniu.com";
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -523,14 +526,15 @@ EOT;
          *  - rest api error
          */
         if ($errno > 0) {
-            throw new \ErrorException("curl error: $errno $error",
-                                      $errno);
+            throw new \RuntimeException("CURL connection ($url) error: " .
+                                        "$errno $error",
+                                        $errno);
         }
 
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
             $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new LeanException("{$code} {$data['error']}", $code);
+            throw new CloudException("{$code} {$data['error']}", $code);
         }
         return $data;
     }
@@ -560,7 +564,7 @@ EOT;
             }
             return $res;
         } else {
-            throw new \ErrorException("Dont know how to encode " .
+            throw new \RuntimeException("Dont know how to encode " .
                                       gettype($value));
         }
     }

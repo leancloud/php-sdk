@@ -64,14 +64,14 @@ class LeanRelation {
      *
      * @param LeanObject $parent Parent object of relation
      * @param string     $key    Field key
-     * @throws ErrorException If parent and key do not match
+     * @throws RuntimeException If parent and key do not match
      */
     public function setParentAndKey($parent, $key) {
         if ($this->parent && $this->parent != $parent) {
-            throw new \ErrorException("Relation does not belong to the object");
+            throw new \RuntimeException("Relation does not belong to the object");
         }
         if ($this->key && $this->key != $key) {
-            throw new \ErrorException("Relation does not belong to the field");
+            throw new \RuntimeException("Relation does not belong to the field");
         }
         $this->parent = $parent;
         $this->key    = $key;

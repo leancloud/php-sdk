@@ -18,7 +18,7 @@ class IncrementOperation implements IOperation {
 
     public function __construct($key, $val) {
         if (!is_numeric($val)) {
-            throw new \InvalidArgumentException("Increment amount must be numeric.");
+            throw new \InvalidArgumentException("Operand must be number.");
         }
         $this->key   = $key;
         $this->value = $val;
@@ -63,7 +63,7 @@ class IncrementOperation implements IOperation {
         if (is_numeric($oldval)) {
             return $this->value + $oldval;
         }
-        throw new \ErrorException("Operation incompatible with previous value.");
+        throw new \RuntimeException("Operation incompatible with previous value.");
     }
 
     /**
@@ -84,7 +84,7 @@ class IncrementOperation implements IOperation {
         } else if ($prevOp instanceof DeleteOperation){
             return new SetOperation($this->getKey(), $this->getValue());
         } else {
-            throw new \ErrorException("Operation incompatible with previous one.");
+            throw new \RuntimeException("Operation incompatible with previous one.");
         }
     }
 }

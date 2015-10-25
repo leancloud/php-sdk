@@ -3,7 +3,7 @@
 use LeanCloud\LeanObject;
 use LeanCloud\LeanQuery;
 use LeanCloud\LeanClient;
-use LeanCloud\LeanException;
+use LeanCloud\CloudException;
 
 class LeanQueryTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
