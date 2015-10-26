@@ -176,7 +176,7 @@ class LeanObject {
      * Set field value by key.
      * @param string $key field key
      * @param mixed  $val field value
-     * @return void
+     * @return $this
      * @throws RuntimeException
      */
     public function set($key, $val) {
@@ -187,16 +187,18 @@ class LeanObject {
             $val = new SetOperation($key, $val);
         }
         $this->_applyOperation($val);
+        return $this;
     }
 
     /**
      * Delete field by key.
      *
      * @param string $key Field key
-     * @return void
+     * @return $this
      */
     public function delete($key) {
         $this->_applyOperation(new DeleteOperation($key));
+        return $this;
     }
 
     /**
@@ -223,9 +225,11 @@ class LeanObject {
      *
      * @param string $key    field key
      * @param number $amount amount to increment
+     * @return $this
      */
     public function increment($key, $amount = 1) {
         $this->_applyOperation(new IncrementOperation($key, $amount));
+        return $this;
     }
 
     /**
@@ -267,11 +271,12 @@ class LeanObject {
      *
      * @param  string $key Field key
      * @param  miexed $val Object to add
-     * @return void
+     * @return $this
      * @throws RuntimeException When adding to non-array field
      */
     public function add($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Add"));
+        return $this;
     }
 
     /**
@@ -279,13 +284,14 @@ class LeanObject {
      *
      * @param string $key Field key
      * @param mixed  $val Object to add
-     * @return void
+     * @return $this
      * @throws RuntimeException When adding to non-array field
      */
     public function addUnique($key, $val) {
         $this->_applyOperation(new ArrayOperation($key,
                                                   array($val),
                                                   "AddUnique"));
+        return $this;
     }
 
     /**
@@ -293,11 +299,12 @@ class LeanObject {
      *
      * @param string $key Field key
      * @param mixed  $val Object to remove
-     * @return void
+     * @return $this
      * @throws RuntimeException When removing from non-array field
      */
     public function remove($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Remove"));
+        return $this;
     }
 
     /**
