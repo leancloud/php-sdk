@@ -10,28 +10,8 @@ use LeanCloud\Storage\IStorage;
 use LeanCloud\Storage\SessionStorage;
 
 /**
- * LeanClient - HTTP LeanClient talking to LeanCloud REST API
- *
- * Usage examples:
- *
- *     LeanClient::initialize($appId, $appKey, $masterKey);
- *     LeanClient::useRegion("CN");
- *     LeanClient::useProduction(true);
- *     LeanClient::useMasterKey(false);
- *
- *     LeanClient::request("GET", "classes/{Object}/{id}", $payload=null,
- *                         $headers=null,
- *                         $useMasterKey=false);
- *     LeanClient::get("classes/{Object}/{id}", $payload=null, $headers=null);
- *     LeanClient::put("classes/{Object}", $payload,
- *                      $headers=null,
- *                      $useMasterKey=false);
- *     LeanClient::post("classes/{Object}", $payload, $headers=null,
- *                      $useMasterKey=false);
- *     LeanClient::delete("classes/{Object}/{id}", $headers=null,
- *                         $useMasterKey=false);
+ * HTTP Client talking to LeanCloud REST API
  */
-
 class LeanClient {
     /**
      * Client version
