@@ -67,6 +67,16 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
         $file->destroy();
     }
 
+    public function testGetCreatedAtAndUpdatedAt() {
+        $file = LeanFile::createWithData("test.txt", "你好，中国!");
+        $file->save();
+        $this->assertNotEmpty($file->getUrl());
+        $this->assertNotEmpty($file->getCreatedAt());
+        $this->assertTrue($file->getCreatedAt() instanceof \DateTime);
+
+        $file->destroy();
+    }
+
     public function testMetaData() {
         $file = LeanFile::createWithData("test.txt", "你好，中国!");
         $file->setMeta("language", "zh-CN");

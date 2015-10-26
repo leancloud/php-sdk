@@ -337,6 +337,15 @@ class LeanObject {
      * @return void
      */
     private function _mergeData($data) {
+        // manually convert createdAt and updatedAt fields so they'll
+        // be decoded as DateTime object.
+        forEach(array("createdAt", "updatedAt") as $key) {
+            if (isset($data[$key]) && is_string($data[$key])) {
+                $data[$key] = array("__type" => "Date",
+                                    "iso"    => $data[$key]);
+            }
+        }
+
         forEach($data as $key => $val) {
             $this->_data[$key] = LeanClient::decode($val);
         }

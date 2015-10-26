@@ -140,6 +140,20 @@ class LeanFile {
     }
 
     /**
+     * @return DateTime
+     */
+    public function getCreatedAt() {
+        return $this->get("createdAt");
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getUpdatedAt() {
+        return $this->get("updatedAt");
+    }
+
+    /**
      * Get file MIME type
      *
      * @return string
@@ -261,21 +275,48 @@ class LeanFile {
     }
 
     /**
+     * Merge data and metaData from server response
+     *
+     * @param array $data
+     * @param array $meta Optional meta data
+     * @return null
+     */
+    private function _mergeData($data, $meta=array()) {
+        // manually convert createdAt and updatedAt fields so they'll
+        // be decoded as DateTime object.
+        forEach(array("createdAt", "updatedAt") as $key) {
+            if (isset($data[$key]) && is_string($data[$key])) {
+                $data[$key] = array("__type" => "Date",
+                                    "iso"    => $data[$key]);
+            }
+        }
+
+        forEach($data as $key => $val) {
+            $this->_data[$key] = LeanClient::decode($val);
+        }
+
+        forEach($meta as $key => $val) {
+            $this->_metaData[$key] = LeanClient::decode($val);
+        }
+    }
+
+    /**
      * Merge server response after save
      *
      * @param array $data JSON decoded response
      * @return null
      */
     public function mergeAfterSave($data) {
+        $meta = array();
+        if (isset($data["metaData"])) {
+            $meta = $data["metaData"];
+            unset($data["metaData"]);
+        }
         if (isset($data["size"])) {
-            if (isset($data["metaData"])) {
-                $data["metaData"]["size"] = $data["size"];
-            } else {
-                $data["metaData"] = array("size" => $data["size"]);
-            }
+            $meta["size"] = $data["size"];
             unset($data["size"]);
         }
-        $this->mergeAfterFetch($data);
+        $this->_mergeData($data, $meta);
     }
 
     /**
@@ -290,8 +331,7 @@ class LeanFile {
             $meta = $data["metaData"];
             unset($data["metaData"]);
         }
-        $this->_metaData = array_merge($this->_metaData, $meta);
-        $this->_data     = array_merge($this->_data,     $data);
+        $this->_mergeData($data, $meta);
     }
 
     /**
