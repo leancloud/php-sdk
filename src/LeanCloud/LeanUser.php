@@ -49,7 +49,7 @@ class LeanUser extends LeanObject {
      * Set username
      *
      * @param string $username
-     * @return LeanUser
+     * @return $this
      */
     public function setUsername($username) {
         $this->set("username", $username);
@@ -60,7 +60,7 @@ class LeanUser extends LeanObject {
      * Set email
      *
      * @param string $email
-     * @return LeanUser
+     * @return $this
      */
     public function setEmail($email) {
         $this->set("email", $email);
@@ -71,7 +71,7 @@ class LeanUser extends LeanObject {
      * Set password
      *
      * @param string $password
-     * @return LeanUser
+     * @return $this
      */
     public function setPassword($password) {
         $this->set("password", $password);

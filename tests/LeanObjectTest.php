@@ -121,6 +121,21 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj->destroy();
     }
 
+    public function testGetCreatedAtAndUpdatedAt() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("foo", "bar");
+        $obj->save();
+        $this->assertNotEmpty($obj->getCreatedAt());
+        $this->assertTrue($obj->getCreatedAt() instanceof \DateTime);
+
+        $obj->set("foo", "baz");
+        $obj->save();
+        $this->assertNotEmpty($obj->getUpdatedAt());
+        $this->assertTrue($obj->getUpdatedAt() instanceof \DateTime);
+
+        $obj->destroy();
+    }
+
     /**
      * Test decoding
      */
