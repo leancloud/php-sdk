@@ -25,13 +25,17 @@ PHP SDK 提供了对数据存储，用户管理等模块的 PHP 实现及接口�
 
 * 前往发布页面下载最新版本: https://github.com/leancloud/php-sdk/releases
 
-    cd $APP_ROOT
-    wget https://github.com/leancloud/php-sdk/archive/vX.X.X.zip
+```bash
+$ cd $APP_ROOT
+$ wget https://github.com/leancloud/php-sdk/archive/vX.X.X.zip
+```
 
 * 将压缩文件解压并置于项目文件夹下，如 $APP_ROOT/vendor/leancloud
 
-    unzip vX.X.X.zip
-    mv php-sdk-X.X.X $APP_ROOT/vendor/leancloud
+```bash
+$ unzip vX.X.X.zip
+$ mv php-sdk-X.X.X $APP_ROOT/vendor/leancloud
+```
 
 #### 初始化
 
