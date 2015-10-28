@@ -19,7 +19,9 @@ PHP SDK 提供了对数据存储，用户管理等模块的 PHP 实现及接口�
 
 如果你的项目使用 composer, 那么安装 LeanCloud PHP SDK 将非常容易：
 
-    composer require leancloud/leancloud-sdk
+```bash
+$ composer require leancloud/leancloud-sdk
+```
 
 #### 手动下载安装
 
@@ -37,13 +39,14 @@ $ unzip vX.X.X.zip
 $ mv php-sdk-X.X.X $APP_ROOT/vendor/leancloud
 ```
 
-#### 初始化
+初始化
+----
 
 完成上述安装后，请加载库(在项目的一开始就需要加载，且只需加载一次)：
 
 ```php
-require_once("vendor/autoload.php");               // if installed via composer
-require_once("vendor/leancloud/src/autoload.php"); // if installed manually
+require_once("vendor/autoload.php");               // composer 安装
+require_once("vendor/leancloud/src/autoload.php"); // 手动安装
 ```
 
 初始化应用的 ID 及 Key（在 LeanCloud 控制台应用的设置页面可获得 app id, app key,
@@ -120,7 +123,7 @@ LeanUser::logInWith("weibo", array("openid" => ...));
 use LeanCloud\LeanObject;
 use LeanCloud\CloudException;
 
-$obj = new LeanObject("Human");
+$obj = new LeanObject("TestObject");
 $obj->set("name", "alice");
 $obj->set("height", 60.0);
 $obj->set("weight", 4.5);
@@ -159,19 +162,19 @@ $obj->destroy();
 我们同样支持子类继承，子类中需要定义静态变量 `$className` ，并注册到存储类:
 
 ```php
-class Human extends LeanObject {
-    protected static $className = "Human";
+class TestObject extends LeanObject {
+    protected static $className = "TestObject";
     public setName($name) {
         $this->set("name", $name);
         return $this;
     }
 }
 // register it as storage class
-Human::registerClass();
+TestObject::registerClass();
 
-$human = new Human();
-$human->setName();
-$human->set("eyeColor", "blue");
+$obj = new TestObject();
+$obj->setName();
+$obj->set("eyeColor", "blue");
 ...
 ```
 
@@ -182,14 +185,14 @@ $human->set("eyeColor", "blue");
 ```php
 use LeanCloud\LeanQuery;
 
-$query = new LeanQuery("Human");
+$query = new LeanQuery("TestObject");
 $obj = $query->get($objectId);
 ```
 
 更为复杂的条件查询：
 
 ```php
-$query = new LeanQuery("Human");
+$query = new LeanQuery("TestObject");
 $query->lessThan("height", 100.0);
 $query->greaterThanOrEqualTo("weight", 5.0);
 $query->addAscend("birthdate");
@@ -245,7 +248,7 @@ try {
 }
 ```
 
-更加细节的行为请参考 API 文档。
+API 文档请参考: https://leancloud.cn/docs/api/php/
 
 贡献
 ----
