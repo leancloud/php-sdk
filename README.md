@@ -114,7 +114,7 @@ LeanUser::become($token);
 // we also support login with sms code, and login with 3rd party
 // auth data, e.g. weibo, weixin. Please see our doc for details.
 LeanUser::logInWithSmsCode("phone number", "sms code");
-LeanUser::logInWith("weibo", array("openid" => ...));
+LeanUser::logInWith("weibo", array("openid" => "..."));
 ```
 
 #### 对象存储
@@ -142,11 +142,11 @@ $obj->get("birthdate");
 // atomatically increment field
 $obj->increment("age", 1);
 // add values to array field
-$obj->add("colors", array("blue", "magenta" ...));
+$obj->add("colors", array("blue", "magenta"));
 // add values uniquely
-$obj->addUnique("colors", ...);
+$obj->addUnique("colors", array("orange"));
 // remove values from array field
-$obj->remove("colors", ...);
+$obj->remove("colors", array("blue"));
 
 // save changes to cloud
 try {
@@ -202,7 +202,7 @@ $query->first(); // return first object
 
 $query->skip(100); // skip number of rows
 $query->limit(20); // limit number of rows to return
-$objects = $query->find(); // return all objects
+$objects = $query->find(); // return query objects
 ```
 
 #### 文件存储
