@@ -30,11 +30,11 @@ composer require leancloud/leancloud-sdk
 
 ```bash
 cd $APP_ROOT
-wget https://github.com/leancloud/php-sdk/archive/v1.0.0-rc.zip
+wget https://github.com/leancloud/php-sdk/archive/vX.X.X.zip
 
 # 解压并置于 vendor 目录
-unzip v1.0.0-rc.zip
-mv php-sdk-1.0.0-rc vendor/leancloud
+unzip vX.X.X.zip
+mv php-sdk-X.X.X vendor/leancloud
 ```
 
 初始化
