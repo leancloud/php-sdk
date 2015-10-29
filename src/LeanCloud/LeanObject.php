@@ -9,7 +9,7 @@ use LeanCloud\Operation\ArrayOperation;
 use LeanCloud\Operation\IncrementOperation;
 
 /**
- * LeanObject - Object interface to LeanCloud storage API.
+ * Object interface to LeanCloud storage API
  *
  */
 class LeanObject {
@@ -71,7 +71,7 @@ class LeanObject {
      *
      * @param string $className
      * @param string $objectId
-     * @return LeanObject or extended Object if class registered.
+     * @return LeanObject
      */
     public static function create($className, $objectId=null) {
         if (isset(self::$_registeredClasses[$className])) {
@@ -115,9 +115,9 @@ class LeanObject {
     }
 
     /**
-     * Search for className given a sub-class.
+     * Search for className given a sub-class
      *
-     * @return string className if found, false if not.
+     * @return string|null
      */
     private static function getRegisteredClassName() {
         return array_search(get_called_class(), self::$_registeredClasses);
@@ -133,7 +133,7 @@ class LeanObject {
     }
 
     /**
-     * Get JSON representation of object pointer
+     * Pointer representation of object
      *
      * @return array
      */
@@ -150,7 +150,7 @@ class LeanObject {
     }
 
     /**
-     * Get objectId.
+     * Get objectId of object
      *
      * @return string
      */
@@ -159,24 +159,27 @@ class LeanObject {
     }
 
     /**
-     * Get DateTime of creating object on LeanCloud.
+     *
+     * @return DateTime
      */
     public function getCreatedAt() {
         return $this->get("createdAt");
     }
 
     /**
-     * Get DateTime of updating object on LeanCloud.
+     *
+     * @return DateTime
      */
     public function getUpdatedAt() {
         return $this->get("updatedAt");
     }
 
     /**
-     * Set field value by key.
+     * Set field value by key
+     *
      * @param string $key field key
      * @param mixed  $val field value
-     * @return $this
+     * @return self
      * @throws RuntimeException
      */
     public function set($key, $val) {
@@ -191,10 +194,10 @@ class LeanObject {
     }
 
     /**
-     * Delete field by key.
+     * Delete field by key
      *
      * @param string $key Field key
-     * @return $this
+     * @return self
      */
     public function delete($key) {
         $this->_applyOperation(new DeleteOperation($key));
@@ -202,7 +205,7 @@ class LeanObject {
     }
 
     /**
-     * Get field value by key.
+     * Get field value by key
      *
      * @param string $key field key
      * @return mixed      field value
@@ -225,7 +228,7 @@ class LeanObject {
      *
      * @param string $key    field key
      * @param number $amount amount to increment
-     * @return $this
+     * @return self
      */
     public function increment($key, $amount = 1) {
         $this->_applyOperation(new IncrementOperation($key, $amount));
@@ -236,7 +239,7 @@ class LeanObject {
      * Get queued operation by key
      *
      * @param string $key
-     * @return IOperation, null if not found.
+     * @return IOperation|null
      */
     private function _getPreviousOp($key) {
         if (isset($this->_operationSet[$key])) {
@@ -249,7 +252,6 @@ class LeanObject {
      * Apply operation
      *
      * @param IOperation $operation
-     * @return void
      */
     private function _applyOperation($operation) {
         $key    = $operation->getKey();
@@ -271,8 +273,8 @@ class LeanObject {
      *
      * @param  string $key Field key
      * @param  miexed $val Object to add
-     * @return $this
-     * @throws RuntimeException When adding to non-array field
+     * @return self
+     * @throws RuntimeException
      */
     public function add($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Add"));
@@ -280,12 +282,12 @@ class LeanObject {
     }
 
     /**
-     * Add one object into array field only if it is not already present.
+     * Add one object uniquely into array field
      *
      * @param string $key Field key
      * @param mixed  $val Object to add
-     * @return $this
-     * @throws RuntimeException When adding to non-array field
+     * @return self
+     * @throws RuntimeException
      */
     public function addUnique($key, $val) {
         $this->_applyOperation(new ArrayOperation($key,
@@ -295,12 +297,12 @@ class LeanObject {
     }
 
     /**
-     * Remove one object from array field.
+     * Remove one object from array field
      *
      * @param string $key Field key
      * @param mixed  $val Object to remove
-     * @return $this
-     * @throws RuntimeException When removing from non-array field
+     * @return self
+     * @throws RuntimeException
      */
     public function remove($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Remove"));
@@ -318,9 +320,9 @@ class LeanObject {
     }
 
     /**
-     * Get unsaved data
+     * Get unsaved changes
      *
-     * @return array Deep associative array
+     * @return array
      */
     private function getSaveData() {
         return LeanClient::encode($this->_operationSet);
@@ -329,8 +331,7 @@ class LeanObject {
     /**
      * Save object and its children objects and files
      *
-     * @return void
-     * @throws RuntimeException When save fialed
+     * @throws RuntimeException
      */
     public function save() {
         if (!$this->isDirty()) {return;}
@@ -341,7 +342,6 @@ class LeanObject {
      * Merge data from server
      *
      * @param array $data JSON decoded server response
-     * @return void
      */
     private function _mergeData($data) {
         // manually convert createdAt and updatedAt fields so they'll
@@ -364,7 +364,6 @@ class LeanObject {
      * All local changes will be cleared.
      *
      * @param array $data JSON decoded server response
-     * @return void
      */
     public function mergeAfterSave($data) {
         $this->_operationSet = array();
@@ -379,7 +378,6 @@ class LeanObject {
      * on server) will be preserved until saved to server.
      *
      * @param array $data JSON decoded server response
-     * @return void
      */
     public function mergeAfterFetch($data) {
         forEach($data as $key => $val) {
@@ -395,7 +393,6 @@ class LeanObject {
      *
      * Local unsaved changes will be **discarded**.
      *
-     * @return bool False if object not found.
      * @throws RuntimeException, CloudException
      */
     public function fetch() {
@@ -406,9 +403,7 @@ class LeanObject {
      * Fetch objects from server
      *
      * @param array $objects Objects to fetch.
-     * @return ???
-     * @throws RuntimeException
-     *         CloudException
+     * @throws RuntimeException, CloudException
      */
     public function fetchAll($objects) {
         $batch = array();
@@ -460,7 +455,6 @@ class LeanObject {
      *
      * It does and only destroy current object.
      *
-     * @return bool True if success
      * @throws CloudException
      */
     public function destroy() {
@@ -484,7 +478,7 @@ class LeanObject {
      *
      * @param  string $key Field key
      * @return LeanRelation
-     * @throws RuntimeException When it is not relation field
+     * @throws RuntimeException
      */
     public function getRelation($key) {
         $val = isset($this->_data[$key]) ? $this->_data[$key] : null;
@@ -508,7 +502,6 @@ class LeanObject {
      *
      * @param array    $seen Objects that have been traversed
      * @param function $func A function to call when non-array value found.
-     * @return void
      */
     public static function traverse($value, &$seen, $func) {
         if ($value instanceof LeanObject) {
@@ -556,8 +549,7 @@ class LeanObject {
      * Save objects and associated unsaved children and files.
      *
      * @param  array $objects Array of objects to save
-     * @return void
-     * @throws RuntimeException When save failed
+     * @throws RuntimeException
      */
     public static function saveAll($objects) {
         if (empty($objects)) { return; }
@@ -585,15 +577,14 @@ class LeanObject {
     }
 
     /**
-     * Save objects in batch.
+     * Save objects in batch
      *
      * It saves objects in a shallow way, that we do not care about children
      * objects.
      *
      * @param array $objects   Array of objects to save
      * @param int   $batchSize Number of objects to save per batch
-     * @return void
-     * @throws RuntimeException When save failed
+     * @throws RuntimeException
      */
     private static function batchSave($objects, $batchSize=20) {
         if (empty($objects)) { return; }
@@ -654,10 +645,9 @@ class LeanObject {
     }
 
     /**
-     * Delete objects in batch.
+     * Delete objects in batch
      *
      * @param array $objects Array of LeanObjects to destroy
-     * @return bool
      */
     public static function destroyAll($objects) {
         $batch = array();

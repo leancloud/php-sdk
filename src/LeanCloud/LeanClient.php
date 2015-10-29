@@ -10,22 +10,18 @@ use LeanCloud\Storage\IStorage;
 use LeanCloud\Storage\SessionStorage;
 
 /**
- * HTTP Client talking to LeanCloud REST API
+ * Client interfacing with LeanCloud REST API
+ *
+ * The client is responsible for sending request to API, and parsing
+ * the response into objects in PHP. There are also utility functions
+ * such as `::randomFloat` to generate a random float number.
+ *
  */
 class LeanClient {
     /**
      * Client version
-     *
-     * @var string
      */
-    private static $version = '0.9.0';
-
-    /**
-     * Persistent key-value storage
-     *
-     * @var IStorage
-     */
-    private static $storage;
+    const VERSION = '0.1.0';
 
     /**
      * API Endpoints for Regions
@@ -39,6 +35,8 @@ class LeanClient {
     /**
      * API Region
      *
+     * Default to CN
+     *
      * @var string
      */
     private static $apiRegion = "CN";
@@ -51,7 +49,9 @@ class LeanClient {
     private static $apiVersion = "1.1";
 
     /**
-     * API Timeout (in seconds);
+     * API Timeout
+     *
+     * Default to 15 seconds
      *
      * @var int
      */
@@ -97,23 +97,29 @@ class LeanClient {
      *
      * @var array
      */
-    private static $default_headers;
+    private static $defaultHeaders;
 
     /**
-     * Initialize application credentials
+     * Persistent key-value storage
+     *
+     * @var IStorage
+     */
+    private static $storage;
+
+
+    /**
+     * Initialize application key and settings
      *
      * @param string $appId        Application ID
      * @param string $appKey       Application key
      * @param string $appMasterKey Application master key
-     *
-     * @return void
      */
     public static function initialize($appId, $appKey, $appMasterKey) {
         self::$appId        = $appId;
         self::$appKey       = $appKey;
         self::$appMasterKey = $appMasterKey;
 
-        self::$default_headers = array(
+        self::$defaultHeaders = array(
             'X-LC-Id' => self::$appId,
             'Content-Type' => 'application/json;charset=utf-8',
             'User-Agent'   => self::getVersionString()
@@ -129,7 +135,9 @@ class LeanClient {
     }
 
     /**
-     * Assert client correctly initialized.
+     * Assert client is correctly initialized
+     *
+     * @throws RuntimeException
      */
     private static function assertInitialized() {
         if (!isset(self::$appId) &&
@@ -139,19 +147,23 @@ class LeanClient {
                                         "please specify application key " .
                                         "with LeanClient::initialize.");
         }
-        return true;
     }
 
+    /**
+     * Get version string used as user agent
+     *
+     * @return string
+     */
     private static function getVersionString() {
-        return "LeanCloud PHP SDK " . self::$version;
+        return "LeanCloud PHP SDK " . self::VERSION;
     }
 
     /**
      * Set API region
      *
      * Available regions are "CN" and "US".
-     * @param  string $region
-     * @return void
+     *
+     * @param string $region
      */
     public static function useRegion($region) {
         if (!isset(self::$api[$region])) {
@@ -163,8 +175,7 @@ class LeanClient {
     /**
      * Use production or not
      *
-     * @param  bool $flag
-     * @return void
+     * @param bool $flag
      */
     public static function useProduction(bool $flag) {
         self::$useProduction = $flag ? true : false;
@@ -173,8 +184,7 @@ class LeanClient {
     /**
      * Use master key or not
      *
-     * @param  bool $flag
-     * @return void
+     * @param bool $flag
      */
     public static function useMasterKey(bool $flag) {
         self::$useMasterKey = $flag ? true : false;
@@ -183,9 +193,8 @@ class LeanClient {
     /**
      * Get API Endpoint
      *
-     * Build the API endpoint with api region and version, the returned
-     * endpoint will include version string. E.g.
-     * https://api.leancloud.cn/1.1 .
+     * Build the API endpoint, the returned endpoint will include
+     * version string. For example: https://api.leancloud.cn/1.1 .
      *
      * @return string
      */
@@ -194,14 +203,14 @@ class LeanClient {
     }
 
     /**
-     * Build request headers from default settings
+     * Build request headers
      *
      * @param string $sessionToken Session token of a LeanUser
      * @param bool   $useMasterKey
      * @return array
      */
     private static function buildHeaders($sessionToken, $useMasterKey) {
-        $h = self::$default_headers;
+        $h = self::$defaultHeaders;
 
         $h['X-LC-Prod'] = self::$useProduction ? 1 : 0;
 
@@ -224,16 +233,20 @@ class LeanClient {
     /**
      * Issue request to LeanCloud
      *
-     * The payload data is automatically json encoded, if the request has
-     * content-type of `application/json`.
+     * The data is passing in as an associative array, which will be encoded
+     * into JSON if the content-type header is "application/json", or
+     * be appended to url as query string if it's GET request.
+     *
+     * The optional headers do have higher precedence, if provided it
+     * will overwrite the items in default headers.
      *
      * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
-     * @param mixed  $data         Payload data
+     * @param array  $data         Payload data
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
-     * @param bool   $useMasterkey Use master key or not, optional
-     * @return array               json decoded associative array
+     * @param bool   $useMasterkey Use master key or not
+     * @return array               JSON decoded associative array
      * @throws RuntimeException, CloudException
      */
     public static function request($method, $path, $data,
@@ -322,9 +335,9 @@ class LeanClient {
      * @param string $data         Payload data
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
-     * @param bool   $useMasterkey Use master key or not, optional
-     * @return array               json decoded associated array
-     * @throws RuntimeException, CloudException
+     * @param bool   $useMasterkey Use master key or not
+     * @return array               JSON decoded associated array
+     * @see ::request
      */
     public static function get($path, $data=null, $sessionToken=null,
                                $headers=array(), $useMasterKey=false) {
@@ -340,9 +353,8 @@ class LeanClient {
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
-     *
-     * @return array               json decoded associated array
-     * @throws RuntimeException, CloudException
+     * @return array               JSON decoded associated array
+     * @see ::request
      */
     public static function post($path, $data, $sessionToken=null,
                                 $headers=array(), $useMasterKey=false) {
@@ -358,9 +370,8 @@ class LeanClient {
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
-     *
-     * @return array               json decoded associated array
-     * @throws RuntimeException, CloudException
+     * @return array               JSON decoded associated array
+     * @see ::request
      */
     public static function put($path, $data, $sessionToken=null,
                                $headers=array(), $useMasterKey=false) {
@@ -375,9 +386,8 @@ class LeanClient {
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
-     *
-     * @return array               json decoded associated array
-     * @throws RuntimeException, CloudException
+     * @return array               JSON decoded associated array
+     * @see ::request
      */
     public static function delete($path, $sessionToken=null,
                                   $headers=array(), $useMasterKey=false) {
@@ -386,14 +396,14 @@ class LeanClient {
     }
 
     /**
-     * Make a batch request with encoded requests.
+     * Issue a batch request
      *
-     * @param array  $requests     Requests to make
+     * @param array  $requests     Array of requests in batch op
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array              JSON decoded associated array
-     * @throws RuntimeException, CloudException
+     * @see ::request
      */
     public static function batch($requests, $sessionToken=null,
                                  $headers=array(), $useMasterKey=false) {
@@ -410,10 +420,10 @@ class LeanClient {
     }
 
     /**
-     * Encode file with params in multipart format.
+     * Encode file with params in multipart format
      *
-     * @param array $file      Arry of file attributes
-     * @param array $params    Key-value params
+     * @param array  $file     File data and attributes
+     * @param array  $params   Key-value params
      * @param string $boundary Boundary string used for frontier
      * @return string          Multipart encoded string
      */
@@ -520,7 +530,7 @@ EOT;
     }
 
     /**
-     * Encode value according to LeanCloud spec.
+     * Encode value for sending to LeanCloud
      *
      * @param mixed $value
      * @return mixed
@@ -535,6 +545,7 @@ EOT;
         } else if ($value instanceof LeanObject) {
             return $value->getPointer();
         } else if ($value instanceof IOperation ||
+                   $value instanceof LeanFile ||
                    $value instanceof LeanBytes) {
             return $value->encode();
         } else if (is_array($value)) {
@@ -570,6 +581,7 @@ EOT;
      * Decode value from LeanCloud response.
      *
      * @param mixed $value
+     * @return mixed
      */
     public static function decode($value) {
         if (is_null($value) || is_scalar($value)) {
@@ -632,14 +644,13 @@ EOT;
      * It unset the storage if $storage is null.
      *
      * @param IStorage $storage
-     * @return null
      */
     public static function setStorage($storage) {
         self::$storage = $storage;
     }
 
     /**
-     * Generate a random float between [$min, $max).
+     * Generate a random float between [$min, $max)
      *
      * @param float $min
      * @param float $max

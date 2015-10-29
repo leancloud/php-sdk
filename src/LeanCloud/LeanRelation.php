@@ -5,7 +5,7 @@ namespace LeanCloud;
 use LeanCloud\Operation\RelationOperation;
 
 /**
- * LeanRelation - Many-to-many relationship for LeanObject
+ * Many-to-many relationship for LeanObject
  *
  * A relation consists of an array of objects, of which items can be
  * added to, and removed from. Each field could only have one kind of
@@ -64,7 +64,7 @@ class LeanRelation {
      *
      * @param LeanObject $parent Parent object of relation
      * @param string     $key    Field key
-     * @throws RuntimeException If parent and key do not match
+     * @throws RuntimeException
      */
     public function setParentAndKey($parent, $key) {
         if ($this->parent && $this->parent != $parent) {
@@ -89,7 +89,7 @@ class LeanRelation {
     /**
      * Add object(s) to the field as relation
      *
-     * @param object or array $objects LeanObject(s) to add
+     * @param object|array $objects LeanObject(s) to add
      */
     public function add($objects) {
         if (!is_array($objects)) { $objects = array($objects); }
@@ -103,7 +103,7 @@ class LeanRelation {
     /**
      * Remove object(s) from the field
      *
-     * @param object or array $objects LeanObject(s) to remove
+     * @param object|array $objects LeanObject(s) to remove
      */
     public function remove($objects) {
         if (!is_array($objects)) { $objects = array($objects); }
@@ -133,7 +133,7 @@ class LeanRelation {
     /**
      * Query on the parent class where child is in the relation
      *
-     * @param LeanObject $child  Child object (with id).
+     * @param LeanObject $child  Child object
      * @return LeanQuery
      */
     public function getReverseQuery(LeanObject $child) {

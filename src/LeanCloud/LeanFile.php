@@ -7,7 +7,7 @@ use LeanCloud\CloudException;
 use LeanCloud\MIMEType;
 
 /**
- * LeanFile
+ * File object on LeanCloud
  *
  */
 class LeanFile {
@@ -98,7 +98,7 @@ class LeanFile {
      * @param string $filepath Absolute file path
      * @param string $mimeType
      * @return LeanFile
-     * @throws RuntimeException When failed to read file.
+     * @throws RuntimeException
      */
     public static function createWithLocalFile($filepath, $mimeType=null) {
         $content = file_get_contents($filepath);
@@ -206,7 +206,7 @@ class LeanFile {
     /**
      * Get file size
      *
-     * @return int Number of bytes
+     * @return int
      */
     public function getSize() {
         return $this->getMeta("size");
@@ -226,7 +226,7 @@ class LeanFile {
      *
      * @param string $key
      * @param miexed $val
-     * @return $this
+     * @return self
      */
     public function setMeta($key, $val) {
         $this->_metaData[$key] = $val;
@@ -279,7 +279,6 @@ class LeanFile {
      *
      * @param array $data
      * @param array $meta Optional meta data
-     * @return null
      */
     private function _mergeData($data, $meta=array()) {
         // manually convert createdAt and updatedAt fields so they'll
@@ -304,7 +303,6 @@ class LeanFile {
      * Merge server response after save
      *
      * @param array $data JSON decoded response
-     * @return null
      */
     public function mergeAfterSave($data) {
         $meta = array();
@@ -323,7 +321,6 @@ class LeanFile {
      * Merge server response after fetch
      *
      * @param array $data JSON decoded response
-     * @return null
      */
     public function mergeAfterFetch($data) {
         $meta = array();
@@ -347,7 +344,7 @@ class LeanFile {
     /**
      * Save file on the cloud
      *
-     * @return null
+     * @throws CloudException
      */
     public function save() {
         if (!$this->isDirty()) {
@@ -397,7 +394,7 @@ class LeanFile {
     /**
      * Delete file on cloud
      *
-     * @return null
+     * @throws CloudException
      */
     public function destroy() {
         if (!$this->getObjectId()) {

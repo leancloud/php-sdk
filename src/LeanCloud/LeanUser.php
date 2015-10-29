@@ -16,16 +16,22 @@ use LeanCloud\CloudException;
  * to authenticate the user in subsequent requests. The session token
  * of logged-in user is available at
  *
- *     LeanUser::getCurrentSessionToken()
+ * ```
+ * LeanUser::getCurrentSessionToken()
+ * ```
  *
  * and current user at
  *
- *     LeanUser::getCurrentUser()
+ * ```
+ * LeanUser::getCurrentUser()
+ * ```
  *
  * Providing a token, the user can be conveniently authenticated and
  * fetched by
  *
- *     LeanUser::become($token)
+ * ```
+ * LeanUser::become($token)
+ * ```
  *
  */
 
@@ -49,7 +55,7 @@ class LeanUser extends LeanObject {
      * Set username
      *
      * @param string $username
-     * @return $this
+     * @return self
      */
     public function setUsername($username) {
         $this->set("username", $username);
@@ -60,7 +66,7 @@ class LeanUser extends LeanObject {
      * Set email
      *
      * @param string $email
-     * @return $this
+     * @return self
      */
     public function setEmail($email) {
         $this->set("email", $email);
@@ -71,7 +77,7 @@ class LeanUser extends LeanObject {
      * Set password
      *
      * @param string $password
-     * @return $this
+     * @return self
      */
     public function setPassword($password) {
         $this->set("password", $password);
@@ -82,7 +88,7 @@ class LeanUser extends LeanObject {
      * Set mobile phone number
      *
      * @param string $number
-     * @return $this
+     * @return self
      */
     public function setMobilePhoneNumber($number) {
         $this->set("mobilePhoneNumber", $number);
@@ -94,8 +100,7 @@ class LeanUser extends LeanObject {
      *
      * It will also auto-login and set current user.
      *
-     * @return null
-     * @throws CloudException if invalid
+     * @throws CloudException
      */
     public function signUp() {
         if ($this->getObjectId()) {
@@ -108,7 +113,6 @@ class LeanUser extends LeanObject {
     /**
      * Save a signed-up user
      *
-     * @return null
      * @throws CloudException
      */
     public function save() {
@@ -125,7 +129,6 @@ class LeanUser extends LeanObject {
      *
      * @param string $old Old password
      * @param string $new New password
-     * @return null
      * @throws CloudException
      */
     public function updatePassword($old, $new) {
@@ -181,7 +184,6 @@ class LeanUser extends LeanObject {
      * if given token is null.
      *
      * @param string $token Session token of logged-in user
-     * @return null
      */
     protected static function setCurrentSessionToken($token) {
         LeanClient::getStorage()->set("LC_SessionToken", $token);
@@ -215,7 +217,6 @@ class LeanUser extends LeanObject {
      * Save logged-in user and session token
      *
      * @param LeanUser
-     * @return null
      */
     private static function saveCurrentUser($user) {
         self::$currentUser = $user;
@@ -224,8 +225,6 @@ class LeanUser extends LeanObject {
 
     /**
      * Clear logged-in user and session token.
-     *
-     * @return null
      */
     private static function clearCurrentUser() {
         self::$currentUser = null;
@@ -272,8 +271,6 @@ class LeanUser extends LeanObject {
 
     /**
      * Log-out current user
-     *
-     * @return null
      */
     public static function logOut() {
         $user = static::getCurrentUser();
@@ -313,7 +310,6 @@ class LeanUser extends LeanObject {
      * for login then.
      *
      * @param string $phoneNumber Register mobile phone number
-     * @return null
      */
     public static function requestLoginSmsCode($phoneNumber) {
         LeanClient::post("/requestLoginSmsCode",
@@ -326,7 +322,6 @@ class LeanUser extends LeanObject {
      * Send user an email to verify email.
      *
      * @param string $email
-     * @return null
      */
     public static function requestEmailVerify($email) {
         LeanClient::post("/requestEmailVerify", array("email" => $email));
@@ -336,7 +331,6 @@ class LeanUser extends LeanObject {
      * Request password reset by email
      *
      * @param string $email Registered email
-     * @return null
      */
     public static function requestPasswordReset($email) {
         LeanClient::post("/requestPasswordReset", array("email" => $email));
@@ -348,7 +342,6 @@ class LeanUser extends LeanObject {
      * Send user mobile phone a message with SMS code.
      *
      * @param string $phoneNumber Registered mobile phone number
-     * @return null
      */
     public static function requestPasswordResetBySmsCode($phoneNumber) {
         LeanClient::post("/requestPasswordResetBySmsCode",
@@ -360,7 +353,6 @@ class LeanUser extends LeanObject {
      *
      * @param string $smsCode
      * @param string $newPassword
-     * @return null
      */
     public static function resetPasswordBySmsCode($smsCode, $newPassword) {
         LeanClient::put("/resetPasswordBySmsCode/{$smsCode}",
@@ -373,7 +365,6 @@ class LeanUser extends LeanObject {
      * Send user mobile phone a message with SMS code.
      *
      * @param string $phoneNumber
-     * @return null
      */
     public static function requestMobilePhoneVerify($phoneNumber) {
         LeanClient::post("/requestMobilePhoneVerify",
@@ -384,7 +375,6 @@ class LeanUser extends LeanObject {
      * Verify mobile phone by SMS code
      *
      * @param string $smsCode
-     * @return null
      */
     public static function verifyMobilePhone($smsCode) {
         LeanClient::post("/verifyMobilePhone/{$smsCode}", null);
@@ -431,7 +421,7 @@ class LeanUser extends LeanObject {
      *
      * @param string $provider  Provider name e.g. "weibo", "weixin"
      * @param array  $authToken Array of id, token, and expiration info
-     * @return $this
+     * @return self
      */
     public function linkWith($provider, $authToken) {
         if (!is_string($provider) || empty($provider)) {
@@ -453,7 +443,7 @@ class LeanUser extends LeanObject {
      * Unlink user with a provider
      *
      * @param string $provider Provider name
-     * @return $this
+     * @return self
      */
     public function unlinkWith($provider) {
         if (!is_string($provider) || empty($provider)) {
