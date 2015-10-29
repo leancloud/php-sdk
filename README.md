@@ -41,8 +41,8 @@ mv php-sdk-X.X.X vendor/leancloud
 ----
 
 完成上述安装后，需要对 SDK 初始化。如果已经创建应用，可以在 LeanCloud
-[**控制台** > **应用设置**](https://leancloud.cn/app.html?appid={{appid}}#/key)
-里找到应用的 ID 和 key。然后在项目中加载 SDK，并初始化：
+[**控制台** > **应用设置**]里找到应用的 ID 和 key。然后在项目中加载 SDK，
+并初始化：
 
 ```php
 // 如果是 composer 安装
