@@ -3,14 +3,14 @@ namespace LeanCloud\Operation;
 
 class DeleteOperation implements IOperation {
     /**
-     * The key of field the operation is about to apply.
+     * The key of field the operation is about to apply
      *
      * @var string
      */
     private $key;
 
     /**
-     * Initialize operation.
+     * Initialize operation
      *
      * @param string $key Key of field to delete.
      */
@@ -28,9 +28,9 @@ class DeleteOperation implements IOperation {
     }
 
     /**
-     * Encode to json represented operation.
+     * Encode to JSON represented operation
      *
-     * @return array json represented string
+     * @return array
      */
     public function encode() {
         return array("__op" => "Delete");

@@ -3,7 +3,7 @@
 namespace LeanCloud;
 
 /**
- * Byte array data type for LeanObject.
+ * Byte array data type for LeanObject
  */
 class LeanBytes {
     /**
@@ -45,7 +45,7 @@ class LeanBytes {
     /**
      * Get byte array
      *
-     * @return array Byte array
+     * @return array
      */
     public function getByteArray() {
         return $this->byteArray;

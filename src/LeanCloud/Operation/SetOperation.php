@@ -3,9 +3,15 @@ namespace LeanCloud\Operation;
 
 use LeanCloud\LeanClient;
 
+/**
+ * Set operation
+ *
+ * Set field to value
+ */
+
 class SetOperation implements IOperation {
     /**
-     * The key of field the operation is about to apply.
+     * The key of field the operation is about to apply
      *
      * @var string
      */
@@ -13,16 +19,24 @@ class SetOperation implements IOperation {
 
     /**
      * The value of operation
+     *
+     * @var mixed
      */
     private $value;
 
+    /**
+     * Initialize operation
+     *
+     * @param string $key
+     * @param mixed  $val
+     */
     public function __construct($key, $val) {
         $this->key   = $key;
         $this->value = $val;
     }
 
     /**
-     * Get key of field the operation applies to.
+     * Get key of field the operation applies to
      *
      * @return string
      */
@@ -40,26 +54,26 @@ class SetOperation implements IOperation {
     }
 
     /**
-     * Encode to json represented operation.
+     * Encode to JSON represented operation
      *
-     * @return string json represented string
+     * @return array
      */
     public function encode() {
         return LeanClient::encode($this->value);
     }
 
     /**
-     * Apply this operation on old value.
+     * Apply operation on old value and returns new one
      *
      * @param mixed $oldval
-     * @return mixed new value
+     * @return mixed
      */
     public function applyOn($oldval) {
         return $this->value;
     }
 
     /**
-     * Merge this operation with (previous) operation.
+     * Merge this operation with (previous) operation
      *
      * @param  IOperation $prevOp
      * @return IOperation

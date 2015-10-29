@@ -1,22 +1,236 @@
 LeanCloud PHP SDK
 ====
 
-_Under development_
+[![Build Status](https://travis-ci.org/leancloud/php-sdk.svg?
+branch=master)](https://travis-ci.org/leancloud/php-sdk)
 
-Hacking
+LeanCloud 为应用提供了从数据存储，消息推送，实时通信到离线分析等全方位
+的一站式云端服务，帮助应用开发者降低后端开发及维护成本，为应用开发加速。
+PHP SDK 提供了对数据存储，用户管理等模块的 PHP 实现及接口，以方便 PHP
+应用的开发。
+
+安装
 ----
 
-* Clone the SDK
-* Install [composer](https://getcomposer.org)
-* Run `composer install` to vendor dependencies
-* Install php5-curl (on ubuntu)
-* Setup app credential in env variables:
+运行环境要求 PHP 5.3 及以上版本，以及
+[cURL](http://php.net/manual/zh/book.curl.php)。
 
-```
-export LC_APP_ID=...
-export LC_APP_KEY=...
-export LC_APP_MASTER_KEY=...
+#### composer 安装
+
+如果使用标准的包管理器 composer，你可以很容易的在项目中添加依赖并下载：
+
+```bash
+composer require leancloud/leancloud-sdk
 ```
 
-* Run `make test` to run test
+#### 手动下载安装
+
+你也可以前往[发布页面](https://github.com/leancloud/php-sdk/releases)
+手动下载安装包。假设你的应用位于 `$APP_ROOT` 目录下：
+
+```bash
+cd $APP_ROOT
+wget https://github.com/leancloud/php-sdk/archive/vX.X.X.zip
+
+# 解压并置于 vendor 目录
+unzip vX.X.X.zip
+mv php-sdk-X.X.X vendor/leancloud
+```
+
+初始化
+----
+
+完成上述安装后，需要对 SDK 初始化。如果已经创建应用，可以在 LeanCloud
+[**控制台** > **应用设置**](https://leancloud.cn/app.html?appid={{appid}}#/key)
+里找到应用的 ID 和 key。然后在项目中加载 SDK，并初始化：
+
+```php
+// 如果是 composer 安装
+// require_once("vendor/autoload.php");
+
+// 如果是手动安装
+require_once("vendor/leancloud/src/autoload.php");
+
+// 参数依次为 app-id, app-key, master-key
+LeanCloud\LeanClient::initialize("app_id", "app_key", "master_key");
+```
+
+使用示例
+----
+
+#### 用户注册及管理
+
+注册一个用户:
+
+```php
+use LeanCloud\LeanUser;
+use LeanCloud\CloudException;
+
+$user = new LeanUser();
+$user->setUsername("alice"):
+$user->setEmail("alice@example.net");
+$user->setPassword("passpass");
+try {
+    $user->signUp();
+} catch (CloudException $ex) {
+    // 如果 LeanCloud 返回错误，这里会抛出异常 CloudException
+    // 如用户名已经被注册：202 Username has been taken
+}
+
+// 注册成功后，用户被自动登录。可以通过以下方法拿到当前登录用户和
+// 授权码。
+LeanUser::getCurrentUser();
+LeanUser::getCurrentSessionToken();
+```
+
+登录一个用户:
+
+```php
+LeanUser::logIn("alice", "passpass");
+$user = LeanUser::getCurrentUser();
+$token = LeanUser::getCurrentSessionToken();
+
+// 给定一个 token 可以很容易的拿到用户
+LeanUser::become($token);
+
+// 我们还支持短信验证码，及第三方授权码登录
+LeanUser::logInWithSmsCode("phone number", "sms code");
+LeanUser::logInWith("weibo", array("openid" => "..."));
+```
+
+#### 对象存储
+
+```php
+use LeanCloud\LeanObject;
+use LeanCloud\CloudException;
+
+$obj = new LeanObject("TestObject");
+$obj->set("name", "alice");
+$obj->set("height", 60.0);
+$obj->set("weight", 4.5);
+$obj->set("birthdate", new DateTime());
+try {
+    $obj->save();
+} catch (CloudException $ex) {
+    // CloudException 会被抛出，如果保存失败
+}
+
+// 获取字段值
+$obj->get("name");
+$obj->get("height");
+$obj->get("birthdate");
+
+// 原子增加一个数
+$obj->increment("age", 1);
+
+// 数组字段的添加，唯一添加，删除
+$obj->add("colors", array("blue", "magenta"));
+$obj->addUnique("colors", array("orange"));
+$obj->remove("colors", array("blue"));
+
+try {
+    $obj->save();
+} catche (CloudException $ex) {
+    // ...
+}
+
+// 在云存储上删除数据
+$obj->destroy();
+```
+
+我们同样支持子类继承，子类中需要定义静态变量 `$className` ，并注册到存储类:
+
+```php
+class TestObject extends LeanObject {
+    protected static $className = "TestObject";
+    public setName($name) {
+        $this->set("name", $name);
+        return $this;
+    }
+}
+// register it as storage class
+TestObject::registerClass();
+
+$obj = new TestObject();
+$obj->setName();
+$obj->set("eyeColor", "blue");
+...
+```
+
+#### 对象查询
+
+给定一个 objectId，可以如下获取对象。
+
+```php
+use LeanCloud\LeanQuery;
+
+$query = new LeanQuery("TestObject");
+$obj = $query->get($objectId);
+```
+
+更为复杂的条件查询：
+
+```php
+$query = new LeanQuery("TestObject");
+$query->lessThan("height", 100.0);           // 小于
+$query->greaterThanOrEqualTo("weight", 5.0); // 大于等于
+$query->addAscend("birthdate");              // 递增排序
+$query->addDescend("name");                  // 递减排序
+$query->count();
+$query->first(); // 返回第一个对象
+
+$query->skip(100);
+$query->limit(20);
+$objects = $query->find(); // 返回查询到的对象
+```
+
+#### 文件存储
+
+直接创建文件:
+
+```php
+use LeanCloud\LeanFile;
+$file = LeanFile::createWithData("hello.txt", "Hello LeanCloud!");
+try {
+    $file->save();
+} catch (CloudException $ex) {
+    // 云存储返回错误，保存失败
+}
+
+$file->getSize();
+$file->getName();
+$file->getUrl();
+```
+
+由本地文件创建：
+
+```php
+$file = LeanFile::createWithLocalFile("/tmp/myfile.png");
+try {
+    $file->save();
+} catch (CloudException $ex) {
+    // 云存储返回错误，保存失败
+}
+
+// 获取文件缩略图的链接
+$url = $file->getThumbUrl();
+```
+
+由已知的 URL 创建文件:
+
+```php
+$file = LeanFile::createWithUrl("image.png", "http://example.net/image.png");
+try {
+    $file->save();
+} catch (CloudException $ex) {
+    // 云存储返回错误，保存失败
+}
+```
+
+完整的 API 文档请参考: https://leancloud.cn/docs/api/php/
+
+贡献
+----
+
+See Hacking.md if you'd like to contribute.
 

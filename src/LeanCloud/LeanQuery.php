@@ -5,8 +5,7 @@ use LeanCloud\LeanClient;
 use LeanCloud\LeanObject;
 
 /**
- * LeanQuery - Query representation for objects on LeanCloud
- *
+ * Query representation for finding objects on LeanCloud
  */
 class LeanQuery {
     /**
@@ -61,7 +60,7 @@ class LeanQuery {
     /**
      * Initilize query
      *
-     * @param string|LeanObject $queryClass The class to operate on
+     * @param string $queryClass The class to operate on
      */
     public function __construct($queryClass) {
         if (is_string($queryClass)) {
@@ -95,7 +94,6 @@ class LeanQuery {
      * @param string $key Field key
      * @param string $op  Condition operator: $ne, $in, $all, $nin etc
      * @param mixed  $val Condition value(s)
-     * @return null
      */
     private function _addCondition($key, $op, $val) {
         $this->where[$key][$op] = LeanClient::encode($val);
@@ -111,7 +109,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param mixed  $val
-     * @return $this
+     * @return self
      */
     public function equalTo($key, $val) {
         $this->where[$key] = LeanClient::encode($val);
@@ -123,7 +121,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param mixed  $val
-     * @return $this
+     * @return self
      */
     public function notEqualTo($key, $val) {
         $this->_addCondition($key, '$ne', $val);
@@ -135,7 +133,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param mixed  $val
-     * @return $this
+     * @return self
      */
     public function lessThan($key, $val) {
         $this->_addCondition($key, '$lt', $val);
@@ -147,7 +145,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param mixed  $val
-     * @return $this
+     * @return self
      */
     public function lessThanOrEqualTo($key, $val) {
         $this->_addCondition($key, '$lte', $val);
@@ -159,7 +157,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param mixed  $val
-     * @return $this
+     * @return self
      */
     public function greaterThan($key, $val) {
         $this->_addCondition($key, '$gt', $val);
@@ -171,7 +169,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param mixed  $val
-     * @return $this
+     * @return self
      */
     public function greaterThanOrEqualTo($key, $val) {
         $this->_addCondition($key, '$gte', $val);
@@ -183,7 +181,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param array  $vals
-     * @return $this
+     * @return self
      */
     public function containedIn($key, $vals) {
         $this->_addCondition($key, '$in', $vals);
@@ -195,7 +193,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param array  $vals
-     * @return $this
+     * @return self
      */
     public function notContainedIn($key, $vals) {
         $this->_addCondition($key, '$nin', $vals);
@@ -207,7 +205,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param array  $vals
-     * @return $this
+     * @return self
      */
     public function containsAll($key, $vals) {
         $this->_addCondition($key, '$all', $vals);
@@ -219,7 +217,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param int    $val
-     * @return $this
+     * @return self
      */
     public function sizeEqualTo($key, $val) {
         $this->_addCondition($key, '$size', $val);
@@ -230,7 +228,7 @@ class LeanQuery {
      * Field exists
      *
      * @param string $key
-     * @return $this
+     * @return self
      */
     public function exists($key) {
         $this->_addCondition($key, '$exists', true);
@@ -241,7 +239,7 @@ class LeanQuery {
      * Field not exists
      *
      * @param string $key
-     * @return $this
+     * @return self
      */
     public function notExists($key) {
         $this->_addCondition($key, '$exists', false);
@@ -258,7 +256,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param string $val The substring to find
-     * @return $this
+     * @return self
      */
     public function contains($key, $val) {
         $this->_addCondition($key, '$regex', $val);
@@ -273,7 +271,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param string $val The start string
-     * @return $this
+     * @return self
      */
     public function startsWith($key, $val) {
         $this->_addCondition($key, '$regex', '^' . $val);
@@ -288,7 +286,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param string $val The end string
-     * @return $this
+     * @return self
      */
     public function endsWith($key, $val) {
         $this->_addCondition($key, '$regex', $val . '$' );
@@ -307,7 +305,7 @@ class LeanQuery {
      * @param string $key
      * @param string $regex     The pattern string
      * @param string $modifiers (optional) Regexp modifiers: "i", "m" etc.
-     * @return $this
+     * @return self
      */
     public function matches($key, $regex, $modifiers="") {
         $this->_addCondition($key, '$regex', $regex);
@@ -326,7 +324,7 @@ class LeanQuery {
      *
      * @param string    $key
      * @param LeanQuery $query The sub-query
-     * @return $this
+     * @return self
      */
     public function matchesInQuery($key, $query) {
         $this->_addCondition($key, '$inQuery', array(
@@ -341,7 +339,7 @@ class LeanQuery {
      *
      * @param string    $key
      * @param LeanQuery $query The sub-query
-     * @return $this
+     * @return self
      */
     public function notMatchInQuery($key, $query) {
         $this->_addCondition($key, '$notInQuery', array(
@@ -357,7 +355,7 @@ class LeanQuery {
      * @param string    $key
      * @param string    $queryKey Target field key in sub-query
      * @param LeanQuery $query    The sub-query
-     * @return $this
+     * @return self
      */
     public function matchesFieldInQuery($key, $queryKey, $query) {
         $this->_addCondition($key, '$select', array(
@@ -376,7 +374,7 @@ class LeanQuery {
      * @param string    $key
      * @param string    $queryKey Target field key in sub-query
      * @param LeanQuery $query    The sub-query
-     * @return $this
+     * @return self
      */
     public function notMatchFieldInQuery($key, $queryKey, $query) {
         $this->_addCondition($key, '$dontSelect', array(
@@ -394,7 +392,7 @@ class LeanQuery {
      *
      * @param string $key     A relation field key
      * @param LeanObject $obj Target object to relate
-     * @return $this
+     * @return self
      */
     public function relatedTo($key, $obj) {
         $this->where['$relatedTo'] = array(
@@ -412,7 +410,7 @@ class LeanQuery {
      * It accepts either one array of keys, or variable number of keys.
      *
      * @param string|array of string Field keys
-     * @return $this
+     * @return self
      */
     public function select($keys) {
         if (!is_array($keys)) {
@@ -434,7 +432,7 @@ class LeanQuery {
      * author object in comment query result.
      *
      * @param string|array of string Field keys
-     * @return $this
+     * @return self
      */
     public function _include($keys) {
         if (!is_array($keys)) {
@@ -451,7 +449,7 @@ class LeanQuery {
      * at a time.
      *
      * @param int $n Number of rows
-     * @return $this
+     * @return self
      */
     public function limit($n) {
         $this->limit = $n;
@@ -464,7 +462,7 @@ class LeanQuery {
      * The default is to skip at zero.
      *
      * @param int $n Number of rows to skip
-     * @return $this
+     * @return self
      */
     public function skip($n) {
         $this->skip = $n;
@@ -477,7 +475,7 @@ class LeanQuery {
      * Previous order constraints will be discarded.
      *
      * @param string $key
-     * @return $this
+     * @return self
      */
     public function ascend($key) {
         $this->order = array($key);
@@ -490,7 +488,7 @@ class LeanQuery {
      * Previous order constraints will be discarded.
      *
      * @param string $key
-     * @return $this
+     * @return self
      */
     public function descend($key) {
         $this->order = array("-$key");
@@ -503,7 +501,7 @@ class LeanQuery {
      * The previous ordering will have higher precedence over this one.
      *
      * @param string $key
-     * @return $this
+     * @return self
      */
     public function addAscend($key) {
         $this->order[] = $key;
@@ -516,7 +514,7 @@ class LeanQuery {
      * The previous ordering will have higher precedence over this one.
      *
      * @param string $key
-     * @return $this
+     * @return self
      */
     public function addDescend($key) {
         $this->order[] = "-$key";
@@ -584,7 +582,7 @@ class LeanQuery {
      *
      * @param string $key
      * @param mixed  $val
-     * @return $this
+     * @return self
      */
     public function addOption($key, $val) {
         $this->extraOption[$key] = $val;
