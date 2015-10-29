@@ -25,47 +25,39 @@ $ composer require leancloud/leancloud-sdk
 
 #### 手动下载安装
 
-* 前往发布页面下载最新版本: https://github.com/leancloud/php-sdk/releases
+如果你使用标准的包管理器 composer ，可以很容易的在项目中添加依赖并下载：
 
 ```bash
-$ cd $APP_ROOT
-$ wget https://github.com/leancloud/php-sdk/archive/vX.X.X.zip
+composer require leancloud/leancloud-sdk
 ```
 
-* 将压缩文件解压并置于项目文件夹下，如 $APP_ROOT/vendor/leancloud
+你也可以前往[发布页面](https://github.com/leancloud/php-sdk/releases)
+手动下载安装包。假设你的应用位于 `$APP_ROOT` 目录下：
 
 ```bash
-$ unzip vX.X.X.zip
-$ mv php-sdk-X.X.X $APP_ROOT/vendor/leancloud
+cd $APP_ROOT
+wget https://github.com/leancloud/php-sdk/archive/v1.0.0-rc.zip
+unzip v1.0.0-rc.zip
+mv php-sdk-1.0.0-rc vendor/leancloud // 解压至 vendor 目录
 ```
 
 初始化
 ----
 
-完成上述安装后，请加载库(在项目的一开始就需要加载，且只需加载一次)：
+完成上述安装后，需要对 SDK 初始化。如果已经创建应用，可以在
+[**控制台** > **应用设置**](/app.html?appid={{appid}}#/key)
+里找到应用的 ID 和 key。然后在项目中加载 SDK，并初始化：
 
 ```php
-require_once("vendor/autoload.php");               // composer 安装
-require_once("vendor/leancloud/src/autoload.php"); // 手动安装
-```
+// composer 安装
+// require_once("vendor/autoload.php");
 
-初始化应用的 ID 及 Key（在 LeanCloud 控制台应用的设置页面可获得 app id, app key,
-master key）:
+// 手动安装
+require_once("vendor/leancloud/src/autoload.php");
 
-```php
+// 参数依次为 app-id, app-key, master-key
 LeanCloud\LeanClient::initialize("app_id", "app_key", "master_key");
-
-// 我们目前支持 CN 和 US 区域，默认使用 CN 区域，可以切换为 US 区域
-LeanCloud\LeanClient::useRegion("US");
 ```
-
-测试应用已经正确初始化：
-
-```php
-LeanCloud\LeanClient::get("/date"); // 获取服务器时间
-// => {"__type": "Date", "iso": "2015-10-01T09:45:45.123Z"}
-```
-
 
 使用示例
 ----
@@ -85,34 +77,27 @@ $user->setPassword("passpass");
 try {
     $user->signUp();
 } catch (CloudException $ex) {
-    // it'll throw CloudException if signUp failed, e.g.
-    // the alice username has been taken.
+    // 如果 LeanCloud 返回错误，这里会抛出异常 CloudException
+    // 如用户名已经被注册：202 Username has been taken
 }
 
-// After signUp it will become current user, which you can get by:
+// 注册成功后，用户被自动登录。可以通过以下方法拿到当前登录用户和
+// 授权码。
 LeanUser::getCurrentUser();
-// You can also get current user sessionToken
 LeanUser::getCurrentSessionToken();
 ```
 
 登录一个用户:
 
 ```php
-use LeanCloud\LeanUser;
-use LeanCloud\CloudException;
-
 LeanUser::logIn("alice", "passpass");
-// it will become current user then
 $user = LeanUser::getCurrentUser();
 $token = LeanUser::getCurrentSessionToken();
 
-// By default we cache current sessionToken in LeanClinet::getStorage(),
-// which might be `CookieStorage` or `SessionStorage`. You can cache it
-// elsewhere, it is easy to get user by sessionToken:
+// 给定一个 token 可以很容易的拿到用户
 LeanUser::become($token);
 
-// we also support login with sms code, and login with 3rd party
-// auth data, e.g. weibo, weixin. Please see our doc for details.
+// 我们还支持短信验证码，及第三方授权码登录
 LeanUser::logInWithSmsCode("phone number", "sms code");
 LeanUser::logInWith("weibo", array("openid" => "..."));
 ```
@@ -131,31 +116,29 @@ $obj->set("birthdate", new DateTime());
 try {
     $obj->save();
 } catch (CloudException $ex) {
-    // it throws CloudException if save to cloud failed
+    // CloudException 会被抛出，如果保存失败
 }
 
-// get fields
+// 获取字段值
 $obj->get("name");
 $obj->get("height");
 $obj->get("birthdate");
 
-// atomatically increment field
+// 原子增加一个数
 $obj->increment("age", 1);
-// add values to array field
+
+// 数组字段的添加，唯一添加，删除
 $obj->add("colors", array("blue", "magenta"));
-// add values uniquely
 $obj->addUnique("colors", array("orange"));
-// remove values from array field
 $obj->remove("colors", array("blue"));
 
-// save changes to cloud
 try {
     $obj->save();
 } catche (CloudException $ex) {
     // ...
 }
 
-// destroy it on cloud
+// 在云存储上删除数据
 $obj->destroy();
 ```
 
@@ -193,16 +176,16 @@ $obj = $query->get($objectId);
 
 ```php
 $query = new LeanQuery("TestObject");
-$query->lessThan("height", 100.0);
-$query->greaterThanOrEqualTo("weight", 5.0);
-$query->addAscend("birthdate");
-$query->addDescend("name");
-$query->count(); // return count of result
-$query->first(); // return first object
+$query->lessThan("height", 100.0);           // 小于
+$query->greaterThanOrEqualTo("weight", 5.0); // 大于等于
+$query->addAscend("birthdate");              // 递增排序
+$query->addDescend("name");                  // 递减排序
+$query->count();
+$query->first(); // 返回第一个对象
 
-$query->skip(100); // skip number of rows
-$query->limit(20); // limit number of rows to return
-$objects = $query->find(); // return query objects
+$query->skip(100);
+$query->limit(20);
+$objects = $query->find(); // 返回查询到的对象
 ```
 
 #### 文件存储
@@ -215,7 +198,7 @@ $file = LeanFile::createWithData("hello.txt", "Hello LeanCloud!");
 try {
     $file->save();
 } catch (CloudException $ex) {
-    // file save failed...
+    // 云存储返回错误，保存失败
 }
 
 $file->getSize();
@@ -230,10 +213,10 @@ $file = LeanFile::createWithLocalFile("/tmp/myfile.png");
 try {
     $file->save();
 } catch (CloudException $ex) {
-    // file save failed...
+    // 云存储返回错误，保存失败
 }
 
-// Get url to display a thumb view of file
+// 获取文件缩略图的链接
 $url = $file->getThumbUrl();
 ```
 
@@ -244,11 +227,11 @@ $file = LeanFile::createWithUrl("image.png", "http://example.net/image.png");
 try {
     $file->save();
 } catch (CloudException $ex) {
-    // file save failed...
+    // 云存储返回错误，保存失败
 }
 ```
 
-API 文档请参考: https://leancloud.cn/docs/api/php/
+完整的 API 文档请参考: https://leancloud.cn/docs/api/php/
 
 贡献
 ----
