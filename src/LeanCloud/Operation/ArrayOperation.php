@@ -6,12 +6,12 @@ use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\DeleteOperation;
 
 /**
- * ArrayOpertion - Add, Remove, AddUnique
+ * Array opertion - Add, Remove, AddUnique
  *
  */
 class ArrayOperation implements IOperation {
     /**
-     * The key of field the operation is about to apply.
+     * The key of field the operation is about to apply
      *
      * @var string
      */
@@ -36,8 +36,7 @@ class ArrayOperation implements IOperation {
      * @param string $key     Field key
      * @param array  $val     Array of values to add or remove
      * @param string $opType  One of Add, AddUnique, Remove
-     * @throws RuntimeException           When operation not supported
-     *         InvalidArgumentException If $val is not array
+     * @throws RuntimeException, InvalidArgumentException
      */
     public function __construct($key, $val, $opType) {
         if (!in_array($opType, array("Add", "AddUnique", "Remove"))) {
@@ -80,9 +79,9 @@ class ArrayOperation implements IOperation {
     }
 
     /**
-     * Encode to json represented operation.
+     * Encode to JSON represented operation
      *
-     * @return string json represented string
+     * @return array
      */
     public function encode() {
         return array(
@@ -136,7 +135,7 @@ class ArrayOperation implements IOperation {
      * Remove objects of this operation from old array.
      *
      * @param  array $oldval Old array of objects
-     * @return array         Array with objects removed
+     * @return array
      */
     private function remove($oldval) {
         $newval = array();
@@ -154,7 +153,7 @@ class ArrayOperation implements IOperation {
      *
      * @param  array $oldval Old array
      * @return array
-     * @throws RuntimeException When old value is not array.
+     * @throws RuntimeException
      */
     public function applyOn($oldval) {
         if (!$oldval) { $oldval = array();}

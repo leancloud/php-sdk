@@ -3,9 +3,13 @@ namespace LeanCloud\Operation;
 
 use LeanCloud\Operation\SetOperation;
 
+/**
+ * Increment operation
+ */
+
 class IncrementOperation implements IOperation {
     /**
-     * The key of field the operation applies to.
+     * The key of field the operation applies to
      *
      * @var string
      */
@@ -16,6 +20,12 @@ class IncrementOperation implements IOperation {
      */
     private $value;
 
+    /**
+     * Initialize operation
+     *
+     * @param string $key
+     * @param number $val
+     */
     public function __construct($key, $val) {
         if (!is_numeric($val)) {
             throw new \InvalidArgumentException("Operand must be number.");
@@ -25,7 +35,7 @@ class IncrementOperation implements IOperation {
     }
 
     /**
-     * Get key of field the operation applies to.
+     * Get key of field the operation applies to
      *
      * @return string
      */
@@ -43,7 +53,7 @@ class IncrementOperation implements IOperation {
     }
 
     /**
-     * Encode to json represented operation.
+     * Encode to JSON represented operation
      *
      * @return string json represented string
      */
@@ -53,10 +63,10 @@ class IncrementOperation implements IOperation {
     }
 
     /**
-     * Apply this operation on old value.
+     * Apply operation on old value and returns new one
      *
      * @param mixed $oldval
-     * @return mixed new value
+     * @return mixed
      */
     public function applyOn($oldval) {
         $oldval = is_null($oldval) ? 0 : $oldval;

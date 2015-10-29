@@ -4,20 +4,20 @@ namespace LeanCloud\Operation;
 use LeanCloud\LeanRelation;
 
 /**
- * RelationOperation
+ * Relation operation
  *
  * Operation that supports adding and removing objects from `LeanRelation`.
  */
 class RelationOperation implements IOperation {
     /**
-     * The key of field the operation is about to apply.
+     * The key of field the operation is about to apply
      *
      * @var string
      */
     private $key;
 
     /**
-     * The target className of relation operation.
+     * The target className of relation operation
      *
      * @var string
      */
@@ -38,12 +38,12 @@ class RelationOperation implements IOperation {
     private $objects_to_remove = array();
 
     /**
-     * Initialize RelationOperation
+     * Initialize relation operation
      *
      * @param string $key     Field key
      * @param array  $adds    The objects to add
      * @param array  $removes The objects to remove
-     * @throws RuntimeException When operand is not relation
+     * @throws RuntimeException
      */
     public function __construct($key, $adds, $removes) {
         if (empty($adds) && empty($removes)) {
@@ -74,9 +74,9 @@ class RelationOperation implements IOperation {
     }
 
     /**
-     * Encode to json represented operation.
+     * Encode to JSON represented operation
      *
-     * @return string json represented string
+     * @return array
      */
     public function encode() {
         $adds    = array("__op" => "AddRelation",
@@ -104,7 +104,6 @@ class RelationOperation implements IOperation {
      * Add object(s) to relation
      *
      * @param array $objects Object(s) to add
-     * @return void
      */
     private function add($objects) {
         if (empty($objects)) { return; }
@@ -131,7 +130,6 @@ class RelationOperation implements IOperation {
      * Remove object(s) from relation
      *
      * @param array $objects Object(s) to remove
-     * @return void
      */
     private function remove($objects) {
         if (empty($objects)) { return; }

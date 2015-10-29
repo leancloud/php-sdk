@@ -37,7 +37,7 @@ class CookieStorage implements IStorage {
      *
      * It is number of seconds since epoch time.
      *
-     * @var int Number of seconds since epoch time.
+     * @var int
      */
     private $expireIn;
 
@@ -88,7 +88,6 @@ class CookieStorage implements IStorage {
      * Remove key from storage
      *
      * @param string $key
-     * @return null
      */
     public function remove($key) {
         setcookie($key, false, 1);
@@ -97,7 +96,7 @@ class CookieStorage implements IStorage {
     /**
      * Clear all data in storage
      *
-     * @return null
+     * @throws RuntimeException
      */
     public function clear() {
         throw new \RuntimeException("Not implemented error.");

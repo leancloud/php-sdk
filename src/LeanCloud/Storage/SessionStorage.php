@@ -5,7 +5,7 @@ namespace LeanCloud\Storage;
 /**
  * Session Based Storage
  *
- * PHP $_SESSION based key-value storage for persistence.
+ * `$_SESSION` based key-value storage for persistence.
  *
  * Note that PHP stores session data by default in local file, which
  * means the storage data will only be available to local server
@@ -40,7 +40,6 @@ class SessionStorage implements IStorage {
      *
      * @param string $key
      * @param mixed  $val
-     * @return $this
      */
     public function set($key, $val) {
         $_SESSION[static::$storageKey][$key] = $val;
@@ -63,7 +62,6 @@ class SessionStorage implements IStorage {
      * Remove key from storage
      *
      * @param string $key
-     * @return null
      */
     public function remove($key) {
         unset($_SESSION[static::$storageKey][$key]);
@@ -71,8 +69,6 @@ class SessionStorage implements IStorage {
 
     /**
      * Clear all data in storage
-     *
-     * @return null
      */
     public function clear() {
         $_SESSION[static::$storageKey] = array();
