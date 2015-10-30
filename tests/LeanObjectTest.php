@@ -180,40 +180,40 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
 
     public function testAddField() {
         $obj = new LeanObject("TestObject");
-        $obj->add("tags", "frontend");
+        $obj->addIn("tags", "frontend");
         $this->assertEquals(array("frontend"), $obj->get("tags"));
 
-        $obj->add("tags", "frontend");
+        $obj->addIn("tags", "frontend");
         $this->assertEquals(array("frontend", "frontend"), $obj->get("tags"));
 
         $obj->set("tags", array("javascript"));
         $this->assertEquals(array("javascript"), $obj->get("tags"));
 
-        $obj->add("tags", "frontend");
+        $obj->addIn("tags", "frontend");
         $this->assertEquals(array("javascript", "frontend"), $obj->get("tags"));
     }
 
     public function testAddUniqueOnField() {
         $obj = new LeanObject("TestObject");
-        $obj->addUnique("tags", "frontend");
+        $obj->addUniqueIn("tags", "frontend");
         $this->assertEquals(array("frontend"), $obj->get("tags"));
 
-        $obj->addUnique("tags", "frontend");
+        $obj->addUniqueIn("tags", "frontend");
         $this->assertEquals(array("frontend"), $obj->get("tags"));
 
-        $obj->addUnique("tags", "javascript");
+        $obj->addUniqueIn("tags", "javascript");
         $this->assertEquals(array("frontend", "javascript"), $obj->get("tags"));
     }
 
     public function testRemoveOnField() {
         $obj = new LeanObject("TestObject");
-        $obj->remove("tags", "frontend");
+        $obj->removeIn("tags", "frontend");
         $this->assertEquals(array(), $obj->get("tags"));
 
         $obj->set("tags", array("frontend", "javascript"));
         $this->assertEquals(array("frontend", "javascript"), $obj->get("tags"));
 
-        $obj->remove("tags", "javascript");
+        $obj->removeIn("tags", "javascript");
         $this->assertEquals(array("frontend"), $obj->get("tags"));
     }
 
@@ -228,7 +228,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj->delete("tags");
         $this->assertNull($obj->get("tags"));
 
-        $obj->add("tags", "frontend");
+        $obj->addIn("tags", "frontend");
         $this->assertEquals(array("frontend"), $obj->get("tags"));
     }
 

@@ -108,7 +108,7 @@ $obj = new LeanObject("TestObject");
 $obj->set("name", "alice");
 $obj->set("height", 60.0);
 $obj->set("weight", 4.5);
-$obj->set("birthdate", new DateTime());
+$obj->set("birthdate", new \DateTime());
 try {
     $obj->save();
 } catch (CloudException $ex) {
@@ -123,16 +123,14 @@ $obj->get("birthdate");
 // 原子增加一个数
 $obj->increment("age", 1);
 
-// 数组字段的添加，唯一添加，删除
-$obj->add("colors", array("blue", "magenta"));
-$obj->addUnique("colors", array("orange"));
-$obj->remove("colors", array("blue"));
-
-try {
-    $obj->save();
-} catche (CloudException $ex) {
-    // ...
-}
+// 在数组字段中添加，添加唯一，删除
+// 注意: 由于API限制，不同数组操作之间必须保存，否则会报错
+$obj->addIn("colors", "blue");
+$obj->save();
+$obj->addUniqueIn("colors", "orange");
+$obj->save();
+$obj->removeIn("colors", "blue");
+$obj->save();
 
 // 在云存储上删除数据
 $obj->destroy();
