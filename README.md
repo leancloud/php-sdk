@@ -132,12 +132,6 @@ $obj->save();
 $obj->removeIn("colors", "blue");
 $obj->save();
 
-try {
-    $obj->save();
-} catche (CloudException $ex) {
-    // ...
-}
-
 // 在云存储上删除数据
 $obj->destroy();
 ```
