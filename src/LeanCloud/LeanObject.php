@@ -276,7 +276,7 @@ class LeanObject {
      * @return self
      * @throws RuntimeException
      */
-    public function add($key, $val) {
+    public function addIn($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Add"));
         return $this;
     }
@@ -289,7 +289,7 @@ class LeanObject {
      * @return self
      * @throws RuntimeException
      */
-    public function addUnique($key, $val) {
+    public function addUniqueIn($key, $val) {
         $this->_applyOperation(new ArrayOperation($key,
                                                   array($val),
                                                   "AddUnique"));
@@ -304,7 +304,7 @@ class LeanObject {
      * @return self
      * @throws RuntimeException
      */
-    public function remove($key, $val) {
+    public function removeIn($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Remove"));
         return $this;
     }

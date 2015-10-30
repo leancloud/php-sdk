@@ -173,7 +173,7 @@ class ArrayOperation implements IOperation {
         if ($this->getOpType() === "Remove") {
             return $this->remove($oldval);
         }
-        throw new \RuntimeException("Operation type{$this->getOptype()}" .
+        throw new \RuntimeException("Operation type {$this->getOptype()}" .
                                     " not supported.");
     }
 
