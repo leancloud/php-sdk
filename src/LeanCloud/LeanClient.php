@@ -4,6 +4,7 @@ namespace LeanCloud;
 
 use LeanCloud\LeanBytes;
 use LeanCloud\LeanObject;
+use LeanCloud\LeanACL;
 use LeanCloud\LeanFile;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Storage\IStorage;
@@ -130,8 +131,8 @@ class LeanClient {
             self::$storage = new SessionStorage();
         }
 
-        // register LeanUser for object storage
         LeanUser::registerClass();
+        LeanRole::registerClass();
     }
 
     /**
@@ -587,9 +588,9 @@ EOT;
         if (is_null($value) || is_scalar($value)) {
             return $value;
         }
-        if (isset($value["*"]) && isset($value["*"]["read"])) {
-            // skip ACL for now
-            return null;
+        if (isset($value[LeanACL::PUBLIC_KEY]) &&
+            isset($value[LeanACL::PUBLIC_KEY]["read"])) {
+            return new LeanACL($value);
         }
         if (!isset($value["__type"])) {
             $out = array();

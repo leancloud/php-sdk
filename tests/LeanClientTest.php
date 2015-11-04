@@ -6,6 +6,7 @@ use LeanCloud\LeanBytes;
 use LeanCloud\LeanUser;
 use LeanCloud\LeanFile;
 use LeanCloud\LeanRelation;
+use LeanCloud\LeanACL;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
 
@@ -218,6 +219,20 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($type["objectId"], $val->getObjectId());
         $this->assertEquals($type["name"], $val->getName());
         $this->assertEquals($type["url"],  $val->getUrl());
+    }
+
+    public function testDecodeACL() {
+        $type = array("*"         => array("read" => true,
+                                           "write" => false),
+                      "user123"    => array("write" => true),
+                      "role:admin" => array("write" => true)
+        );
+        $val  = LeanClient::decode($type);
+        $this->assertTrue($val instanceof LeanACL);
+        $this->assertTrue($val->getPublicReadAccess());
+        $this->assertFalse($val->getPublicWriteAccess());
+        $this->assertTrue($val->getRoleWriteAccess("admin"));
+        $this->assertTrue($val->getWriteAccess("user123"));
     }
 }
 
