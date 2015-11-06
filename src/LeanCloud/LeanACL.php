@@ -25,18 +25,33 @@ class LeanACL {
     private $data;
 
     /**
-     * Initialize an ACL object with data
+     * Initialize an ACL object
      *
-     * @param array $data Associative array of ACL data
+     * It accepts user, or JSON encoded ACL data. In the former, the
+     * user will be granted both read and write access. While the
+     * latter will be interpretted as JSON encoded array.
+     *
+     * @param mixed $val LeanUser or JSON encoded ACL array
      */
-    public function __construct($data=null) {
-        if (!isset($data)) { return; }
+    public function __construct($val=null) {
+        $this->data = array();
 
-        if (isset($data[self::PUBLIC_KEY]) &&
-            isset($data[self::PUBLIC_KEY]["read"])) {
-            $this->data = $data;
-        } else {
-            throw new \RuntimeException("Invalid ACL data");
+        if (!isset($val)) { return; }
+
+        if ($val instanceof LeanUser) {
+            $this->setReadAccess($val, true);
+            $this->setWriteAccess($val, true);
+        } else if (is_array($val)) {
+            forEach($val as $id => $attr) {
+                if (!is_string($id)) {
+                    throw new \RuntimeException("Invalid ACL data");
+                }
+                if (isset($attr["read"]) || isset($attr["write"])) {
+                    $this->data[$id] = $attr;
+                } else {
+                    throw new \RuntimeException("Invalid ACL data");
+                }
+            }
         }
     }
 

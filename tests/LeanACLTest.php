@@ -11,6 +11,15 @@ class LeanACLTest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
+        LeanClient::useRegion(getenv("LC_API_REGION"));
+    }
+
+    public function testInitializeUserACL() {
+        $user = new LeanUser(null, "id123");
+        $acl  = new LeanACL($user);
+        $out  = $acl->encode();
+        $this->assertEquals(true, $out["id123"]["read"]);
+        $this->assertEquals(true, $out["id123"]["write"]);
     }
 
     public function testSetPublicAccess() {
@@ -41,8 +50,7 @@ class LeanACLTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetRoleAccess() {
-        $role = new LeanRole(null, "id234");
-        $role->setName("admin");
+        $role = new LeanRole("admin", new LeanACL());
         $acl = new LeanACL();
         $acl->setRoleReadAccess($role, true);
         $out = $acl->encode();
