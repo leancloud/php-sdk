@@ -194,6 +194,16 @@ class LeanObject {
     }
 
     /**
+     * Set ACL for object
+     *
+     * @param LeanACL $acl
+     * @return self
+     */
+    public function setACL(LeanACL $acl) {
+        return $this->set("ACL", $acl);
+    }
+
+    /**
      * Delete field by key
      *
      * @param string $key Field key

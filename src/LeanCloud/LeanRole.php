@@ -9,8 +9,9 @@ namespace LeanCloud;
  * permission, then users belongs to this role will all inherit the
  * write permission.
  *
- * All users of a role could be got by `$role->getUsers()`, which is an
- * instance of LeanRelation, where users can be added or removed.
+ * All users of a role could be queried by `$role->getUsers()`, which
+ * is an instance of LeanRelation, where users can be added or
+ * removed.
  *
  * Roles can belong to role as well, which can be got by
  * `$role->getRoles()`, where roles can be added or removed.
@@ -19,10 +20,25 @@ namespace LeanCloud;
  */
 class LeanRole extends LeanObject {
     /**
-     * Corresponding table name on LeanCloud
+     * Table name on LeanCloud
      * @var string
      */
     protected static $className = "_Role";
+
+    /**
+     * Initialize a role
+     *
+     * The name can contain only alphanumeric characters, _, -, and
+     * space. It cannot be changed after being saved.
+     *
+     * @param string  $name The name of role
+     * @param LeanACL $acl  The ACL specifies who can change **this role**
+     */
+    public function __construct($name, $acl) {
+        parent::__construct();
+        $this->set("name", $name);
+        $this->setACL($acl);
+    }
 
     /**
      * Get name of role
@@ -31,20 +47,6 @@ class LeanRole extends LeanObject {
      */
     public function getName() {
         return $this->get("name");
-    }
-
-    /**
-     * Set name of role
-     *
-     * The name can contain only alphanumeric characters, _, -, and
-     * space. It cannot be changed after being saved.
-     *
-     * @param string $name Role name
-     * @return self
-     */
-    public function setName($name) {
-        $this->set("name", $name);
-        return $this;
     }
 
     /**

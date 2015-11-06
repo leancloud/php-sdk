@@ -547,6 +547,7 @@ EOT;
             return $value->getPointer();
         } else if ($value instanceof IOperation ||
                    $value instanceof LeanFile ||
+                   $value instanceof LeanACL ||
                    $value instanceof LeanBytes) {
             return $value->encode();
         } else if (is_array($value)) {
