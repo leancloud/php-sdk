@@ -291,11 +291,11 @@ class LeanFile {
         }
 
         forEach($data as $key => $val) {
-            $this->_data[$key] = LeanClient::decode($val);
+            $this->_data[$key] = LeanClient::decode($val, $key);
         }
 
         forEach($meta as $key => $val) {
-            $this->_metaData[$key] = LeanClient::decode($val);
+            $this->_metaData[$key] = LeanClient::decode($val, $key);
         }
     }
 

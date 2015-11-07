@@ -204,6 +204,15 @@ class LeanObject {
     }
 
     /**
+     * Get ACL for object
+     *
+     * @return null|LeanACL
+     */
+    public function getACL() {
+        return $this->get("ACL");
+    }
+
+    /**
      * Delete field by key
      *
      * @param string $key Field key
@@ -364,7 +373,7 @@ class LeanObject {
         }
 
         forEach($data as $key => $val) {
-            $this->_data[$key] = LeanClient::decode($val);
+            $this->_data[$key] = LeanClient::decode($val, $key);
         }
     }
 
