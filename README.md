@@ -1,10 +1,9 @@
 LeanCloud PHP SDK
 ====
-
-[![Build Status](https://img.shields.io/travis/leancloud/
-php-sdk.svg)](https://travis-ci.org/leancloud/php-sdk)
-[![Latest Version](https://img.shields.io/packagist/v/leancloud/
-leancloud-sdk.svg)](https://packagist.org/packages/leancloud/leancloud-sdk)
+[![Build Status](https://img.shields.io/travis/leancloud/php-sdk.svg)
+](https://travis-ci.org/leancloud/php-sdk)
+[![Latest Version](https://img.shields.io/packagist/v/leancloud/leancloud-sdk.svg)
+](https://packagist.org/packages/leancloud/leancloud-sdk)
 
 LeanCloud 为应用提供了从数据存储，消息推送，实时通信到离线分析等全方位
 的一站式云端服务，帮助应用开发者降低后端开发及维护成本，为应用开发加速。
