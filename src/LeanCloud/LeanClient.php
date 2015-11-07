@@ -178,7 +178,7 @@ class LeanClient {
      *
      * @param bool $flag
      */
-    public static function useProduction(bool $flag) {
+    public static function useProduction($flag) {
         self::$useProduction = $flag ? true : false;
     }
 
@@ -187,7 +187,7 @@ class LeanClient {
      *
      * @param bool $flag
      */
-    public static function useMasterKey(bool $flag) {
+    public static function useMasterKey($flag) {
         self::$useMasterKey = $flag ? true : false;
     }
 
@@ -204,13 +204,16 @@ class LeanClient {
     }
 
     /**
-     * Build request headers
+     * Build authentication headers
      *
      * @param string $sessionToken Session token of a LeanUser
      * @param bool   $useMasterKey
      * @return array
      */
-    private static function buildHeaders($sessionToken, $useMasterKey) {
+    public static function buildHeaders($sessionToken, $useMasterKey) {
+        if (is_null($useMasterKey)) {
+            $useMasterKey = self::$useMasterKey;
+        }
         $h = self::$defaultHeaders;
 
         $h['X-LC-Prod'] = self::$useProduction ? 1 : 0;
@@ -220,7 +223,7 @@ class LeanClient {
         $sign      = md5($timestamp . $key);
         $h['X-LC-Sign'] = $sign . "," . $timestamp;
 
-        if ($useMasterKey || self::$useMasterKey) {
+        if ($useMasterKey) {
             $h['X-LC-Sign'] .= ",master";
         }
 
@@ -253,7 +256,7 @@ class LeanClient {
     public static function request($method, $path, $data,
                                    $sessionToken=null,
                                    $headers=array(),
-                                   $useMasterKey=false) {
+                                   $useMasterKey=null) {
         self::assertInitialized();
         $url  = self::getAPIEndPoint();
         $url .= $path;
@@ -333,15 +336,15 @@ class LeanClient {
      * Issue GET request to LeanCloud
      *
      * @param string $path         Request path (without version string)
-     * @param string $data         Payload data
+     * @param array  $data         Payload data
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not
      * @return array               JSON decoded associated array
-     * @see ::request
+     * @see self::request()
      */
     public static function get($path, $data=null, $sessionToken=null,
-                               $headers=array(), $useMasterKey=false) {
+                               $headers=array(), $useMasterKey=null) {
         return self::request("GET", $path, $data, $sessionToken,
                              $headers, $useMasterKey);
     }
@@ -350,15 +353,15 @@ class LeanClient {
      * Issue POST request to LeanCloud
      *
      * @param string $path         Request path (without version string)
-     * @param string $data         Payload data
+     * @param array  $data         Payload data
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               JSON decoded associated array
-     * @see ::request
+     * @see self::request()
      */
     public static function post($path, $data, $sessionToken=null,
-                                $headers=array(), $useMasterKey=false) {
+                                $headers=array(), $useMasterKey=null) {
         return self::request("POST", $path, $data, $sessionToken,
                              $headers, $useMasterKey);
     }
@@ -367,15 +370,15 @@ class LeanClient {
      * Issue PUT request to LeanCloud
      *
      * @param string $path         Request path (without version string)
-     * @param string $data         Payload data
+     * @param array  $data         Payload data
      * @param string $sessionToken Session token of a LeanUser
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               JSON decoded associated array
-     * @see ::request
+     * @see self::request()
      */
     public static function put($path, $data, $sessionToken=null,
-                               $headers=array(), $useMasterKey=false) {
+                               $headers=array(), $useMasterKey=null) {
         return self::request("PUT", $path, $data, $sessionToken,
                              $headers, $useMasterKey);
     }
@@ -388,10 +391,10 @@ class LeanClient {
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               JSON decoded associated array
-     * @see ::request
+     * @see self::request()
      */
     public static function delete($path, $sessionToken=null,
-                                  $headers=array(), $useMasterKey=false) {
+                                  $headers=array(), $useMasterKey=null) {
         return self::request("DELETE", $path, null, $sessionToken,
                              $headers, $useMasterKey);
     }
@@ -404,10 +407,10 @@ class LeanClient {
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array              JSON decoded associated array
-     * @see ::request
+     * @see self::request()
      */
     public static function batch($requests, $sessionToken=null,
-                                 $headers=array(), $useMasterKey=false) {
+                                 $headers=array(), $useMasterKey=null) {
         $response = LeanClient::post("/batch",
                                      array("requests" => $requests),
                                      $sessionToken,

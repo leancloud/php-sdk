@@ -17,11 +17,8 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
         LeanClient::useRegion(getenv("LC_API_REGION"));
+        LeanClient::useMasterKey(false);
     }
-
-    // TODO:
-    // - test use master key
-    // - test use production
 
     public function testGetAPIEndpoint() {
         LeanClient::useRegion("CN");
@@ -38,6 +35,30 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         LeanClient::useRegion("US");
         $this->assertEquals(LeanClient::getAPIEndpoint(),
                             "https://us-api.leancloud.cn/1.1");
+    }
+
+    public function testUseMasterKeyByDefault() {
+        LeanClient::useMasterKey(true);
+        $headers = LeanClient::buildHeaders("token", null);
+        $this->assertContains("master", $headers["X-LC-Sign"]);
+
+        $headers = LeanClient::buildHeaders("token", true);
+        $this->assertContains("master", $headers["X-LC-Sign"]);
+
+        $headers = LeanClient::buildHeaders("token", false);
+        $this->assertNotContains("master", $headers["X-LC-Sign"]);
+    }
+
+    public function testNotUseMasterKeyByDefault() {
+        LeanClient::useMasterKey(false);
+        $headers = LeanClient::buildHeaders("token", null);
+        $this->assertNotContains("master", $headers["X-LC-Sign"]);
+
+        $headers = LeanClient::buildHeaders("token", false);
+        $this->assertNotContains("master", $headers["X-LC-Sign"]);
+
+        $headers = LeanClient::buildHeaders("token", true);
+        $this->assertContains("master", $headers["X-LC-Sign"]);
     }
 
     public function testRequestServerDate() {
