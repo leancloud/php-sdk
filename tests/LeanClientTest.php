@@ -6,6 +6,7 @@ use LeanCloud\LeanBytes;
 use LeanCloud\LeanUser;
 use LeanCloud\LeanFile;
 use LeanCloud\LeanRelation;
+use LeanCloud\LeanACL;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
 
@@ -149,7 +150,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $date = new DateTime();
         $type = array("__type" => "Date",
                       "iso" => LeanClient::formatDate($date));
-        $this->assertEquals($date, LeanClient::decode($type));
+        $this->assertEquals($date, LeanClient::decode($type, null));
     }
 
     public function testDecodeDateWithTimeZone() {
@@ -159,14 +160,14 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
             $date = new DateTime("now", new DateTimeZone($zone));
             $type = array("__type" => "Date",
                           "iso" => LeanClient::formatDate($date));
-            $this->assertEquals($date, LeanClient::decode($type));
+            $this->assertEquals($date, LeanClient::decode($type, null));
         }
     }
 
     public function testDecodeRelation() {
         $type = array("__type" => "Relation",
                       "className" => "TestObject");
-        $val  = LeanClient::decode($type);
+        $val  = LeanClient::decode($type, null);
         $this->assertTrue($val instanceof LeanRelation);
         $this->assertEquals("TestObject", $val->getTargetClassName());
     }
@@ -175,7 +176,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $type = array("__type" => "Pointer",
                       "className" => "TestObject",
                       "objectId" => "abc101");
-        $val  = LeanClient::decode($type);
+        $val  = LeanClient::decode($type, null);
 
         $this->assertTrue($val instanceof LeanObject);
         $this->assertEquals("TestObject", $val->getClassName());
@@ -187,7 +188,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                       "objectId"  => "abc101",
                       "name"      => "alice",
                       "tags"      => array("fiction", "bar"));
-        $val  = LeanClient::decode($type);
+        $val  = LeanClient::decode($type, null);
 
         $this->assertTrue($val instanceof LeanObject);
         $this->assertEquals("TestObject", $val->getClassName());
@@ -198,7 +199,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
     public function testDecodeBytes() {
         $type = array("__type" => "Bytes",
                       "base64" => base64_encode("Hello"));
-        $val = LeanClient::decode($type);
+        $val = LeanClient::decode($type, null);
         $this->assertTrue($val instanceof LeanBytes);
         $this->assertEquals(array(72, 101, 108, 108, 111),
                             $val->getByteArray());
@@ -210,7 +211,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                       "objectId"  => "abc101",
                       "username"  => "alice",
                       "email"     => "alice@example.com");
-        $val  = LeanClient::decode($type);
+        $val  = LeanClient::decode($type, null);
 
         $this->assertTrue($val instanceof LeanUser);
         $this->assertEquals($type["objectId"], $val->getObjectId());
@@ -222,7 +223,7 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $type = array("__type"    => "Pointer",
                       "className" => "_User",
                       "objectId"  => "abc101");
-        $val  = LeanClient::decode($type);
+        $val  = LeanClient::decode($type, null);
 
         $this->assertTrue($val instanceof LeanUser);
         $this->assertEquals($type["objectId"], $val->getObjectId());
@@ -233,12 +234,57 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                       "objectId"  => "abc101",
                       "name"      => "favicon.ico",
                       "url" => "https://leancloud.cn/favicon.ico");
-        $val  = LeanClient::decode($type);
+        $val  = LeanClient::decode($type, null);
 
         $this->assertTrue($val instanceof LeanFile);
         $this->assertEquals($type["objectId"], $val->getObjectId());
         $this->assertEquals($type["name"], $val->getName());
         $this->assertEquals($type["url"],  $val->getUrl());
+    }
+
+    public function testDecodeACL() {
+        $type = array("*"         => array("read" => true,
+                                           "write" => false),
+                      "user123"    => array("write" => true),
+                      "role:admin" => array("write" => true)
+        );
+        $val  = LeanClient::decode($type, 'ACL');
+        $this->assertTrue($val instanceof LeanACL);
+        $this->assertTrue($val->getPublicReadAccess());
+        $this->assertFalse($val->getPublicWriteAccess());
+        $this->assertTrue($val->getRoleWriteAccess("admin"));
+        $this->assertTrue($val->getWriteAccess("user123"));
+    }
+
+    public function testDecodeRecursiveObjectWithACL() {
+        $acl = array(
+            'id102' => array(
+                'write' => true
+            )
+        );
+        $type = array(
+            '__type' => 'Object',
+            'className' => 'TestObject',
+            'objectId' => 'id101',
+            'name' => 'alice',
+            'ACL' => $acl,
+            'parent' => array(
+                '__type' => 'Object',
+                'className' => 'TestObject',
+                'objectId'  => 'id102',
+                'name' => 'jill',
+                'ACL' => $acl
+            )
+        );
+        $val = LeanClient::decode($type, null);
+        $this->assertTrue($val instanceof LeanObject);
+        $this->assertEquals('alice', $val->get('name'));
+        $this->assertTrue($val->getACL() instanceof LeanACL);
+
+        $parent = $val->get("parent");
+        $this->assertTrue($parent instanceof LeanObject);
+        $this->assertEquals('jill', $parent->get('name'));
+        $this->assertTrue($parent->getACL() instanceof LeanACL);
     }
 }
 

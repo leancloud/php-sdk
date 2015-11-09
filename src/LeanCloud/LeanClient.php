@@ -4,6 +4,7 @@ namespace LeanCloud;
 
 use LeanCloud\LeanBytes;
 use LeanCloud\LeanObject;
+use LeanCloud\LeanACL;
 use LeanCloud\LeanFile;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Storage\IStorage;
@@ -130,8 +131,8 @@ class LeanClient {
             self::$storage = new SessionStorage();
         }
 
-        // register LeanUser for object storage
         LeanUser::registerClass();
+        LeanRole::registerClass();
     }
 
     /**
@@ -549,6 +550,7 @@ EOT;
             return $value->getPointer();
         } else if ($value instanceof IOperation ||
                    $value instanceof LeanFile ||
+                   $value instanceof LeanACL ||
                    $value instanceof LeanBytes) {
             return $value->encode();
         } else if (is_array($value)) {
@@ -583,21 +585,21 @@ EOT;
     /**
      * Decode value from LeanCloud response.
      *
-     * @param mixed $value
+     * @param mixed  $value Value to decode
+     * @param string $key   Field key for the value
      * @return mixed
      */
-    public static function decode($value) {
-        if (is_null($value) || is_scalar($value)) {
+    public static function decode($value, $key) {
+        if (!is_array($value)) {
             return $value;
         }
-        if (isset($value["*"]) && isset($value["*"]["read"])) {
-            // skip ACL for now
-            return null;
+        if ($key == 'ACL') {
+            return new LeanACL($value);
         }
         if (!isset($value["__type"])) {
             $out = array();
-            forEach($value as $key => $val) {
-                $out[$key] = self::decode($val);
+            forEach($value as $k => $v) {
+                $out[$k] = self::decode($v, $k);
             }
             return $out;
         }
@@ -612,7 +614,9 @@ EOT;
         if ($type == "Bytes") {
             return LeanBytes::createFromBase64Data($value["base64"]);
         }
-        if ($type == "GeoPoint") {}
+        if ($type == "GeoPoint") {
+            return $value;
+        }
         if ($type == "File") {
             $file = new LeanFile($value["name"]);
             $file->mergeAfterFetch($value);
@@ -628,7 +632,7 @@ EOT;
             return $obj;
         }
         if ($type == "Relation") {
-            return new LeanRelation(null, null, $value["className"]);
+            return new LeanRelation(null, $key, $value["className"]);
         }
     }
 
