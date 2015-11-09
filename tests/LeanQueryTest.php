@@ -2,6 +2,7 @@
 
 use LeanCloud\LeanObject;
 use LeanCloud\LeanQuery;
+use LeanCloud\GeoPoint;
 use LeanCloud\LeanClient;
 use LeanCloud\CloudException;
 
@@ -308,6 +309,100 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
                                     array('key' => 'relField',
                                           'object' => $obj->getPointer())));
         $this->assertEquals($expect, $out["where"]);
+    }
+
+    public function testNearGeoPoint() {
+        $query = new LeanQuery("TestObject");
+        $query->near('location', new GeoPoint(39.9, 116.4));
+        $out = $query->encode();
+        $expect = json_encode(array(
+            'location' => array(
+                '$nearSphere' => array(
+                    '__type' => 'GeoPoint',
+                    'latitude' => 39.9,
+                    'longitude' => 116.4
+                )
+            )
+        ));
+        $this->assertEquals($expect, $out['where']);
+    }
+
+    public function testWithinRadians() {
+        $query = new LeanQuery("TestObject");
+        $query->withinRadians('location', new GeoPoint(39.9, 116.4), 0.5);
+        $out = $query->encode();
+        $expect = json_encode(array(
+            'location' => array(
+                '$nearSphere' => array(
+                    '__type' => 'GeoPoint',
+                    'latitude' => 39.9,
+                    'longitude' => 116.4
+                ),
+                '$maxDistanceInRadians' => 0.5
+            )
+        ));
+        $this->assertEquals($expect, $out['where']);
+    }
+
+    public function testWithinKilometers() {
+        $query = new LeanQuery("TestObject");
+        $query->withinKilometers('location', new GeoPoint(39.9, 116.4), 0.5);
+        $out = $query->encode();
+        $expect = json_encode(array(
+            'location' => array(
+                '$nearSphere' => array(
+                    '__type' => 'GeoPoint',
+                    'latitude' => 39.9,
+                    'longitude' => 116.4
+                ),
+                '$maxDistanceInKilometers' => 0.5
+            )
+        ));
+        $this->assertEquals($expect, $out['where']);
+    }
+
+    public function testWithinMiles() {
+        $query = new LeanQuery("TestObject");
+        $query->withinMiles('location', new GeoPoint(39.9, 116.4), 0.5);
+        $out = $query->encode();
+        $expect = json_encode(array(
+            'location' => array(
+                '$nearSphere' => array(
+                    '__type' => 'GeoPoint',
+                    'latitude' => 39.9,
+                    'longitude' => 116.4
+                ),
+                '$maxDistanceInMiles' => 0.5
+            )
+        ));
+        $this->assertEquals($expect, $out['where']);
+    }
+
+    public function testWithinBox() {
+        $query = new LeanQuery("TestObject");
+        $query->withinBox('location',
+                          new GeoPoint(39.9, 116.4),
+                          new GeoPoint(40.0, 118.0));
+        $out = $query->encode();
+        $expect = json_encode(array(
+            'location' => array(
+                '$within' => array(
+                    '$box' => array(
+                        array(
+                            '__type' => 'GeoPoint',
+                            'latitude' => 39.9,
+                            'longitude' => 116.4
+                        ),
+                        array(
+                            '__type' => 'GeoPoint',
+                            'latitude' => 40.0,
+                            'longitude' => 118.0
+                        )
+                    )
+                )
+            )
+        ));
+        $this->assertEquals($expect, $out['where']);
     }
 
     public function testSelectFields() {

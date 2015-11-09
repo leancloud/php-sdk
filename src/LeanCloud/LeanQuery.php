@@ -404,6 +404,79 @@ class LeanQuery {
 
     // end Sub query
 
+    // GeoPoint query
+
+    /**
+     * Find objects near a geo point
+     *
+     * @param string   $key   Field key
+     * @param GeoPoint $point Center geo point
+     * @return self
+     */
+    public function near($key, GeoPoint $point) {
+        $this->_addCondition($key, '$nearSphere', $point);
+        return $this;
+    }
+
+    /**
+     * Find objects within a sphere of point, in radians
+     *
+     * @param string   $key      Field key
+     * @param GeoPoint $point    Center geo point
+     * @param number   $distance Distance in radians
+     * @return self
+     */
+    public function withinRadians($key, GeoPoint $point, $distance) {
+        $this->near($key, $point);
+        $this->_addCondition($key, '$maxDistanceInRadians', $distance);
+        return $this;
+    }
+
+    /**
+     * Find objects within a sphere of point, in kilometers
+     *
+     * @param string   $key      Field key
+     * @param GeoPoint $point    Center geo point
+     * @param number   $distance Distance in kilometers
+     * @return self
+     */
+    public function withinKilometers($key, GeoPoint $point, $distance) {
+        $this->near($key, $point);
+        $this->_addCondition($key, '$maxDistanceInKilometers', $distance);
+        return $this;
+    }
+
+    /**
+     * Find objects within a sphere of point, in miles
+     *
+     * @param string   $key      Field key
+     * @param GeoPoint $point    Center geo point
+     * @param number   $distance Distance in miles
+     * @return self
+     */
+    public function withinMiles($key, GeoPoint $point, $distance) {
+        $this->near($key, $point);
+        $this->_addCondition($key, '$maxDistanceInMiles', $distance);
+        return $this;
+    }
+
+    /**
+     * Find objects within a rectangle
+     *
+     * @param string   $key       Field key
+     * @param GeoPoint $southwest Geo point of southwest corner
+     * @param GeoPoint $northeast Geo point of northeast corner
+     * @return self
+     */
+    public function withinBox($key, GeoPoint $southwest, GeoPoint $northeast) {
+        $this->_addCondition($key, '$within', array(
+            '$box' => array($southwest, $northeast)
+        ));
+        return $this;
+    }
+
+    // End GeoPoint query
+
     /**
      * Specify fields to include in query result
      *
