@@ -70,8 +70,8 @@ class GeoPoint {
         $deltaLon = $lon1rad - $lon2rad;
         $sinLat = sin($deltaLat / 2);
         $sinLon = sin($deltaLon / 2);
-        $a = $sinLat * $sinLon *
-           (1.0 + cos($lat1rad) * cos($lat2rad));
+        $a = $sinLat * $sinLat +
+           cos($lat1rad) * cos($lat2rad) * $sinLon * $sinLon;
         $a = min(1.0, $a);
         return 2 * asin(sqrt($a));
     }

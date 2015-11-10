@@ -44,7 +44,8 @@ class GeoPointTest extends PHPUnit_Framework_TestCase {
         $rad = $point->radiansTo(new GeoPoint(-39.9, -63.6));
         $this->assertEquals(M_PI, $rad, '', 0.0000001);
 
-        $rad = $point->radiansTo(new GeoPoint(0, 0));
-        $this->assertEquals(1.9188923197632701, $rad, '', 0.0000001);
+        $rad = $point->radiansTo(new GeoPoint(0, 116.4));
+        $this->assertEquals(39.9 * M_PI / 180.0, $rad, '', 0.0000001);
+
     }
 }
