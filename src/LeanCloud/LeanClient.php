@@ -549,9 +549,10 @@ EOT;
         } else if ($value instanceof LeanObject) {
             return $value->getPointer();
         } else if ($value instanceof IOperation ||
-                   $value instanceof LeanFile ||
-                   $value instanceof LeanACL ||
-                   $value instanceof LeanBytes) {
+                   $value instanceof GeoPoint   ||
+                   $value instanceof LeanBytes  ||
+                   $value instanceof LeanACL    ||
+                   $value instanceof LeanFile) {
             return $value->encode();
         } else if (is_array($value)) {
             $res = array();
@@ -615,7 +616,7 @@ EOT;
             return LeanBytes::createFromBase64Data($value["base64"]);
         }
         if ($type == "GeoPoint") {
-            return $value;
+            return new GeoPoint($value["latitude"], $value["longitude"]);
         }
         if ($type == "File") {
             $file = new LeanFile($value["name"]);

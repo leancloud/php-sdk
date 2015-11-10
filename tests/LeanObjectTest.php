@@ -1,6 +1,7 @@
 <?php
 
 use LeanCloud\LeanObject;
+use LeanCloud\GeoPoint;
 use LeanCloud\LeanClient;
 use LeanCloud\LeanRelation;
 use LeanCloud\Storage\SessionStorage;
@@ -345,6 +346,19 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->setExpectedException("RuntimeException",
                                     "Object without ID cannot be serialized.");
         $a->save();
+    }
+
+    public function testSetGeoPoint() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("location", new GeoPoint(39.9, 116.4));
+        $obj->save();
+
+        $obj2 = new LeanObject("TestObject", $obj->getObjectId());
+        $obj2->fetch();
+        $loc = $obj2->get("location");
+        $this->assertTrue($loc instanceof GeoPoint);
+        $this->assertEquals(39.9, $loc->getLatitude());
+        $this->assertEquals(116.4, $loc->getLongitude());
     }
 
 }
