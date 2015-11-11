@@ -4,7 +4,7 @@ use LeanCloud\LeanClient;
 use LeanCloud\LeanQuery;
 use LeanCloud\LeanPush;
 
-class LeanACLTest extends PHPUnit_Framework_TestCase {
+class LeanPushTest extends PHPUnit_Framework_TestCase {
     public function testMessageEncode() {
         $data = array(
             "alert" => "Hello world!",

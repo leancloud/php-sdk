@@ -52,10 +52,9 @@ class LeanPush {
      * Available options please see
      * https://leancloud.cn/docs/push_guide.html#%E6%8E%A8%E9%80%81%E6%B6%88%E6%81%AF
      *
-     * Most of them are supported with specific methods, such as
-     * `setChannels`, `setWhere`, etc. Use the specific one if there
-     * is, else use this one. For example, to enable "dev" environment
-     * in iOS:
+     * There are helper methods for setting most of options, use those
+     * if possible. Use this when no helper present, e.g. to enable
+     * "dev" environment in iOS:
      *
      * ```php
      * $push->setOption("prod", "dev");
@@ -64,6 +63,7 @@ class LeanPush {
      * @param string $key Option key
      * @param mixed  $val Option value
      * @return self
+     * @see self::setWhere, self::setChannels, self::setPushTime ...
      */
     public function setOption($key, $val) {
         $this->options[$key] = $val;
@@ -82,7 +82,9 @@ class LeanPush {
     }
 
     /**
-     * Filter target devices by querying over installation table
+     * Filter target devices by query
+     *
+     * The query must be over _Installation table.
      *
      * @param LeanQuery $query A query over _Installation
      * @return self
@@ -90,8 +92,8 @@ class LeanPush {
      */
     public function setWhere(LeanQuery $query) {
         if ($query->getClassName() != "_Installation") {
-            throw new \RuntimeException("Push where must be a query " .
-                                        "on _Installation table.");
+            throw new \RuntimeException("Query must be over " .
+                                        "_Installation table.");
         }
         return $this->setOption("where", $query);
     }
@@ -156,7 +158,7 @@ class LeanPush {
     }
 
     /**
-     * Send Push to LeanCloud
+     * Send notification to LeanCloud
      *
      * @return array
      */
