@@ -760,5 +760,36 @@ class LeanQuery {
         $resp = LeanClient::get("/classes/{$this->getClassName()}", $params);
         return $resp["count"];
     }
+
+    /**
+     * Doing a CQL query to retrive objects
+     *
+     * It returns an array that contains:
+     *
+     * * className - Class name of the query
+     * * results   - List of objects
+     * * count     - Number of objects when it's a count query
+     *
+     * @param string $cql     CQL statement
+     * @param array  $pvalues Positional values to replace in CQL
+     * @return array
+     * @link https://leancloud.cn/docs/cql_guide.html
+     */
+    public static function doCloudQuery($cql, $pvalues=array()) {
+        $data = array("cql" => $cql);
+        if (!empty($pvalues)) {
+            $data["pvalues"] = json_encode(LeanClient::encode($pvalues));
+        }
+        $resp = LeanClient::get('/cloudQuery', $data);
+        $objects = array();
+        forEach($resp["results"] as $val) {
+            $obj = LeanObject::create($resp["className"], $val["objectId"]);
+            $obj->mergeAfterFetch($val);
+            $objects[] = $obj;
+        }
+        $resp["results"] = $objects;
+
+        return $resp;
+    }
 }
 

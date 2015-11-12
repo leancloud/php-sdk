@@ -596,5 +596,53 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         );
         $this->assertEquals(json_encode($where), $out["where"]);
     }
+
+    public function testDoCloudQueryCount() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("name", "alice");
+        $obj->save();
+        $resp = LeanQuery::doCloudQuery("SELECT count(*) FROM TestObject");
+        $this->assertTrue(is_int($resp["count"]));
+        $this->assertEquals("TestObject", $resp["className"]);
+        $obj->destroy();
+    }
+
+    public function testDoCloudQueryWithPvalues() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("name", "alice");
+        $obj->save();
+        $resp = LeanQuery::doCloudQuery("SELECT * FROM TestObject ".
+                                        "WHERE name = ? LIMIT ?",
+                                        array("alice", 1));
+        $this->assertGreaterThan(0, count($resp["results"]));
+        $obj->destroy();
+    }
+
+    /*
+    public function testDoCloudQueryWithDate() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("name", "alice");
+        $obj->save();
+        $date = $obj->getCreatedAt();
+        $resp = LeanQuery::doCloudQuery("SELECT * FROM TestObject ".
+                                        "WHERE createdAt = ?",
+                                        array($date));
+        $this->assertGreaterThan(0, count($resp["results"]));
+        $obj->destroy();
+    }
+
+    public function testDoCloudQueryGeoPoint() {
+        $point = new GeoPoint(39.9, 116.4);
+        $obj = new LeanObject("TestObject");
+        $obj->set("name", "alice");
+        $obj->set("location", $point);
+        $obj->save();
+        $resp = LeanQuery::doCloudQuery("SELECT * FROM TestObject " .
+                                        "WHERE location NEAR ?",
+                                        array($point));
+        $this->assertEquals("TestObject", $resp["className"]);
+        $obj->destroy();
+    }
+    */
 }
 
