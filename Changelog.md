@@ -1,6 +1,7 @@
 
 0.2.0 发布日期：2015-11-12
 ----
+* 支持 CQL 查询：LeanQuery::doCloudQuery
 * 支持发送 Push 推送消息 (#23)
 * 支持 GeoPoint 类型及地理位置查询 (#25)
 * 支持 Role 和 ACL 权限管理 (#19)
