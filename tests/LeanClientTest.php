@@ -7,6 +7,7 @@ use LeanCloud\LeanUser;
 use LeanCloud\LeanFile;
 use LeanCloud\LeanRelation;
 use LeanCloud\LeanACL;
+use LeanCloud\GeoPoint;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
 
@@ -285,6 +286,18 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($parent instanceof LeanObject);
         $this->assertEquals('jill', $parent->get('name'));
         $this->assertTrue($parent->getACL() instanceof LeanACL);
+    }
+
+    public function testDecodeGeoPoint() {
+        $type = array(
+            '__type' => 'GeoPoint',
+            'latitude' => 39.9,
+            'longitude' => 116.4
+        );
+        $val = LeanClient::decode($type, null);
+        $this->assertTrue($val instanceof GeoPoint);
+        $this->assertEquals(39.9, $val->getLatitude());
+        $this->assertEquals(116.4, $val->getLongitude());
     }
 }
 
