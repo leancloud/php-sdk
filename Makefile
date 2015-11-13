@@ -1,5 +1,5 @@
 test:
-	vendor/bin/phpunit --bootstrap src/autoload.php tests
+	vendor/bin/phpunit
 
 release:
 	./release.sh $V

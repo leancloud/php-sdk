@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./src/autoload.php"
+         colors="true"
+         forceCoversAnnotation="false">
+  <testsuites>
+    <testsuite name="unit">
+      <directory suffix="Test.php">tests</directory>
+    </testsuite>
+  </testsuites>
+
+  <filter>
+    <whitelist>
+      <directory suffix=".php">src</directory>
+      <file>src/LeanCloud/LeanClient.php</file>
+    </whitelist>
+  </filter>
+</phpunit>

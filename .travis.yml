@@ -9,4 +9,8 @@ php:
 env:
   - LC_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LC_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LC_API_REGION=US
 
-script: phpunit --bootstrap src/autoload.php tests
+script:
+  - phpunit --coverage-clover=coverage.xml
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
