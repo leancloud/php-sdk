@@ -2,24 +2,8 @@
 namespace LeanCloud\Engine;
 
 /**
- * Define functions and hooks on cloud
+ * Cloud functions and hooks repository
  *
- *```php
- * LeanEngine::define("sayHello", function($params, $user) {
- * });
- *
- * LeanEngine::afterSave("TestObject", function($object, $user) {
- * });
- *
- * LeanEngine::onLogin(function($user) {
- * });
- *
- * LeanEngine::onVerified("sms", function($user) {
- * });
- *
- * LeanEngine::onInsight(function($params) {
- * });
- *```
  */
 
 class Cloud {
@@ -47,12 +31,12 @@ class Cloud {
     );
 
     /**
-     * Get defined function by name
+     * Get defined function or hook by internal name
      *
      * @param string $funcName Name of function or hook
      * @return callable|null
      */
-    public static function getFunc($funcName) {
+    private static function getFunc($funcName) {
         return (isset(self::$repo[$funcName]) ? self::$repo[$funcName] : null);
     }
 
@@ -70,7 +54,7 @@ class Cloud {
     /**
      * Define a cloud function
      *
-     * The function accepts two arguments: the first is an array of
+     * The function shall take two arguments: the first is an array of
      * parameters, the second is user in the session. Example:
      *
      * ```php
@@ -81,6 +65,7 @@ class Cloud {
      *
      * @param string   $funcName
      * @param callable $func
+     * @see self::runFunc
      */
     public static function define($funcName, $func) {
         self::$repo[$funcName] = $func;
@@ -91,7 +76,18 @@ class Cloud {
      *
      * The function shall take two arguments: the first one is class
      * object, the second is user if available in session. If your $func
-     * throws `FunctionError`, the save will be rejected.
+     * throws `FunctionError`, the save will be rejected. Example:
+     *
+     * ```php
+     * Cloud::beforeSave("TestObject", function($object, $user) {
+     *     $title = $object->get("title");
+     *     if (strlen($title) > 140) {
+     *         // Throw error and reject the save operation.
+     *         throw new FunctionError("Title is too long", 1);
+     *     }
+     *     // else object will be saved.
+     * });
+     * ```
      *
      * @param string $className
      * @param callable $func
