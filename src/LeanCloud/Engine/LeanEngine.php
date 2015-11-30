@@ -1,5 +1,7 @@
 <?php
 
+namespace LeanCloud\Engine;
+
 use LeanCloud\LeanClient;
 use LeanCloud\LeanUser;
 
@@ -27,34 +29,6 @@ class LeanEngine {
         'X-Requested-With',
         'Content-Type'
     );
-
-    /**
-     * Render data as JSON output and end request
-     *
-     * @param array $data
-     */
-    private static function renderJSON($data) {
-        header("Content-Type: application/json; charset=utf-8;");
-        echo LeanClient::encode($data);
-        exit;
-    }
-
-    /**
-     * Render error response and end request
-     *
-     * @param string $message Error message
-     * @param string $code    Error code
-     * @param string $status  Http response status code
-     */
-    private static function renderError($message, $code=1, $status=400) {
-        http_response_code($status);
-        header("Content-Type: application/json; charset=utf-8;");
-        echo json_encode(array(
-            "code"  => $code,
-            "error" => $message
-        ));
-        exit;
-    }
 
     /**
      * Authenticate application request
@@ -103,20 +77,21 @@ class LeanEngine {
         }
         $token = $_SERVER["HTTP_X_LC_Session"] ?
                $_SERVER["HTTP_X_LC_Session"] :
-               $_SERVER["HTTP_X_Avoscloud-Session-Token"];
+               $_SERVER["HTTP_X_Avoscloud_Session_Token"];
         $token = $token ? $token : $_SERVER["HTTP_X_Uluru_Session_Token"];
         LeanUser::become($token);
     }
 
     /**
      * Dispatch request
+     *
      */
-    public static function dispatch() {
+    private static function dispatch() {
         $url      = rtrim($_SERVER["REQUEST_URI"], "/");
         if ($url == "/__engine/1/ping") {
             self::renderJSON(array(
                 "runtime" => "PHP:TODO",
-                "version" => LeanClient::VERSION;
+                "version" => LeanClient::VERSION
             ));
         }
         self::processSession();
@@ -124,6 +99,7 @@ class LeanEngine {
         $matches = array();
         if (preg_match("/\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) == 1) {
             $origin = $_SERVER["HTTP_Origin"];
+            $method = $_SERVER["REQUEST_METHOD"];
             header("Access-Control-Allow-Origin: " . ($origin ? $origin : "*"));
             if ($method == "OPTIONS") {
                 header("Access-Control-Max-Age: 86400");
@@ -145,17 +121,32 @@ class LeanEngine {
             }
             try {
                 if (count($params) == 1) {
-                    $result = self::runFunc($params[0], $data, $user);
+                    // {1,1.1}/functions/{funcName}
+                    $result = Cloud::runFunc($params[0], $data, $user);
                 } else if ($params[0] == "onVerified") {
-                    // onVerified hook has endpoint: functions/onVerified/sms
-                    $result = self::runOnVerified($params[1], $user);
+                    // {1,1.1}/functions/onVerified/sms
+                    Cloud::runOnVerified($params[1], $user);
+                    $result = "ok";
                 } else if ($params[0] == "_User" && $params[1] == "onLogin") {
-                    $result = self::runOnLogin($data["object"]);
+                    // {1,1.1}/functions/_User/onLogin
+                    Cloud::runOnLogin($data["object"]);
+                    $result = "ok";
                 } else if ($params[0] == "BigQuery" || $params[0] == "Insight") {
-                    $result = self::runOnInsight($data);
+                    // {1,1.1}/functions/BigQuery/onComplete
+                    Cloud::runOnInsight($data);
+                    $result = "ok";
                 } else if (count($params) == 2) {
-                    $result = self::runHook($params[0], $params[1],
-                                            $data["object"], $user);
+                    // {1,1.1}/functions/{className}/beforeSave
+                    $obj = $data["object"];
+                    Cloud::runHook($params[0], $params[1],
+                                   $obj, $user);
+                    if ($params[1] == "beforeDelete") {
+                        $result = "";
+                    } else if (strpos($params[1], "after") === 0) {
+                        $result = "ok";
+                    } else {
+                        $result = $obj;
+                    }
                 } else {
                     self::renderError("Route not found.", 1, 404);
                 }
@@ -167,109 +158,49 @@ class LeanEngine {
     }
 
     /**
-     * Run cloud function
+     * Render data as JSON output and end request
      *
-     * Example:
-     *
-     * ```php
-     * LeanEngine::runFunc("sayHello", array("name" => "alice"), $user);
-     * // sayHello(array("name" => "alice"), $user);
-     * ```
-     *
-     * @param string   $funcName Name of defined function
-     * @param array    $data     Array of parameters passed to function
-     * @param LeanUser $user     Request user
-     * @return mixed
-     * @throws FunctionError
+     * @param array $data
      */
-    public static function runFunc($funcName, $params, $user) {
-        $func = Cloud::getFunc($funcName);
-        if (!$func) {
-            throw new FunctionError("Cloud function not found.", 404);
-        }
-        return call_user_func($func, $params, $user);
+    private static function renderJSON($data) {
+        header("Content-Type: application/json; charset=utf-8;");
+        echo json_encode(LeanClient::encode($data));
+        exit;
     }
 
     /**
-     * Run cloud hook
+     * Render error response and end request
      *
-     * Example:
-     *
-     * ```php
-     * LeanEngine::runHook("TestObject", "beforeUpdate", $object, $user);
-     * // hook($object, $user);
-     * ```
-     *
-     * @param string $className  Classname
-     * @param string $hookName   Hook name, e.g. beforeUpdate
-     * @param LeanObject $object The object of attached hook
-     * @param LeanUser   $user   Request user
-     * @return mixed
-     * @throws FunctionError
+     * @param string $message Error message
+     * @param string $code    Error code
+     * @param string $status  Http response status code
      */
-    public static function runHook($className, $hookName, $object,
-                                   $user=null) {
-        $name = Cloud::getHookName($className, $hookName);
-        $func = Cloud::getFunc($name);
-        if (!$func) {
-            throw new FunctionError("Cloud hook `{$name}' not found.",
-                                    404);
-        }
-        return call_user_func($func, $object, $user);
+    private static function renderError($message, $code=1, $status=400) {
+        http_response_code($status);
+        header("Content-Type: application/json; charset=utf-8;");
+        echo json_encode(array(
+            "code"  => $code,
+            "error" => $message
+        ));
+        exit;
     }
 
     /**
-     * Run hook when a user logs in
-     *
-     * @param LeanUser $user The user that tries to login
-     * @throws FunctionError
+     * Start engine and process request
      */
-    public static function runOnLogin($user) {
-        return self::runHook("_User", "onLogin", $user);
+    public function start() {
+        self::dispatch();
     }
 
     /**
-     * Run hook when user verified by Email or SMS
+     * Function to expose LeanEngine as Laraval middleware
      *
-     * @param string   $type Either "sms" or "email", case-sensitive
-     * @param LeanUser $user The verifying user
-     * @throws FunctionError
+     * @param Request  $request Laravel request
+     * @param Callable $next    Laravel Closure
      */
-    public static function runOnVerified($type, $user) {
-        $name = "__on_verified_{$type}";
-        $func = Cloud::getFunc($name);
-        if (!$func) {
-            throw new FunctionError("Cloud hook `{$name}' not found.",
-                                    404);
-        }
-        return call_user_func($func, $user);
+    public static handle($request, $next) {
+        self::dispatch();
+        $next();
     }
-
-    /**
-     * Run hook when BigQuery complete
-     *
-     * @see self::runOnInsight
-     */
-    public static function runOnBigQuery($params) {
-        return self::runOnInsight($params);
-    }
-
-    /**
-     * Run hook on big query complete
-     *
-     * @param array $params Job id and 
-     * @return mixed
-     * @throws FunctionError
-     */
-    public static function runOnInsight($params) {
-        $name = "__on_complete_bigquery_job";
-        $func = Cloud::getFunc($name);
-        if (!$func) {
-            throw new FunctionError("Cloud hook `{$name}' not found.",
-                                    404);
-        }
-        return call_user_func($func, $params);
-    }
-
 }
 
