@@ -3,6 +3,14 @@
 use LeanCloud\Engine\Cloud;
 
 class CloudTest extends PHPUnit_Framework_TestCase {
+    public function testGetKeys() {
+        $name = uniqid();
+        Cloud::define($name, function($params, $user) {
+            return "hello";
+        });
+        $this->assertContains($name, Cloud::getKeys());
+    }
+
     public function testFunctionWithoutArg() {
         Cloud::define("hello", function($params, $user) {
             return "hello";

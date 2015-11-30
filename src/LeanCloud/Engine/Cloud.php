@@ -30,6 +30,10 @@ class Cloud {
         "onComplete"   => "__on_complete_"
     );
 
+    public static function getKeys() {
+        return array_keys(self::$repo);
+    }
+
     /**
      * Get defined function or hook by internal name
      *
