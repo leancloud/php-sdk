@@ -20,6 +20,23 @@ Cloud::define("sayHello", function($params, $user) {
     return "hello {$params['name']}";
 });
 
+Cloud::onLogin(function($user) {
+    return;
+});
+
+Cloud::onInsight(function($job) {
+    return;
+});
+
+Cloud::onVerified("sms", function($user){
+    return;
+});
+
+Cloud::beforeSave("TestObject", function($obj, $user) {
+    $obj->set("__testKey", 42);
+    return $obj;
+});
+
 $engine = new LeanEngine();
 $engine->start();
 

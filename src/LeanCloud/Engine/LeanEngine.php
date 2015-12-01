@@ -120,7 +120,6 @@ class LeanEngine {
                 "version" => LeanClient::VERSION
             ));
         }
-        self::processSession();
         $matches = array();
         if (preg_match("/\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) == 1) {
             $method = $_SERVER["REQUEST_METHOD"];
@@ -135,6 +134,8 @@ class LeanEngine {
                 header("Content-Length: 0");
                 exit;
             }
+            self::processSession();
+            $user = LeanUser::getCurrentUser();
 
             if ($matches[3] == "/_ops/metadatas") {
                 // only master key can do this
@@ -145,7 +146,6 @@ class LeanEngine {
             $body   = file_get_contents("php://input");
             $data   = LeanClient::decode(json_decode($body, true), null);
             $params = explode("/", ltrim($matches[3], "/"));
-            $user   = LeanUser::getCurrentUser();
             try {
                 if (count($params) == 1) {
                     // {1,1.1}/functions/{funcName}

@@ -73,5 +73,39 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         ));
         $this->assertEquals("hello alice", $resp["result"]);
     }
+
+    public function testOnInsight() {
+        $resp = $this->request("/1/functions/BigQuery/onComplete", "POST", array(
+            "id" => "id001",
+            "status" => "OK",
+            "message" => "Big query completed successfully."
+        ));
+        $this->assertEquals("ok", $resp["result"]);
+    }
+
+    public function testOnLogin() {
+        $resp = $this->request("/1/functions/_User/onLogin", "POST", array(
+            "object" => array(
+                "__type"    => "Object",
+                "className" => "_User",
+                "objectId"  => "id002",
+                "username"  => "alice"
+            )
+        ));
+        $this->assertEquals("ok", $resp["result"]);
+    }
+
+    public function testOnVerifiedSms() {
+        $resp = $this->request("/1/functions/onVerified/sms", "POST", array(
+            "object" => array(
+                "__type"    => "Object",
+                "className" => "_User",
+                "objectId"  => "id002",
+                "username"  => "alice"
+            )
+        ));
+        $this->assertEquals("ok", $resp["result"]);
+    }
+
 }
 
