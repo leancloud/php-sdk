@@ -31,55 +31,81 @@ class LeanEngine {
     );
 
     /**
+     * Search keys for value in a hash array
+     *
+     * @param array $map  The hash array to search in
+     * @param array $keys Keys in order
+     * @retrun mixed
+     */
+    private static function getVal($hash, $keys) {
+        $val = null;
+        forEach($keys as $k) {
+            if (isset($hash[$k])) {
+                $val = $hash[$k];
+            }
+            if ($val) {
+                return $val;
+            }
+        }
+        return $val;
+    }
+
+    /**
      * Authenticate application request
      *
      * @return bool
      */
     private static function authRequest() {
-        // The client address is available from:
-        // $_SERVER["HTTP_X_Real_Ip"];
-        // $_SERVER["HTTP_X_Forwaded_For"];
-        $appId = $_SERVER["HTTP_X_LC_Id"];
-        $appId = $appId ? $appId : $_SERVER["HTTP_X_Avoscloud_Application_Id"];
-        $appId = $appId ? $appId : $_SERVER["HTTP_X_Uluru_Application_Id"];
+        $appId = self::getVal($_SERVER, array(
+            "HTTP_X_LC_ID",
+            "HTTP_X_AVOSCLOUD_APPLICATION_ID",
+            "HTTP_X_ULURU_APPLICATION_ID"
+        ));
         if (!$appId) {
-            self::renderError("Unauthorized", 401, 401);
+            self::renderError("Application ID not found", 401, 401);
         }
-        $sign = $_SERVER["HTTP_X_LC_Sign"] ?
-              $_SERVER["HTTP_X_LC_Sign"] :
-              $_SERVER["HTTP_X_Avoscloud_Request_Sign"];
+        $sign = self::getVal($_SERVER, array(
+            "HTTP_X_LC_SIGN",
+            "HTTP_X_AVOSCLOUD_REQUEST_SIGN"
+        ));
         if ($sign && LeanClient::verifySign($appId, $sign)) {
             return true;
         }
 
-        $appKey = $_SERVER["HTTP_X_LC_Key"];
-        $appKey = $appKey ? $appKey : $_SERVER["HTTP_X_Avoscloud_Application_Key"];
-        $appKey = $appKey ? $appKey : $_SERVER["HTTP_X_Uluru_Application_Key"];
+        $appKey = self::getVal($_SERVER, array(
+            "HTTP_X_LC_KEY",
+            "HTTP_X_AVOSCLOUD_APPLICATION_KEY",
+            "HTTP_X_ULURU_APPLICATION_KEY"
+        ));
         if ($appKey && LeanClient::verifyKey($appId, $appKey)) {
             return true;
         }
 
-        $masterKey = $_SERVER["HTTP_X_Avoscloud_Master_Key"] ?
-                   $_SERVER["HTTP_X_Avoscloud_Master_Key"] :
-                   $_SERVER["HTTP_X_Uluru_Master_Key"];
-        if ($masterKey && LeanClient::verifyMasterKey($appId, $masterKey)) {
+        $masterKey = self::getVal($_SERVER, array(
+            "HTTP_X_AVOSCLOUD_MASTER_KEY",
+            "HTTP_X_ULURU_MASTER_KEY"
+        ));
+        $key = "{$masterKey}, master";
+        if ($masterKey && LeanClient::verifyKey($appId, $key)) {
             return true;
         }
-        return false;
+
+        self::renderError("Unauthorized", 401, 401);
     }
 
     /**
      * Process request session
      */
     private static function processSession() {
-        if (!self::authRequest()) {
-            self::renderError("Unauthorized", 401, 401);
+        self::authRequest();
+        $token = self::getVal($_SERVER, array(
+            "HTTP_X_LC_SESSION",
+            "HTTP_X_AVOSCLOUD_SESSION_TOKEN",
+            "HTTP_X_ULURU_SESSION_TOKEN"
+        ));
+        if ($token) {
+            LeanUser::become($token);
         }
-        $token = $_SERVER["HTTP_X_LC_Session"] ?
-               $_SERVER["HTTP_X_LC_Session"] :
-               $_SERVER["HTTP_X_Avoscloud_Session_Token"];
-        $token = $token ? $token : $_SERVER["HTTP_X_Uluru_Session_Token"];
-        LeanUser::become($token);
     }
 
     /**
@@ -95,11 +121,10 @@ class LeanEngine {
             ));
         }
         self::processSession();
-        $user    = LeanUser::getCurrentUser();
         $matches = array();
         if (preg_match("/\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) == 1) {
-            $origin = $_SERVER["HTTP_Origin"];
             $method = $_SERVER["REQUEST_METHOD"];
+            $origin = $_SERVER["HTTP_ORIGIN"];
             header("Access-Control-Allow-Origin: " . ($origin ? $origin : "*"));
             if ($method == "OPTIONS") {
                 header("Access-Control-Max-Age: 86400");
@@ -111,14 +136,16 @@ class LeanEngine {
                 exit;
             }
 
+            if ($matches[3] == "/_ops/metadatas") {
+                // only master key can do this
+                self::renderJSON(Cloud::getKeys());
+            }
             // Get request body from input stream. Note php framework
             // might read and emptied input.
-            $body = file_get_contents("php://input");
-            $data = LeanClient::decode($body, null);  // Request data
+            $body   = file_get_contents("php://input");
+            $data   = LeanClient::decode(json_decode($body, true), null);
             $params = explode("/", ltrim($matches[3], "/"));
-            if ($matches[3] == "/_ops/metadatas") {
-                $result = self::renderJSON(array_keys(Cloud::getKeys()));
-            }
+            $user   = LeanUser::getCurrentUser();
             try {
                 if (count($params) == 1) {
                     // {1,1.1}/functions/{funcName}
@@ -150,10 +177,10 @@ class LeanEngine {
                 } else {
                     self::renderError("Route not found.", 1, 404);
                 }
+                self::renderJSON(array("result" => $result));
             } catch (FunctionError $err) {
                 self::renderError($err->getMessage(), $err->getCode());
             }
-            self::renderJSON(array("result" => $result));
         }
     }
 
@@ -197,10 +224,11 @@ class LeanEngine {
      *
      * @param Request  $request Laravel request
      * @param Callable $next    Laravel Closure
+     * @return mixed
      */
-    public static handle($request, $next) {
+    public function handle($request, $next) {
         self::dispatch();
-        $next();
+        return $next($request);
     }
 }
 
