@@ -235,6 +235,49 @@ class LeanClient {
     }
 
     /**
+     * Verify app ID and sign
+     *
+     * The sign must be in the format of "{md5sum},{timestamp}[,master]",
+     * which follows the format as in header "X-LC-Sign".
+     *
+     * @param string $appId App Id
+     * @param string $sign  Request sign
+     * @return bool
+     */
+    public static function verifySign($appId, $sign) {
+        if (!$appId || ($appId != self::$appId)) {
+            return false;
+        }
+        $parts = explode(",", $sign);
+        $key   = self::$appKey;
+        if (isset($parts[2]) && "master" === trim($parts[2])) {
+            $key = self::$appMasterKey;
+        }
+        return $parts[0] === md5(trim($parts[1]) . $key);
+    }
+
+    /**
+     * Verify app ID and key
+     *
+     * The key shall be in format of "{key}[,master]", it will be verified
+     * as master key if master suffix present.
+     *
+     * @param string $appId App Id
+     * @param string $key   App key or master key
+     * @return bool
+     */
+    public static function verifyKey($appId, $key) {
+        if (!$appId || ($appId != self::$appId)) {
+            return false;
+        }
+        $parts = explode(",", $key);
+        if (isset($parts[1]) && "master" === trim($parts[1])) {
+            return self::$appMasterKey === $parts[0];
+        }
+        return self::$appKey === $parts[0];
+    }
+
+    /**
      * Issue request to LeanCloud
      *
      * The data is passing in as an associative array, which will be encoded

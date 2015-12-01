@@ -38,6 +38,36 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                             "https://us-api.leancloud.cn/1.1");
     }
 
+    public function testVerifyKey() {
+        $result = LeanClient::verifyKey(
+            getenv("LC_APP_ID"),
+            getenv("LC_APP_KEY")
+        );
+        $this->assertTrue($result);
+    }
+
+    public function testVerifyKeyMaster() {
+        $result = LeanClient::verifyKey(
+            getenv("LC_APP_ID"),
+            getenv("LC_APP_MASTER_KEY") . ",master"
+        );
+        $this->assertTrue($result);
+    }
+
+    public function testVerifySign() {
+        $time = time();
+        $sign = md5($time . getenv("LC_APP_KEY")) . ",{$time}";
+        $result = LeanClient::verifySign(getenv("LC_APP_ID"), $sign);
+        $this->assertTrue($result);
+    }
+
+    public function testVerifySignMaster() {
+        $time = time();
+        $sign = md5($time . getenv("LC_APP_MASTER_KEY")) . ",{$time},master";
+        $result = LeanClient::verifySign(getenv("LC_APP_ID"), $sign);
+        $this->assertTrue($result);
+    }
+
     public function testUseMasterKeyByDefault() {
         LeanClient::useMasterKey(true);
         $headers = LeanClient::buildHeaders("token", null);
