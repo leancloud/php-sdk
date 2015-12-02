@@ -349,7 +349,7 @@ class LeanClient {
         $resp     = curl_exec($req);
         $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         $respType = curl_getinfo($req, CURLINFO_CONTENT_TYPE);
-        $error    = curl_errno($req);
+        $error    = curl_error($req);
         $errno    = curl_errno($req);
         curl_close($req);
 
