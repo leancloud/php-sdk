@@ -31,13 +31,20 @@ class LeanEngine {
     );
 
     /**
+     * Engine environment
+     *
+     * @var array
+     */
+    private $req = array();
+
+    /**
      * Search keys for value in a hash array
      *
      * @param array $map  The hash array to search in
      * @param array $keys Keys in order
      * @retrun mixed
      */
-    private static function getVal($hash, $keys) {
+    private function getVal($hash, $keys) {
         $val = null;
         forEach($keys as $k) {
             if (isset($hash[$k])) {
@@ -51,60 +58,105 @@ class LeanEngine {
     }
 
     /**
-     * Authenticate application request
+     * Parse app session info into req
      *
-     * @return bool
      */
-    private static function authRequest() {
-        $appId = self::getVal($_SERVER, array(
-            "HTTP_X_LC_ID",
-            "HTTP_X_AVOSCLOUD_APPLICATION_ID",
-            "HTTP_X_ULURU_APPLICATION_ID"
-        ));
-        if (!$appId) {
-            self::renderError("Application ID not found", 401, 401);
+    private function parseRequest() {
+        $contentType = isset($_SERVER["CONTENT_TYPE"]) ?
+                     $_SERVER["CONTENT_TYPE"] :
+                     $_SERVER["HTTP_CONTENT_TYPE"];
+        if (preg_match("/text\/plain/", $contentType)) {
+            // the CORS request might be sent as POST request with text/plain
+            // header, whence the app key info is attached in the body as
+            // JSON.
+            $this->req["appId"]        = isset($data["_ApplicationId"]) ?
+                                       $data["_ApplicationId"] : null;
+            $this->req["appKey"]       = isset($data["_ApplicationKey"]) ?
+                                       $data["_ApplicationKey"] : null;
+            $this->req["masterKey"]    = isset($data["_MasterKey"]) ?
+                                       $data["_MasterKey"] : null;
+            $this->req["sessionToken"] = isset($data["_SessionToken"]) ?
+                                       $data["_SessionToken"] : null;
+            $this->req["sign"]         = null;
+            $this->req["useProd"]      = isset($data["_ApplicationProduction"]) ?
+                                       (true && $data["_ApplicationProduction"]) :
+                                  true;
+        } else {
+            $this->req["appId"] = $this->getVal($_SERVER, array(
+                "HTTP_X_LC_ID",
+                "HTTP_X_AVOSCLOUD_APPLICATION_ID",
+                "HTTP_X_ULURU_APPLICATION_ID"
+            ));
+            $this->req["appKey"] = $this->getVal($_SERVER, array(
+                "HTTP_X_LC_KEY",
+                "HTTP_X_AVOSCLOUD_APPLICATION_KEY",
+                "HTTP_X_ULURU_APPLICATION_KEY"
+            ));
+            $this->req["masterKey"] = $this->getVal($_SERVER, array(
+                "HTTP_X_AVOSCLOUD_MASTER_KEY",
+                "HTTP_X_ULURU_MASTER_KEY"
+            ));
+            $this->req["sessionToken"] = $this->getVal($_SERVER, array(
+                "HTTP_X_LC_SESSION",
+                "HTTP_X_AVOSCLOUD_SESSION_TOKEN",
+                "HTTP_X_ULURU_SESSION_TOKEN"
+            ));
+            $this->req["sign"] = $this->getVal($_SERVER, array(
+                "HTTP_X_LC_SIGN",
+                "HTTP_X_AVOSCLOUD_REQUEST_SIGN"
+            ));
+            $prod = $this->getVal($_SERVER, array(
+                "HTTP_X_LC_PROD",
+                "HTTP_X_AVOSCLOUD_APPLICATION_PRODUCTION",
+                "HTTP_X_ULURU_APPLICATION_PRODUCTION"
+            ));
+            $this->req["useProd"] = true;
+            if ($prod === 0 || $prod === false) {
+                $this->req["useProd"] = false;
+            }
         }
-        $sign = self::getVal($_SERVER, array(
-            "HTTP_X_LC_SIGN",
-            "HTTP_X_AVOSCLOUD_REQUEST_SIGN"
-        ));
+        $this->req["useMaster"] = false;
+    }
+
+    /**
+     * Authenticate application request
+     */
+    private function authRequest() {
+        $appId = $this->req["appId"];
+        $sign  = $this->req["sign"];
         if ($sign && LeanClient::verifySign($appId, $sign)) {
+            if (strpos($sign, "master") !== false) {
+                $this->req["useMaster"] = true;
+            }
             return true;
         }
 
-        $appKey = self::getVal($_SERVER, array(
-            "HTTP_X_LC_KEY",
-            "HTTP_X_AVOSCLOUD_APPLICATION_KEY",
-            "HTTP_X_ULURU_APPLICATION_KEY"
-        ));
+        $appKey = $this->req["appKey"];
         if ($appKey && LeanClient::verifyKey($appId, $appKey)) {
+            if (strpos($appKey, "master") !== false) {
+                $this->req["useMaster"] = true;
+            }
             return true;
         }
 
-        $masterKey = self::getVal($_SERVER, array(
-            "HTTP_X_AVOSCLOUD_MASTER_KEY",
-            "HTTP_X_ULURU_MASTER_KEY"
-        ));
+        $masterKey = $this->req["masterKey"];
         $key = "{$masterKey}, master";
         if ($masterKey && LeanClient::verifyKey($appId, $key)) {
+            $this->req["useMaster"] = true;
             return true;
         }
 
-        self::renderError("Unauthorized", 401, 401);
+        $this->renderError("Unauthorized", 401, 401);
     }
 
     /**
      * Process request session
      */
-    private static function processSession() {
-        self::authRequest();
-        $token = self::getVal($_SERVER, array(
-            "HTTP_X_LC_SESSION",
-            "HTTP_X_AVOSCLOUD_SESSION_TOKEN",
-            "HTTP_X_ULURU_SESSION_TOKEN"
-        ));
-        if ($token) {
-            LeanUser::become($token);
+    private function processSession() {
+        $this->parseRequest();
+        $this->authRequest();
+        if ($this->req["sessionToken"]) {
+            LeanUser::become($this->req["sessionToken"]);
         }
     }
 
@@ -112,10 +164,10 @@ class LeanEngine {
      * Dispatch request
      *
      */
-    private static function dispatch() {
+    private function dispatch() {
         $url      = rtrim($_SERVER["REQUEST_URI"], "/");
         if ($url == "/__engine/1/ping") {
-            self::renderJSON(array(
+            $this->renderJSON(array(
                 "runtime" => "PHP:TODO",
                 "version" => LeanClient::VERSION
             ));
@@ -134,15 +186,17 @@ class LeanEngine {
                 header("Content-Length: 0");
                 exit;
             }
-            self::processSession();
+            $this->processSession();
             $user = LeanUser::getCurrentUser();
-
             if ($matches[3] == "/_ops/metadatas") {
-                // only master key can do this
-                self::renderJSON(Cloud::getKeys());
+                if ($this->req["useMaster"]) {
+                    $this->renderJSON(Cloud::getKeys());
+                } else {
+                    $this->renderError("Unauthorized.", 401, 401);
+                }
             }
-            // Get request body from input stream. Note php framework
-            // might read and emptied input.
+
+            // Note prior to php 5.6, the input can be read only once
             $body   = file_get_contents("php://input");
             $data   = LeanClient::decode(json_decode($body, true), null);
             $params = explode("/", ltrim($matches[3], "/"));
@@ -150,36 +204,34 @@ class LeanEngine {
                 if (count($params) == 1) {
                     // {1,1.1}/functions/{funcName}
                     $result = Cloud::runFunc($params[0], $data, $user);
+                    $this->renderJSON(array("result" => $result));
                 } else if ($params[0] == "onVerified") {
                     // {1,1.1}/functions/onVerified/sms
                     Cloud::runOnVerified($params[1], $user);
-                    $result = "ok";
+                    $this->renderJSON(array("result" => "ok"));
                 } else if ($params[0] == "_User" && $params[1] == "onLogin") {
                     // {1,1.1}/functions/_User/onLogin
                     Cloud::runOnLogin($data["object"]);
-                    $result = "ok";
+                    $this->renderJSON(array("result" => "ok"));
                 } else if ($params[0] == "BigQuery" || $params[0] == "Insight") {
                     // {1,1.1}/functions/BigQuery/onComplete
                     Cloud::runOnInsight($data);
-                    $result = "ok";
+                    $this->renderJSON(array("result" => "ok"));
                 } else if (count($params) == 2) {
                     // {1,1.1}/functions/{className}/beforeSave
                     $obj = $data["object"];
                     Cloud::runHook($params[0], $params[1],
                                    $obj, $user);
                     if ($params[1] == "beforeDelete") {
-                        $result = "";
+                        $this->renderJSON(array());
                     } else if (strpos($params[1], "after") === 0) {
-                        $result = "ok";
+                        $this->renderJSON(array("result" => "ok"));
                     } else {
-                        $result = $obj;
+                        $this->renderJSON($obj);
                     }
-                } else {
-                    self::renderError("Route not found.", 1, 404);
                 }
-                self::renderJSON(array("result" => $result));
             } catch (FunctionError $err) {
-                self::renderError($err->getMessage(), $err->getCode());
+                $this->renderError($err->getMessage(), $err->getCode());
             }
         }
     }
@@ -189,20 +241,20 @@ class LeanEngine {
      *
      * @param array $data
      */
-    private static function renderJSON($data) {
+    private function renderJSON($data) {
         header("Content-Type: application/json; charset=utf-8;");
         echo json_encode(LeanClient::encode($data));
         exit;
     }
 
     /**
-     * Render error response and end request
+     * Render error and end request
      *
      * @param string $message Error message
      * @param string $code    Error code
      * @param string $status  Http response status code
      */
-    private static function renderError($message, $code=1, $status=400) {
+    private function renderError($message, $code=1, $status=400) {
         http_response_code($status);
         header("Content-Type: application/json; charset=utf-8;");
         echo json_encode(array(
@@ -216,18 +268,32 @@ class LeanEngine {
      * Start engine and process request
      */
     public function start() {
-        self::dispatch();
+        $this->dispatch();
     }
 
     /**
-     * Function to expose LeanEngine as Laraval middleware
+     * Handle Laravel request
+     *
+     * It exposes LeanEngine as a Laravel middleware, which can be
+     * registered in Laravel application. E.g. in
+     * `app/Http/Kernel.php`:
+     *
+     * ```php
+     * class Kernel extends HttpKernel {
+     *     protected $middleware = [
+     *         ...,
+     *         \LeanCloud\Engine\LeanEngine::class,
+     *     ];
+     * }
+     * ```
      *
      * @param Request  $request Laravel request
      * @param Callable $next    Laravel Closure
      * @return mixed
+     * @link http://laravel.com/docs/5.1/middleware
      */
     public function handle($request, $next) {
-        self::dispatch();
+        $this->dispatch();
         return $next($request);
     }
 }
