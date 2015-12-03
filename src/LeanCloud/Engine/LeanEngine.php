@@ -59,18 +59,18 @@ class LeanEngine {
 
     private function parsePlainBody($data) {
         if (!empty($data)) {
-            $this->req["appId"]        = isset($data["_ApplicationId"]) ?
-                                       $data["_ApplicationId"] : null;
-            $this->req["appKey"]       = isset($data["_ApplicationKey"]) ?
-                                       $data["_ApplicationKey"] : null;
-            $this->req["masterKey"]    = isset($data["_MasterKey"]) ?
-                                       $data["_MasterKey"] : null;
-            $this->req["sessionToken"] = isset($data["_SessionToken"]) ?
-                                       $data["_SessionToken"] : null;
-            $this->req["sign"]         = null;
-            $this->req["useProd"]      = isset($data["_ApplicationProduction"]) ?
-                                       (true && $data["_ApplicationProduction"]) :
-                                       true;
+            $this->req["X_LC_ID"]         = isset($data["_ApplicationId"]) ?
+                                          $data["_ApplicationId"] : null;
+            $this->req["X_LC_KEY"]        = isset($data["_ApplicationKey"]) ?
+                                          $data["_ApplicationKey"] : null;
+            $this->req["X_LC_MASTER_KEY"] = isset($data["_MasterKey"]) ?
+                                          $data["_MasterKey"] : null;
+            $this->req["X_LC_SESSION"]    = isset($data["_SessionToken"]) ?
+                                          $data["_SessionToken"] : null;
+            $this->req["X_LC_SIGN"]       = null;
+            $this->req["useProd"] = isset($data["_ApplicationProduction"]) ?
+                                  (true && $data["_ApplicationProduction"]) :
+                                  true;
             // remove internal fields set by API
             forEach($data as $key) {
                 if ($key[0] === "_") {
@@ -104,26 +104,26 @@ class LeanEngine {
             $this->parsePlainBody(json_decode($body, true));
         } else {
             $this->req["data"]  = json_decode($body, true);
-            $this->req["appId"] = $this->getVal($_SERVER, array(
+            $this->req["X_LC_ID"] = $this->getVal($_SERVER, array(
                 "HTTP_X_LC_ID",
                 "HTTP_X_AVOSCLOUD_APPLICATION_ID",
                 "HTTP_X_ULURU_APPLICATION_ID"
             ));
-            $this->req["appKey"] = $this->getVal($_SERVER, array(
+            $this->req["X_LC_KEY"] = $this->getVal($_SERVER, array(
                 "HTTP_X_LC_KEY",
                 "HTTP_X_AVOSCLOUD_APPLICATION_KEY",
                 "HTTP_X_ULURU_APPLICATION_KEY"
             ));
-            $this->req["masterKey"] = $this->getVal($_SERVER, array(
+            $this->req["X_LC_MASTER_KEY"] = $this->getVal($_SERVER, array(
                 "HTTP_X_AVOSCLOUD_MASTER_KEY",
                 "HTTP_X_ULURU_MASTER_KEY"
             ));
-            $this->req["sessionToken"] = $this->getVal($_SERVER, array(
+            $this->req["X_LC_SESSION"] = $this->getVal($_SERVER, array(
                 "HTTP_X_LC_SESSION",
                 "HTTP_X_AVOSCLOUD_SESSION_TOKEN",
                 "HTTP_X_ULURU_SESSION_TOKEN"
             ));
-            $this->req["sign"] = $this->getVal($_SERVER, array(
+            $this->req["X_LC_SIGN"] = $this->getVal($_SERVER, array(
                 "HTTP_X_LC_SIGN",
                 "HTTP_X_AVOSCLOUD_REQUEST_SIGN"
             ));
@@ -136,7 +136,7 @@ class LeanEngine {
             if ($prod === 0 || $prod === false) {
                 $this->req["useProd"] = false;
             }
-            $this->req["origin"] = $_SERVER["HTTP_ORIGIN"];
+            $this->req["ORIGIN"] = $_SERVER["HTTP_ORIGIN"];
         }
         $this->req["useMaster"] = false;
     }
@@ -145,8 +145,8 @@ class LeanEngine {
      * Authenticate application request
      */
     private function authRequest() {
-        $appId = $this->req["appId"];
-        $sign  = $this->req["sign"];
+        $appId = $this->req["X_LC_ID"];
+        $sign  = $this->req["X_LC_SIGN"];
         if ($sign && LeanClient::verifySign($appId, $sign)) {
             if (strpos($sign, "master") !== false) {
                 $this->req["useMaster"] = true;
@@ -154,7 +154,7 @@ class LeanEngine {
             return true;
         }
 
-        $appKey = $this->req["appKey"];
+        $appKey = $this->req["X_LC_KEY"];
         if ($appKey && LeanClient::verifyKey($appId, $appKey)) {
             if (strpos($appKey, "master") !== false) {
                 $this->req["useMaster"] = true;
@@ -162,7 +162,7 @@ class LeanEngine {
             return true;
         }
 
-        $masterKey = $this->req["masterKey"];
+        $masterKey = $this->req["X_LC_MASTER_KEY"];
         $key = "{$masterKey}, master";
         if ($masterKey && LeanClient::verifyKey($appId, $key)) {
             $this->req["useMaster"] = true;
@@ -177,8 +177,9 @@ class LeanEngine {
      */
     private function processSession() {
         $this->authRequest();
-        if ($this->req["sessionToken"]) {
-            LeanUser::become($this->req["sessionToken"]);
+        $token = $this->req["X_LC_SESSION"];
+        if ($token) {
+            LeanUser::become($token);
         }
     }
 
@@ -191,7 +192,7 @@ class LeanEngine {
      */
     private function dispatch($method, $url, $data) {
         $url      = rtrim($url, "/");
-        if ($url == "/__engine/1/ping") {
+        if (strpos($url, "/__engine/1/ping") === 0) {
             $this->renderJSON(array(
                 "runtime" => "PHP:TODO",
                 "version" => LeanClient::VERSION
@@ -199,7 +200,7 @@ class LeanEngine {
         }
         $matches = array();
         if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) == 1) {
-            $origin = $this->req["origin"];
+            $origin = $this->req["ORIGIN"];
             header("Access-Control-Allow-Origin: " . ($origin ? $origin : "*"));
             if ($method == "OPTIONS") {
                 header("Access-Control-Max-Age: 86400");
@@ -212,7 +213,7 @@ class LeanEngine {
             }
             $this->processSession();
             $user = LeanUser::getCurrentUser();
-            if ($matches[3] == "/_ops/metadatas") {
+            if (strpos($matches[3], "/_ops/metadatas") === 0) {
                 if ($this->req["useMaster"]) {
                     $this->renderJSON(Cloud::getKeys());
                 } else {
