@@ -31,7 +31,7 @@ class LeanEngine {
     );
 
     /**
-     * Engine environment
+     * Request info
      *
      * @var array
      */
@@ -57,18 +57,8 @@ class LeanEngine {
         return $val;
     }
 
-    /**
-     * Parse app session info into req
-     *
-     */
-    private function parseRequest() {
-        $contentType = isset($_SERVER["CONTENT_TYPE"]) ?
-                     $_SERVER["CONTENT_TYPE"] :
-                     $_SERVER["HTTP_CONTENT_TYPE"];
-        if (preg_match("/text\/plain/", $contentType)) {
-            // the CORS request might be sent as POST request with text/plain
-            // header, whence the app key info is attached in the body as
-            // JSON.
+    private function parsePlainBody($data) {
+        if (!empty($data)) {
             $this->req["appId"]        = isset($data["_ApplicationId"]) ?
                                        $data["_ApplicationId"] : null;
             $this->req["appKey"]       = isset($data["_ApplicationKey"]) ?
@@ -80,8 +70,40 @@ class LeanEngine {
             $this->req["sign"]         = null;
             $this->req["useProd"]      = isset($data["_ApplicationProduction"]) ?
                                        (true && $data["_ApplicationProduction"]) :
-                                  true;
+                                       true;
+            // remove internal fields set by API
+            forEach($data as $key) {
+                if ($key[0] === "_") {
+                    unset($data[$key]);
+                }
+            }
+            $this->req["data"] = $data;
+        }
+    }
+
+    /**
+     * Parse raw request
+     */
+    private function parseRequest() {
+        $url  = $_SERVER["REQUEST_URI"];
+        $body = "";
+        if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/", $url) == 1) {
+            // Note prior to php 5.6, input could be read only once. To not
+            // interfere with 3rd party framework, we read it only within
+            // LeanEngine internal endpoints.
+            $body = file_get_contents("php://input");
+        }
+        $contentType = $this->getVal($_SERVER, array(
+            "CONTENT_TYPE",
+            "HTTP_CONTENT_TYPE"
+        ));
+        if (preg_match("/text\/plain/", $contentType)) {
+            // the CORS request might be sent as POST request with text/plain
+            // header, whence the app key info is attached in the body as
+            // JSON.
+            $this->parsePlainBody(json_decode($body, true));
         } else {
+            $this->req["data"]  = json_decode($body, true);
             $this->req["appId"] = $this->getVal($_SERVER, array(
                 "HTTP_X_LC_ID",
                 "HTTP_X_AVOSCLOUD_APPLICATION_ID",
@@ -114,6 +136,7 @@ class LeanEngine {
             if ($prod === 0 || $prod === false) {
                 $this->req["useProd"] = false;
             }
+            $this->req["origin"] = $_SERVER["HTTP_ORIGIN"];
         }
         $this->req["useMaster"] = false;
     }
@@ -153,7 +176,6 @@ class LeanEngine {
      * Process request session
      */
     private function processSession() {
-        $this->parseRequest();
         $this->authRequest();
         if ($this->req["sessionToken"]) {
             LeanUser::become($this->req["sessionToken"]);
@@ -163,9 +185,12 @@ class LeanEngine {
     /**
      * Dispatch request
      *
+     * @param string $method Request method
+     * @param string $url    Request URL
+     * @param array  $data   JSON decoded body
      */
-    private function dispatch() {
-        $url      = rtrim($_SERVER["REQUEST_URI"], "/");
+    private function dispatch($method, $url, $data) {
+        $url      = rtrim($url, "/");
         if ($url == "/__engine/1/ping") {
             $this->renderJSON(array(
                 "runtime" => "PHP:TODO",
@@ -173,9 +198,8 @@ class LeanEngine {
             ));
         }
         $matches = array();
-        if (preg_match("/\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) == 1) {
-            $method = $_SERVER["REQUEST_METHOD"];
-            $origin = $_SERVER["HTTP_ORIGIN"];
+        if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) == 1) {
+            $origin = $this->req["origin"];
             header("Access-Control-Allow-Origin: " . ($origin ? $origin : "*"));
             if ($method == "OPTIONS") {
                 header("Access-Control-Max-Age: 86400");
@@ -196,9 +220,7 @@ class LeanEngine {
                 }
             }
 
-            // Note prior to php 5.6, the input can be read only once
-            $body   = file_get_contents("php://input");
-            $data   = LeanClient::decode(json_decode($body, true), null);
+            $data   = LeanClient::decode($data, null);
             $params = explode("/", ltrim($matches[3], "/"));
             try {
                 if (count($params) == 1) {
@@ -268,7 +290,10 @@ class LeanEngine {
      * Start engine and process request
      */
     public function start() {
-        $this->dispatch();
+        $this->parseRequest();
+        $this->dispatch($_SERVER["REQUEST_METHOD"],
+                        $_SERVER["REQUEST_URI"],
+                        $this->req["data"]);
     }
 
     /**
@@ -293,7 +318,10 @@ class LeanEngine {
      * @link http://laravel.com/docs/5.1/middleware
      */
     public function handle($request, $next) {
-        $this->dispatch();
+        // TODO: parse laravel request
+        $this->dispatch($request->method(),
+                        $request->url(),
+                        $request->json());
         return $next($request);
     }
 }
