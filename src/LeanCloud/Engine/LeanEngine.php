@@ -38,17 +38,17 @@ class LeanEngine {
     private $req = array();
 
     /**
-     * Search keys for value in a hash array
+     * Retrieve value by multiple keys in array
      *
-     * @param array $map  The hash array to search in
+     * @param array $arr  The array to search in
      * @param array $keys Keys in order
      * @retrun mixed
      */
-    private function getVal($hash, $keys) {
+    private function retrieveVal($arr, $keys) {
         $val = null;
         forEach($keys as $k) {
-            if (isset($hash[$k])) {
-                $val = $hash[$k];
+            if (isset($arr[$k])) {
+                $val = $arr[$k];
             }
             if ($val) {
                 return $val;
@@ -57,7 +57,19 @@ class LeanEngine {
         return $val;
     }
 
-    private function parsePlainBody($data) {
+
+    /**
+     * Parse plain text body
+     *
+     * The CORS request might be sent as POST request with text/plain
+     * header, whence the app key info is attached in the body as
+     * JSON.
+     *
+     * @param string $body
+     * @return array $data
+     */
+    private function parsePlainBody($body) {
+        $data = json_decode($body, true);
         if (!empty($data)) {
             $this->req["X_LC_ID"]         = isset($data["_ApplicationId"]) ?
                                           $data["_ApplicationId"] : null;
@@ -71,6 +83,7 @@ class LeanEngine {
             $this->req["useProd"] = isset($data["_ApplicationProduction"]) ?
                                   (true && $data["_ApplicationProduction"]) :
                                   true;
+            $this->req["useMaster"] = false;
             // remove internal fields set by API
             forEach($data as $key) {
                 if ($key[0] === "_") {
@@ -79,70 +92,61 @@ class LeanEngine {
             }
             $this->req["data"] = $data;
         }
+        return $data;
     }
 
     /**
-     * Parse raw request
+     * Parse variant headers into standard names
      */
-    private function parseRequest() {
-        $url  = $_SERVER["REQUEST_URI"];
-        $body = "";
-        if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/", $url) == 1) {
-            // Note prior to php 5.6, input could be read only once. To not
-            // interfere with 3rd party framework, we read it only within
-            // LeanEngine internal endpoints.
-            $body = file_get_contents("php://input");
+    private function parseHeaders($headers=null) {
+        if (empty($headers)) {
+            $headers = $_SERVER;
         }
-        $contentType = $this->getVal($_SERVER, array(
+        $this->req["ORIGIN"] = $this->retrieveVal($headers, array(
+            "HTTP_ORIGIN"
+        ));
+        $this->req["CONTENT_TYPE"] = $this->retrieveVal($headers, array(
             "CONTENT_TYPE",
             "HTTP_CONTENT_TYPE"
         ));
-        if (preg_match("/text\/plain/", $contentType)) {
-            // the CORS request might be sent as POST request with text/plain
-            // header, whence the app key info is attached in the body as
-            // JSON.
-            $this->parsePlainBody(json_decode($body, true));
-        } else {
-            $this->req["data"]  = json_decode($body, true);
-            $this->req["X_LC_ID"] = $this->getVal($_SERVER, array(
-                "HTTP_X_LC_ID",
-                "HTTP_X_AVOSCLOUD_APPLICATION_ID",
-                "HTTP_X_ULURU_APPLICATION_ID"
-            ));
-            $this->req["X_LC_KEY"] = $this->getVal($_SERVER, array(
-                "HTTP_X_LC_KEY",
-                "HTTP_X_AVOSCLOUD_APPLICATION_KEY",
-                "HTTP_X_ULURU_APPLICATION_KEY"
-            ));
-            $this->req["X_LC_MASTER_KEY"] = $this->getVal($_SERVER, array(
-                "HTTP_X_AVOSCLOUD_MASTER_KEY",
-                "HTTP_X_ULURU_MASTER_KEY"
-            ));
-            $this->req["X_LC_SESSION"] = $this->getVal($_SERVER, array(
-                "HTTP_X_LC_SESSION",
-                "HTTP_X_AVOSCLOUD_SESSION_TOKEN",
-                "HTTP_X_ULURU_SESSION_TOKEN"
-            ));
-            $this->req["X_LC_SIGN"] = $this->getVal($_SERVER, array(
-                "HTTP_X_LC_SIGN",
-                "HTTP_X_AVOSCLOUD_REQUEST_SIGN"
-            ));
-            $prod = $this->getVal($_SERVER, array(
-                "HTTP_X_LC_PROD",
-                "HTTP_X_AVOSCLOUD_APPLICATION_PRODUCTION",
-                "HTTP_X_ULURU_APPLICATION_PRODUCTION"
-            ));
-            $this->req["useProd"] = true;
-            if ($prod === 0 || $prod === false) {
-                $this->req["useProd"] = false;
-            }
-            $this->req["ORIGIN"] = $_SERVER["HTTP_ORIGIN"];
+
+        $this->req["X_LC_ID"] = $this->retrieveVal($headers, array(
+            "HTTP_X_LC_ID",
+            "HTTP_X_AVOSCLOUD_APPLICATION_ID",
+            "HTTP_X_ULURU_APPLICATION_ID"
+        ));
+        $this->req["X_LC_KEY"] = $this->retrieveVal($headers, array(
+            "HTTP_X_LC_KEY",
+            "HTTP_X_AVOSCLOUD_APPLICATION_KEY",
+            "HTTP_X_ULURU_APPLICATION_KEY"
+        ));
+        $this->req["X_LC_MASTER_KEY"] = $this->retrieveVal($headers, array(
+            "HTTP_X_AVOSCLOUD_MASTER_KEY",
+            "HTTP_X_ULURU_MASTER_KEY"
+        ));
+        $this->req["X_LC_SESSION"] = $this->retrieveVal($headers, array(
+            "HTTP_X_LC_SESSION",
+            "HTTP_X_AVOSCLOUD_SESSION_TOKEN",
+            "HTTP_X_ULURU_SESSION_TOKEN"
+        ));
+        $this->req["X_LC_SIGN"] = $this->retrieveVal($headers, array(
+            "HTTP_X_LC_SIGN",
+            "HTTP_X_AVOSCLOUD_REQUEST_SIGN"
+        ));
+        $prod = $this->retrieveVal($headers, array(
+            "HTTP_X_LC_PROD",
+            "HTTP_X_AVOSCLOUD_APPLICATION_PRODUCTION",
+            "HTTP_X_ULURU_APPLICATION_PRODUCTION"
+        ));
+        $this->req["useProd"] = true;
+        if ($prod === 0 || $prod === false) {
+            $this->req["useProd"] = false;
         }
         $this->req["useMaster"] = false;
     }
 
     /**
-     * Authenticate application request
+     * Authenticate request by app ID and key
      */
     private function authRequest() {
         $appId = $this->req["X_LC_ID"];
@@ -173,7 +177,7 @@ class LeanEngine {
     }
 
     /**
-     * Process request session
+     * Set user session if sessionToken present
      */
     private function processSession() {
         $this->authRequest();
@@ -186,11 +190,25 @@ class LeanEngine {
     /**
      * Dispatch request
      *
+     * Following routes are processed and returned by LeanEngine:
+     *
+     * ```
+     * OPTIONS {1,1.1}/{functions,call}.*
+     * *       __engine/1/ping
+     * *      {1,1.1}/{functions,call}/_ops/metadatas
+     * *      {1,1.1}/{functions,call}/onVerified/{sms,email}
+     * *      {1,1.1}/{functions,call}/BigQuery/onComplete
+     * *      {1,1.1}/{functions,call}/{className}/{hookName}
+     * *      {1,1.1}/{functions,call}/{funcName}
+     * ```
+     *
+     * others may be added in future.
+     *
      * @param string $method Request method
      * @param string $url    Request URL
-     * @param array  $data   JSON decoded body
+     * @param array  $body   Request body
      */
-    private function dispatch($method, $url, $data) {
+    private function dispatch($method, $url, $body=null) {
         $url      = rtrim($url, "/");
         if (strpos($url, "/__engine/1/ping") === 0) {
             $this->renderJSON(array(
@@ -211,6 +229,16 @@ class LeanEngine {
                 header("Content-Length: 0");
                 exit;
             }
+            if (($method == "POST" || $method == "PUT") && empty($body)) {
+                // Note input can be read only once prior to php 5.6.
+                $body = file_get_contents("php://input");
+            }
+            if (preg_match("/text\/plain/", $this->req["CONTENT_TYPE"])) {
+                $json = $this->parsePlainBody($body);
+            } else {
+                $json = json_decode($body, true);
+            }
+
             $this->processSession();
             $user = LeanUser::getCurrentUser();
             if (strpos($matches[3], "/_ops/metadatas") === 0) {
@@ -221,7 +249,7 @@ class LeanEngine {
                 }
             }
 
-            $data   = LeanClient::decode($data, null);
+            $data   = LeanClient::decode($json, null);
             $params = explode("/", ltrim($matches[3], "/"));
             try {
                 if (count($params) == 1) {
@@ -243,14 +271,14 @@ class LeanEngine {
                 } else if (count($params) == 2) {
                     // {1,1.1}/functions/{className}/beforeSave
                     $obj = $data["object"];
-                    Cloud::runHook($params[0], $params[1],
+                    $obj2 = Cloud::runHook($params[0], $params[1],
                                    $obj, $user);
                     if ($params[1] == "beforeDelete") {
                         $this->renderJSON(array());
                     } else if (strpos($params[1], "after") === 0) {
                         $this->renderJSON(array("result" => "ok"));
                     } else {
-                        $this->renderJSON($obj);
+                        $this->renderJSON($obj2);
                     }
                 }
             } catch (FunctionError $err) {
@@ -291,10 +319,9 @@ class LeanEngine {
      * Start engine and process request
      */
     public function start() {
-        $this->parseRequest();
+        $this->parseHeaders($_SERVER);
         $this->dispatch($_SERVER["REQUEST_METHOD"],
-                        $_SERVER["REQUEST_URI"],
-                        $this->req["data"]);
+                        $_SERVER["REQUEST_URI"]);
     }
 
     /**
@@ -319,10 +346,10 @@ class LeanEngine {
      * @link http://laravel.com/docs/5.1/middleware
      */
     public function handle($request, $next) {
-        // TODO: parse laravel request
+        $this->parseHeaders($request->header());
         $this->dispatch($request->method(),
                         $request->url(),
-                        $request->json());
+                        $request->getContent());
         return $next($request);
     }
 }
