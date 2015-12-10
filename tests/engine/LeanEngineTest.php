@@ -107,5 +107,19 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("ok", $resp["result"]);
     }
 
+    public function testBeforeSave() {
+        $obj = array(
+            "__type"    => "Object",
+            "className" => "TestObject",
+            "objectId"  => "id002",
+            "name"      => "alice"
+        );
+        $resp = $this->request("/1/functions/TestObject/beforeSave", "POST",
+                               array("object" => $obj));
+        $obj2 = $resp;
+        $this->assertEquals($obj["objectId"], $obj2["objectId"]);
+        $this->assertEquals($obj["name"],     $obj2["name"]);
+        $this->assertEquals(42,               $obj2["__testKey"]);
+    }
 }
 

@@ -34,6 +34,10 @@ Cloud::onVerified("sms", function($user){
     return;
 });
 
-$engine = new LeanEngine();
-$engine->start();
+Cloud::beforeSave("TestObject", function($obj, $user) {
+    $obj->set("__testKey", 42);
+    return $obj;
+});
+
+LeanEngine::start();
 

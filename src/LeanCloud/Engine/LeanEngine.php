@@ -31,11 +31,11 @@ class LeanEngine {
     );
 
     /**
-     * Request info
+     * Parsed env variables
      *
      * @var array
      */
-    private $req = array();
+    public static $ENV = array();
 
     /**
      * Retrieve value by multiple keys in array
@@ -44,7 +44,7 @@ class LeanEngine {
      * @param array $keys Keys in order
      * @retrun mixed
      */
-    private function retrieveVal($arr, $keys) {
+    private static function retrieveVal($arr, $keys) {
         $val = null;
         forEach($keys as $k) {
             if (isset($arr[$k])) {
@@ -57,7 +57,6 @@ class LeanEngine {
         return $val;
     }
 
-
     /**
      * Parse plain text body
      *
@@ -66,122 +65,129 @@ class LeanEngine {
      * JSON.
      *
      * @param string $body
-     * @return array $data
+     * @return array Decoded body array
      */
-    private function parsePlainBody($body) {
+    private static function parsePlainBody($body) {
         $data = json_decode($body, true);
         if (!empty($data)) {
-            $this->req["X_LC_ID"]         = isset($data["_ApplicationId"]) ?
+            self::$ENV["LC_ID"]         = isset($data["_ApplicationId"]) ?
                                           $data["_ApplicationId"] : null;
-            $this->req["X_LC_KEY"]        = isset($data["_ApplicationKey"]) ?
+            self::$ENV["LC_KEY"]        = isset($data["_ApplicationKey"]) ?
                                           $data["_ApplicationKey"] : null;
-            $this->req["X_LC_MASTER_KEY"] = isset($data["_MasterKey"]) ?
+            self::$ENV["LC_MASTER_KEY"] = isset($data["_MasterKey"]) ?
                                           $data["_MasterKey"] : null;
-            $this->req["X_LC_SESSION"]    = isset($data["_SessionToken"]) ?
+            self::$ENV["LC_SESSION"]    = isset($data["_SessionToken"]) ?
                                           $data["_SessionToken"] : null;
-            $this->req["X_LC_SIGN"]       = null;
-            $this->req["useProd"] = isset($data["_ApplicationProduction"]) ?
+            self::$ENV["LC_SIGN"]       = null;
+            self::$ENV["useProd"] = isset($data["_ApplicationProduction"]) ?
                                   (true && $data["_ApplicationProduction"]) :
                                   true;
-            $this->req["useMaster"] = false;
+            self::$ENV["useMaster"] = false;
             // remove internal fields set by API
             forEach($data as $key) {
                 if ($key[0] === "_") {
                     unset($data[$key]);
                 }
             }
-            $this->req["data"] = $data;
         }
         return $data;
     }
 
     /**
      * Parse variant headers into standard names
+     *
+     * The headers shall be an associative array that contains raw
+     * header keys. For example, in Laravel they are available at
+     * `$request->header()`. It will default to `$_SERVER` if not
+     * provided.
+     *
+     * @param array $headers
      */
-    private function parseHeaders($headers=null) {
+    private static function parseHeaders($headers=null) {
         if (empty($headers)) {
             $headers = $_SERVER;
         }
-        $this->req["ORIGIN"] = $this->retrieveVal($headers, array(
+        self::$ENV["ORIGIN"] = static::retrieveVal($headers, array(
             "HTTP_ORIGIN"
         ));
-        $this->req["CONTENT_TYPE"] = $this->retrieveVal($headers, array(
+        self::$ENV["CONTENT_TYPE"] = static::retrieveVal($headers, array(
             "CONTENT_TYPE",
             "HTTP_CONTENT_TYPE"
         ));
 
-        $this->req["X_LC_ID"] = $this->retrieveVal($headers, array(
+        self::$ENV["LC_ID"] = static::retrieveVal($headers, array(
             "HTTP_X_LC_ID",
             "HTTP_X_AVOSCLOUD_APPLICATION_ID",
             "HTTP_X_ULURU_APPLICATION_ID"
         ));
-        $this->req["X_LC_KEY"] = $this->retrieveVal($headers, array(
+        self::$ENV["LC_KEY"] = static::retrieveVal($headers, array(
             "HTTP_X_LC_KEY",
             "HTTP_X_AVOSCLOUD_APPLICATION_KEY",
             "HTTP_X_ULURU_APPLICATION_KEY"
         ));
-        $this->req["X_LC_MASTER_KEY"] = $this->retrieveVal($headers, array(
+        self::$ENV["LC_MASTER_KEY"] = static::retrieveVal($headers, array(
             "HTTP_X_AVOSCLOUD_MASTER_KEY",
             "HTTP_X_ULURU_MASTER_KEY"
         ));
-        $this->req["X_LC_SESSION"] = $this->retrieveVal($headers, array(
+        self::$ENV["LC_SESSION"] = static::retrieveVal($headers, array(
             "HTTP_X_LC_SESSION",
             "HTTP_X_AVOSCLOUD_SESSION_TOKEN",
             "HTTP_X_ULURU_SESSION_TOKEN"
         ));
-        $this->req["X_LC_SIGN"] = $this->retrieveVal($headers, array(
+        self::$ENV["LC_SIGN"] = static::retrieveVal($headers, array(
             "HTTP_X_LC_SIGN",
             "HTTP_X_AVOSCLOUD_REQUEST_SIGN"
         ));
-        $prod = $this->retrieveVal($headers, array(
+        $prod = static::retrieveVal($headers, array(
             "HTTP_X_LC_PROD",
             "HTTP_X_AVOSCLOUD_APPLICATION_PRODUCTION",
             "HTTP_X_ULURU_APPLICATION_PRODUCTION"
         ));
-        $this->req["useProd"] = true;
+        self::$ENV["useProd"] = true;
         if ($prod === 0 || $prod === false) {
-            $this->req["useProd"] = false;
+            self::$ENV["useProd"] = false;
         }
-        $this->req["useMaster"] = false;
+        self::$ENV["useMaster"] = false;
     }
 
     /**
      * Authenticate request by app ID and key
      */
-    private function authRequest() {
-        $appId = $this->req["X_LC_ID"];
-        $sign  = $this->req["X_LC_SIGN"];
+    private static function authRequest() {
+        $appId = self::$ENV["LC_ID"];
+        $sign  = self::$ENV["LC_SIGN"];
         if ($sign && LeanClient::verifySign($appId, $sign)) {
             if (strpos($sign, "master") !== false) {
-                $this->req["useMaster"] = true;
+                self::$ENV["useMaster"] = true;
             }
             return true;
         }
 
-        $appKey = $this->req["X_LC_KEY"];
+        $appKey = self::$ENV["LC_KEY"];
         if ($appKey && LeanClient::verifyKey($appId, $appKey)) {
             if (strpos($appKey, "master") !== false) {
-                $this->req["useMaster"] = true;
+                self::$ENV["useMaster"] = true;
             }
             return true;
         }
 
-        $masterKey = $this->req["X_LC_MASTER_KEY"];
+        $masterKey = self::$ENV["LC_MASTER_KEY"];
         $key = "{$masterKey}, master";
         if ($masterKey && LeanClient::verifyKey($appId, $key)) {
-            $this->req["useMaster"] = true;
+            self::$ENV["useMaster"] = true;
             return true;
         }
 
-        $this->renderError("Unauthorized", 401, 401);
+        static::renderError("Unauthorized", 401, 401);
     }
 
     /**
      * Set user session if sessionToken present
+     *
      */
-    private function processSession() {
-        $this->authRequest();
-        $token = $this->req["X_LC_SESSION"];
+    private static function processSession() {
+        static::authRequest();
+        $token = self::$ENV["LC_SESSION"];
         if ($token) {
             LeanUser::become($token);
         }
@@ -205,20 +211,20 @@ class LeanEngine {
      * others may be added in future.
      *
      * @param string $method Request method
-     * @param string $url    Request URL
+     * @param string $url    Request url
      * @param array  $body   Request body
      */
-    private function dispatch($method, $url, $body=null) {
+    private static function dispatch($method, $url, $body=null) {
         $url      = rtrim($url, "/");
         if (strpos($url, "/__engine/1/ping") === 0) {
-            $this->renderJSON(array(
+            static::renderJSON(array(
                 "runtime" => "PHP:TODO",
                 "version" => LeanClient::VERSION
             ));
         }
         $matches = array();
-        if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) == 1) {
-            $origin = $this->req["ORIGIN"];
+        if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) === 1) {
+            $origin = self::$ENV["ORIGIN"];
             header("Access-Control-Allow-Origin: " . ($origin ? $origin : "*"));
             if ($method == "OPTIONS") {
                 header("Access-Control-Max-Age: 86400");
@@ -233,19 +239,19 @@ class LeanEngine {
                 // Note input can be read only once prior to php 5.6.
                 $body = file_get_contents("php://input");
             }
-            if (preg_match("/text\/plain/", $this->req["CONTENT_TYPE"])) {
-                $json = $this->parsePlainBody($body);
+            if (preg_match("/text\/plain/", self::$ENV["CONTENT_TYPE"])) {
+                $json = static::parsePlainBody($body);
             } else {
                 $json = json_decode($body, true);
             }
 
-            $this->processSession();
+            static::processSession();
             $user = LeanUser::getCurrentUser();
             if (strpos($matches[3], "/_ops/metadatas") === 0) {
-                if ($this->req["useMaster"]) {
-                    $this->renderJSON(Cloud::getKeys());
+                if (self::$ENV["useMaster"]) {
+                    static::renderJSON(Cloud::getKeys());
                 } else {
-                    $this->renderError("Unauthorized.", 401, 401);
+                    static::renderError("Unauthorized.", 401, 401);
                 }
             }
 
@@ -255,34 +261,33 @@ class LeanEngine {
                 if (count($params) == 1) {
                     // {1,1.1}/functions/{funcName}
                     $result = Cloud::runFunc($params[0], $data, $user);
-                    $this->renderJSON(array("result" => $result));
+                    static::renderJSON(array("result" => $result));
                 } else if ($params[0] == "onVerified") {
                     // {1,1.1}/functions/onVerified/sms
                     Cloud::runOnVerified($params[1], $user);
-                    $this->renderJSON(array("result" => "ok"));
+                    static::renderJSON(array("result" => "ok"));
                 } else if ($params[0] == "_User" && $params[1] == "onLogin") {
                     // {1,1.1}/functions/_User/onLogin
                     Cloud::runOnLogin($data["object"]);
-                    $this->renderJSON(array("result" => "ok"));
+                    static::renderJSON(array("result" => "ok"));
                 } else if ($params[0] == "BigQuery" || $params[0] == "Insight") {
                     // {1,1.1}/functions/BigQuery/onComplete
                     Cloud::runOnInsight($data);
-                    $this->renderJSON(array("result" => "ok"));
+                    static::renderJSON(array("result" => "ok"));
                 } else if (count($params) == 2) {
                     // {1,1.1}/functions/{className}/beforeSave
-                    $obj = $data["object"];
-                    $obj2 = Cloud::runHook($params[0], $params[1],
-                                   $obj, $user);
+                    $obj = Cloud::runHook($params[0], $params[1],
+                                          $data["object"], $user);
                     if ($params[1] == "beforeDelete") {
-                        $this->renderJSON(array());
+                        static::renderJSON(array());
                     } else if (strpos($params[1], "after") === 0) {
-                        $this->renderJSON(array("result" => "ok"));
+                        static::renderJSON(array("result" => "ok"));
                     } else {
-                        $this->renderJSON($obj2);
+                        static::renderJSON($obj->toJSON());
                     }
                 }
             } catch (FunctionError $err) {
-                $this->renderError($err->getMessage(), $err->getCode());
+                static::renderError($err->getMessage(), $err->getCode());
             }
         }
     }
@@ -292,9 +297,9 @@ class LeanEngine {
      *
      * @param array $data
      */
-    private function renderJSON($data) {
+    private static function renderJSON($data) {
         header("Content-Type: application/json; charset=utf-8;");
-        echo json_encode(LeanClient::encode($data));
+        echo json_encode($data);
         exit;
     }
 
@@ -305,7 +310,7 @@ class LeanEngine {
      * @param string $code    Error code
      * @param string $status  Http response status code
      */
-    private function renderError($message, $code=1, $status=400) {
+    private static function renderError($message, $code=1, $status=400) {
         http_response_code($status);
         header("Content-Type: application/json; charset=utf-8;");
         echo json_encode(array(
@@ -318,10 +323,10 @@ class LeanEngine {
     /**
      * Start engine and process request
      */
-    public function start() {
-        $this->parseHeaders($_SERVER);
-        $this->dispatch($_SERVER["REQUEST_METHOD"],
-                        $_SERVER["REQUEST_URI"]);
+    public static function start() {
+        static::parseHeaders($_SERVER);
+        static::dispatch($_SERVER["REQUEST_METHOD"],
+                         $_SERVER["REQUEST_URI"]);
     }
 
     /**
@@ -346,10 +351,10 @@ class LeanEngine {
      * @link http://laravel.com/docs/5.1/middleware
      */
     public function handle($request, $next) {
-        $this->parseHeaders($request->header());
-        $this->dispatch($request->method(),
-                        $request->url(),
-                        $request->getContent());
+        static::parseHeaders($request->header());
+        static::dispatch($request->method(),
+                         $request->url(),
+                         $request->getContent());
         return $next($request);
     }
 }
