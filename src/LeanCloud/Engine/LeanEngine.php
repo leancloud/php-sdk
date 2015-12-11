@@ -260,45 +260,61 @@ class LeanEngine {
 
             $data   = LeanClient::decode($json, null);
             $params = explode("/", ltrim($matches["extra"], "/"));
-            try {
-                if (count($params) == 1) {
-                    // {1,1.1}/functions/{funcName}
+            if (count($params) == 1) {
+                // {1,1.1}/functions/{funcName}
+                try {
                     $result = Cloud::runFunc($params[0], $data, $user);
-                    if ($matches["endpoint"] === "functions") {
-                        // Encode object to type-less literal JSON
-                        $out = LeanClient::encode($result, "toJSON");
-                    } else {
-                        // Encode object to full, type-annotated JSON
-                        $out = LeanClient::encode($result, "toFullJSON");
-                    }
-                    static::renderJSON(array("result" => $out));
-                } else if ($params[0] == "onVerified") {
-                    // {1,1.1}/functions/onVerified/sms
+                } catch (FunctionError $err) {
+                    static::renderError($err->getMessage(), $err->getCode());
+                }
+                if ($matches["endpoint"] === "functions") {
+                    // Encode object to type-less literal JSON
+                    $out = LeanClient::encode($result, "toJSON");
+                } else {
+                    // Encode object to full, type-annotated JSON
+                    $out = LeanClient::encode($result, "toFullJSON");
+                }
+                static::renderJSON(array("result" => $out));
+            } else if ($params[0] == "onVerified") {
+                // {1,1.1}/functions/onVerified/sms
+                try {
                     Cloud::runOnVerified($params[1], $user);
-                    static::renderJSON(array("result" => "ok"));
-                } else if ($params[0] == "_User" && $params[1] == "onLogin") {
-                    // {1,1.1}/functions/_User/onLogin
+                } catch (FunctionError $err) {
+                    static::renderError($err->getMessage(), $err->getCode());
+                }
+                static::renderJSON(array("result" => "ok"));
+            } else if ($params[0] == "_User" && $params[1] == "onLogin") {
+                // {1,1.1}/functions/_User/onLogin
+                try {
                     Cloud::runOnLogin($data["object"]);
-                    static::renderJSON(array("result" => "ok"));
-                } else if ($params[0] == "BigQuery" || $params[0] == "Insight") {
-                    // {1,1.1}/functions/BigQuery/onComplete
+                } catch (FunctionError $err) {
+                    static::renderError($err->getMessage(), $err->getCode());
+                }
+                static::renderJSON(array("result" => "ok"));
+            } else if ($params[0] == "BigQuery" || $params[0] == "Insight") {
+                // {1,1.1}/functions/BigQuery/onComplete
+                try {
                     Cloud::runOnInsight($data);
-                    static::renderJSON(array("result" => "ok"));
-                } else if (count($params) == 2) {
-                    // {1,1.1}/functions/{className}/beforeSave
+                } catch (FunctionError $err) {
+                    static::renderError($err->getMessage(), $err->getCode());
+                }
+                static::renderJSON(array("result" => "ok"));
+            } else if (count($params) == 2) {
+                // {1,1.1}/functions/{className}/beforeSave
+                try {
                     $obj = Cloud::runHook($params[0], $params[1],
                                           $data["object"], $user);
-                    if ($params[1] == "beforeDelete") {
-                        static::renderJSON(array());
-                    } else if (strpos($params[1], "after") === 0) {
-                        static::renderJSON(array("result" => "ok"));
-                    } else {
-                        // Encode object to type-less literal JSON
-                        static::renderJSON($obj->toJSON());
-                    }
+                } catch (FunctionError $err) {
+                    static::renderError($err->getMessage(), $err->getCode());
                 }
-            } catch (FunctionError $err) {
-                static::renderError($err->getMessage(), $err->getCode());
+                if ($params[1] == "beforeDelete") {
+                    static::renderJSON(array());
+                } else if (strpos($params[1], "after") === 0) {
+                    static::renderJSON(array("result" => "ok"));
+                } else {
+                    // Encode object to type-less literal JSON
+                    static::renderJSON($obj->toJSON());
+                }
             }
         }
     }
