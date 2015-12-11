@@ -329,6 +329,60 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(39.9, $val->getLatitude());
         $this->assertEquals(116.4, $val->getLongitude());
     }
+
+    public function testEncodeObjectToJSON() {
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
+        $a->set("name", "A");
+        $b->set("name", "B");
+        $a->addIn("likes", $b);
+        $json = LeanClient::encode($a, "toJSON");
+        $this->assertEquals("A", $json["name"]);
+        $this->assertEquals("id001", $json["objectId"]);
+        $this->assertEquals("B", $json["likes"][0]["name"]);
+        $this->assertEquals("id002", $json["likes"][0]["objectId"]);
+
+        $this->assertNotContains("__type", $json);
+        $this->assertNotContains("className", $json["likes"][0]);
+    }
+
+    public function testEncodeObjectToFullJSON() {
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
+        $a->set("name", "A");
+        $b->set("name", "B");
+        $a->addIn("likes", $b);
+        $json = LeanClient::encode($a, "toFullJSON");
+        $this->assertEquals("A", $json["name"]);
+        $this->assertEquals("id001", $json["objectId"]);
+        $this->assertEquals("B", $json["likes"][0]["name"]);
+        $this->assertEquals("id002", $json["likes"][0]["objectId"]);
+
+        $this->assertEquals("Object",     $json["__type"]);
+        $this->assertEquals("TestObject", $json["className"]);
+        $this->assertEquals("Object",     $json["likes"][0]["__type"]);
+        $this->assertEquals("TestObject", $json["likes"][0]["className"]);
+    }
+
+    public function testEncodeCircularObjectAsPointer() {
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
+        $c = new LeanObject("TestObject", "id003");
+        $a->set("name", "A");
+        $b->set("name", "B");
+        $c->set("name", "C");
+        $a->addIn("likes", $b);
+        $b->addIn("likes", $c);
+        $c->addIn("likes", $a);
+        $jsonA = LeanClient::encode($a, "toFullJSON");
+        $jsonB = $jsonA["likes"][0];
+        $jsonC = $jsonB["likes"][0];
+
+        $this->assertEquals("Object", $jsonA["__type"]);
+        $this->assertEquals("Object", $jsonB["__type"]);
+        $this->assertEquals("Object", $jsonC["__type"]);
+        $this->assertEquals("Pointer", $jsonC["likes"][0]["__type"]);
+    }
 }
 
 

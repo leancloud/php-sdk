@@ -577,12 +577,36 @@ EOT;
     }
 
     /**
-     * Encode value for sending to LeanCloud
+     * Recursively encode value as JSON representation
      *
-     * @param mixed $value
+     * By default LeanObject will be encoded as pointer, though
+     * `$encoder` could be provided to encode to customized type, such
+     * as full `__type` annotated json object. The $encoder must be
+     * name of instance method of LeanObject.
+     *
+     * To vaoid infinite loop in the case of circular LeanObject
+     * references, previously seen objects (`$seen`) are encoded
+     * in pointer, even a customized encoder was provided.
+     *
+     * ```php
+     * $obj = new TestObject();
+     * $obj->set("owner", $user);
+     *
+     * // encode object to full JSON, with `__type` and `className`
+     * LeanClient::encode($obj, "toFullJSON");
+     *
+     * // encode object to literal JSON, without `__type` and `className`
+     * LeanClient::encode($obj, "toJSON");
+     * ```
+     *
+     * @param mixed  $value
+     * @param string $encoder LeanObject encoder name, e.g.: getPointer, toJSON
+     * @param array  $seen    Array of LeanObject that has been traversed
      * @return mixed
      */
-    public static function encode($value) {
+    public static function encode($value,
+                                  $encoder=null,
+                                  $seen=array()) {
         if (is_null($value) || is_scalar($value)) {
             return $value;
         } else if (($value instanceof \DateTime) ||
@@ -590,7 +614,12 @@ EOT;
             return array("__type" => "Date",
                          "iso"    => self::formatDate($value));
         } else if ($value instanceof LeanObject) {
-            return $value->getPointer();
+            if ($encoder && !in_array($value, $seen)) {
+                $seen[] = $value;
+                return call_user_func(array($value, $encoder), $seen);
+            } else {
+                return $value->getPointer();
+            }
         } else if ($value instanceof IOperation ||
                    $value instanceof GeoPoint   ||
                    $value instanceof LeanBytes  ||
@@ -600,7 +629,7 @@ EOT;
         } else if (is_array($value)) {
             $res = array();
             forEach($value as $key => $val) {
-                $res[$key] = self::encode($val);
+                $res[$key] = self::encode($val, $encoder, $seen);
             }
             return $res;
         } else {
