@@ -17,8 +17,9 @@ class HttpsRedirect {
                 $reqHost = $_SERVER["HTTP_X_FORWARDED_HOST"];
             }
         } else {
-            // Note: HTTPS is set non-empty when secure, except when ISAPI
-            // with IIS sets it as "off" to indicate non-secure request.
+            // Note: By default it will be set non-empty for https request,
+            // though ISAPI with IIS sets it as "off" to indicate non-secure
+            // request.
             if (!empty($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] != "off")){
                 $reqProto = "https";
             }
