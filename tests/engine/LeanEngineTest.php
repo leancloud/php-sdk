@@ -3,6 +3,13 @@
 use LeanCloud\LeanClient;
 use LeanCloud\CloudException;
 
+/**
+ * Test LeanEngine app server
+ *
+ * The test suite runs against a running server started at index.php, please
+ * see that for returned response.
+ */
+
 class LeanEngineTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
         LeanClient::initialize(
@@ -67,6 +74,21 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("hello", $resp["result"]);
     }
 
+    public function testCallFunctionWithObject() {
+        $obj  = array(
+            "__type"    => "Object",
+            "className" => "TestObject",
+            "objectId"  => "id001",
+            "name"      => "alice"
+        );
+        $resp = $this->request("/1/call/updateObject", "POST", array(
+            "object" => $obj
+        ));
+        $this->assertEquals($obj["className"], $resp["result"]["className"]);
+        $this->assertEquals($obj["objectId"],  $resp["result"]["objectId"]);
+        $this->assertEquals(42,  $resp["result"]["__testKey"]);
+    }
+
     public function testFunctionWithParam() {
         $resp = $this->request("/1/functions/sayHello", "POST", array(
             "name" => "alice"
@@ -121,5 +143,30 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($obj["name"],     $obj2["name"]);
         $this->assertEquals(42,               $obj2["__testKey"]);
     }
+
+    public function testAfterSave() {
+        $obj = array(
+            "__type"    => "Object",
+            "className" => "TestObject",
+            "objectId"  => "id002",
+            "name"      => "alice"
+        );
+        $resp = $this->request("/1/functions/TestObject/afterSave", "POST",
+                               array("object" => $obj));
+        $this->assertEquals("ok", $resp["result"]);
+    }
+
+    public function testBeforeDelete() {
+        $obj = array(
+            "__type"    => "Object",
+            "className" => "TestObject",
+            "objectId"  => "id002",
+            "name"      => "alice"
+        );
+        $resp = $this->request("/1/functions/TestObject/beforeDelete", "POST",
+                               array("object" => $obj));
+        $this->assertEmpty($resp);
+    }
+
 }
 

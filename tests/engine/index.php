@@ -5,6 +5,7 @@ require_once "../../src/autoload.php";
 use LeanCloud\LeanClient;
 use LeanCloud\Engine\LeanEngine;
 use LeanCloud\Engine\Cloud;
+use LeanCloud\Engine\HttpsRedirect;
 
 LeanClient::initialize(
     getenv("LC_APP_ID"),
@@ -20,6 +21,12 @@ Cloud::define("hello", function() {
 // define function with named params
 Cloud::define("sayHello", function($params, $user) {
     return "hello {$params['name']}";
+});
+
+Cloud::define("updateObject", function($params, $user) {
+    $obj = $params["object"];
+    $obj->set("__testKey", 42);
+    return $obj;
 });
 
 Cloud::onLogin(function($user) {
@@ -39,5 +46,14 @@ Cloud::beforeSave("TestObject", function($obj, $user) {
     return $obj;
 });
 
+Cloud::afterSave("TestObject", function($obj, $user) {
+    return;
+});
+
+Cloud::beforeDelete("TestObject", function($obj, $user) {
+    return;
+});
+
+//HttpsRedirect::redirect();
 LeanEngine::start();
 

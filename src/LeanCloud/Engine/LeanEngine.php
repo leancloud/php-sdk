@@ -224,6 +224,9 @@ class LeanEngine {
         }
         $matches = array();
         if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) === 1) {
+            $matches["version"]  = $matches[1]; // 1 or 1.1
+            $matches["endpoint"] = $matches[2]; // functions or call
+            $matches["extra"]    = $matches[3]; // extra part after endpoint
             $origin = self::$ENV["ORIGIN"];
             header("Access-Control-Allow-Origin: " . ($origin ? $origin : "*"));
             if ($method == "OPTIONS") {
@@ -247,7 +250,7 @@ class LeanEngine {
 
             static::processSession();
             $user = LeanUser::getCurrentUser();
-            if (strpos($matches[3], "/_ops/metadatas") === 0) {
+            if (strpos($matches["extra"], "/_ops/metadatas") === 0) {
                 if (self::$ENV["useMaster"]) {
                     static::renderJSON(Cloud::getKeys());
                 } else {
@@ -256,12 +259,19 @@ class LeanEngine {
             }
 
             $data   = LeanClient::decode($json, null);
-            $params = explode("/", ltrim($matches[3], "/"));
+            $params = explode("/", ltrim($matches["extra"], "/"));
             try {
                 if (count($params) == 1) {
                     // {1,1.1}/functions/{funcName}
                     $result = Cloud::runFunc($params[0], $data, $user);
-                    static::renderJSON(array("result" => $result));
+                    if ($matches["endpoint"] === "functions") {
+                        // Encode object to type-less literal JSON
+                        $out = LeanClient::encode($result, "toJSON");
+                    } else {
+                        // Encode object to full, type-annotated JSON
+                        $out = LeanClient::encode($result, "toFullJSON");
+                    }
+                    static::renderJSON(array("result" => $out));
                 } else if ($params[0] == "onVerified") {
                     // {1,1.1}/functions/onVerified/sms
                     Cloud::runOnVerified($params[1], $user);
@@ -283,6 +293,7 @@ class LeanEngine {
                     } else if (strpos($params[1], "after") === 0) {
                         static::renderJSON(array("result" => "ok"));
                     } else {
+                        // Encode object to type-less literal JSON
                         static::renderJSON($obj->toJSON());
                     }
                 }
