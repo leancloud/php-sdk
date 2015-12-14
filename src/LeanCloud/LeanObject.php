@@ -150,21 +150,18 @@ class LeanObject {
     }
 
     /**
-     * Recursively encode object and its data to literal JSON
+     * Recursively encode object and its data to JSON
      *
-     * Recursively encode object and its (snapshot) data to literal
-     * JSON. Literal means object will not have `__type` and
-     * `className` attributes.
+     * Top level object are encoded to literal JSON, with __type and
+     * className stripped out.
      *
-     * @param array $seen Objects that have been traversed
      * @return array
      * @see self::toFullJSON
      */
-    public function toJSON($seen=array()) {
-        $out = array();
-        forEach($this->_data as $key => $val) {
-            $out[$key] = LeanClient::encode($val, "toJSON", $seen);
-        }
+    public function toJSON() {
+        $out = $this->toFullJSON();
+        unset($out["__type"]);
+        unset($out["className"]);
         return $out;
     }
 
