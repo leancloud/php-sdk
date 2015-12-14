@@ -215,18 +215,22 @@ class LeanEngine {
      * @param array  $body   Request body
      */
     private static function dispatch($method, $url, $body=null) {
-        $url      = rtrim($url, "/");
-        if (strpos($url, "/__engine/1/ping") === 0) {
+        $path = parse_url($url, PHP_URL_PATH);
+        $path = rtrim($path, "/");
+        if (strpos($path, "/__engine/1/ping") === 0) {
             static::renderJSON(array(
                 "runtime" => "PHP:TODO",
                 "version" => LeanClient::VERSION
             ));
         }
-        $matches = array();
-        if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/", $url, $matches) === 1) {
-            $matches["version"]  = $matches[1]; // 1 or 1.1
-            $matches["endpoint"] = $matches[2]; // functions or call
-            $matches["extra"]    = $matches[3]; // extra part after endpoint
+
+        $pathParts = array(); // matched path components
+        if (preg_match("/^\/(1|1\.1)\/(functions|call)(.*)/",
+                       $path,
+                       $pathParts) === 1) {
+            $pathParts["version"]  = $pathParts[1]; // 1 or 1.1
+            $pathParts["endpoint"] = $pathParts[2]; // functions or call
+            $pathParts["extra"]    = $pathParts[3]; // extra part after endpoint
             $origin = self::$ENV["ORIGIN"];
             header("Access-Control-Allow-Origin: " . ($origin ? $origin : "*"));
             if ($method == "OPTIONS") {
@@ -249,8 +253,7 @@ class LeanEngine {
             }
 
             static::processSession();
-            $user = LeanUser::getCurrentUser();
-            if (strpos($matches["extra"], "/_ops/metadatas") === 0) {
+            if (strpos($pathParts["extra"], "/_ops/metadatas") === 0) {
                 if (self::$ENV["useMaster"]) {
                     static::renderJSON(Cloud::getKeys());
                 } else {
@@ -258,65 +261,152 @@ class LeanEngine {
                 }
             }
 
-            $data   = LeanClient::decode($json, null);
-            $params = explode("/", ltrim($matches["extra"], "/"));
-            if (count($params) == 1) {
+            // extract func params from path:
+            // /1.1/call/{0}/{1}
+            $funcParams = explode("/", ltrim($pathParts["extra"], "/"));
+            if (count($funcParams) == 1) {
                 // {1,1.1}/functions/{funcName}
-                try {
-                    $result = Cloud::runFunc($params[0], $data, $user);
-                } catch (FunctionError $err) {
-                    static::renderError($err->getMessage(), $err->getCode());
-                }
-                if ($matches["endpoint"] === "functions") {
-                    // Encode object to type-less literal JSON
-                    $out = LeanClient::encode($result, "toJSON");
-                } else {
-                    // Encode object to full, type-annotated JSON
-                    $out = LeanClient::encode($result, "toFullJSON");
-                }
-                static::renderJSON(array("result" => $out));
-            } else if ($params[0] == "onVerified") {
-                // {1,1.1}/functions/onVerified/sms
-                try {
-                    Cloud::runOnVerified($params[1], $user);
-                } catch (FunctionError $err) {
-                    static::renderError($err->getMessage(), $err->getCode());
-                }
-                static::renderJSON(array("result" => "ok"));
-            } else if ($params[0] == "_User" && $params[1] == "onLogin") {
-                // {1,1.1}/functions/_User/onLogin
-                try {
-                    Cloud::runOnLogin($data["object"]);
-                } catch (FunctionError $err) {
-                    static::renderError($err->getMessage(), $err->getCode());
-                }
-                static::renderJSON(array("result" => "ok"));
-            } else if ($params[0] == "BigQuery" || $params[0] == "Insight") {
-                // {1,1.1}/functions/BigQuery/onComplete
-                try {
-                    Cloud::runOnInsight($data);
-                } catch (FunctionError $err) {
-                    static::renderError($err->getMessage(), $err->getCode());
-                }
-                static::renderJSON(array("result" => "ok"));
-            } else if (count($params) == 2) {
-                // {1,1.1}/functions/{className}/beforeSave
-                try {
-                    $obj = Cloud::runHook($params[0], $params[1],
-                                          $data["object"], $user);
-                } catch (FunctionError $err) {
-                    static::renderError($err->getMessage(), $err->getCode());
-                }
-                if ($params[1] == "beforeDelete") {
-                    static::renderJSON(array());
-                } else if (strpos($params[1], "after") === 0) {
-                    static::renderJSON(array("result" => "ok"));
-                } else {
-                    // Encode object to type-less literal JSON
-                    static::renderJSON($obj->toJSON());
+                static::dispatchFunc($funcParams[0], $json,
+                                     $pathParts["endpoint"] === "call");
+            } else {
+                if ($funcParams[0] == "onVerified") {
+                    // {1,1.1}/functions/onVerified/sms
+                    static::dispatchOnVerified($funcParams[1], $json);
+                } else if ($funcParams[0] == "_User" &&
+                           $funcParams[1] == "onLogin") {
+                    // {1,1.1}/functions/_User/onLogin
+                    static::dispatchOnLogin($json);
+                } else if ($funcParams[0] == "BigQuery" ||
+                           $funcParams[0] == "Insight") {
+                    // {1,1.1}/functions/Insight/onComplete
+                    static::dispatchOnInsight($json);
+                } else if (count($funcParams) == 2) {
+                    // {1,1.1}/functions/{className}/beforeSave
+                    static::dispatchHook($funcParams[0], $funcParams[1], $json);
                 }
             }
         }
+    }
+
+    /**
+     * Dispatch function and render result
+     *
+     * @param string $funcName Function name
+     * @param array  $body     JSON decoded body params
+     * @param bool   $decodeObj
+     */
+    private static function dispatchFunc($funcName, $body, $decodeObj=false) {
+        $params = $body;
+        if ($decodeObj) {
+            $params = LeanClient::decode($body, null);
+        }
+        try {
+            $result = Cloud::runFunc($funcName, $params,
+                                     LeanUser::getCurrentUser());
+        } catch (FunctionError $err) {
+            static::renderError($err->getMessage(), $err->getCode());
+        }
+        if ($decodeObj) {
+            // Encode object to full, type-annotated JSON
+            $out = LeanClient::encode($result, "toFullJSON");
+        } else {
+            // Encode object to type-less literal JSON
+            $out = LeanClient::encode($result, "toJSON");
+        }
+        static::renderJSON(array("result" => $out));
+    }
+
+    /**
+     * Dispatch class hook and render result
+     *
+     * @param string $className
+     * @param string $hookName
+     * @param array  $body     JSON decoded body params
+     */
+    private static function dispatchHook($className, $hookName, $body) {
+        $json              = $body["object"];
+        $json["__type"]    = "Object";
+        $json["className"] = $className;
+        $obj = LeanClient::decode($json, null);
+
+        // set hook marks to prevent infinite loop. For example if user
+        // invokes `$obj->save` in an afterSave hook, API will not again
+        // invoke afterSave if we set hook marks.
+        forEach(array("__before", "__after", "__after_update") as $key) {
+            if (isset($json[$key])) {
+                $obj->set($key, $json[$key]);
+            }
+        }
+
+        // in beforeUpdate hook, set updatedKeys so user can detect
+        // which keys are updated in the update.
+        if (isset($json["_updatedKeys"])) {
+            $obj->updatedKeys = $json["_updatedKeys"];
+        }
+
+        try {
+            $result = Cloud::runHook($className,
+                                     $hookName,
+                                     $obj,
+                                     LeanUser::getCurrentUser());
+        } catch (FunctionError $err) {
+            static::renderError($err->getMessage(), $err->getCode());
+        }
+        if ($hookName == "beforeDelete") {
+            static::renderJSON(array());
+        } else if (strpos($hookName, "after") === 0) {
+            static::renderJSON(array("result" => "ok"));
+        } else {
+            $outObj = $result;
+            // Encode result object to type-less literal JSON
+            static::renderJSON($outObj->toJSON());
+        }
+    }
+
+    /**
+     * Dispatch onVerified hook
+     *
+     * @param string $type Verify type: email or sms
+     * @param array  $body JSON decoded body params
+     */
+    private static function dispatchOnVerified($type, $body) {
+        $userObj = LeanClient::decode($body["object"], null);
+        LeanUser::saveCurrentUser($userObj);
+        try {
+            Cloud::runOnVerified($type, $userObj);
+        } catch (FunctionError $err) {
+            static::renderError($err->getMessage(), $err->getCode());
+        }
+        static::renderJSON(array("result" => "ok"));
+    }
+
+    /**
+     * Dispatch onLogin hook
+     *
+     * @param array $body JSON decoded body params
+     */
+    private static function dispatchOnLogin($body) {
+        $userObj = LeanClient::decode($body["object"], null);
+        try {
+            Cloud::runOnLogin($userObj);
+        } catch (FunctionError $err) {
+            static::renderError($err->getMessage(), $err->getCode());
+        }
+        static::renderJSON(array("result" => "ok"));
+    }
+
+    /**
+     * Dispatch onInsight hook
+     *
+     * @param array $body JSON decoded body params
+     */
+    private static function dispatchOnInsight($body) {
+        try {
+            Cloud::runOnInsight($body);
+        } catch (FunctionError $err) {
+            static::renderError($err->getMessage(), $err->getCode());
+        }
+        static::renderJSON(array("result" => "ok"));
     }
 
     /**
