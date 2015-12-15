@@ -226,7 +226,7 @@ class LeanEngine {
         $path = rtrim($path, "/");
         if (strpos($path, "/__engine/1/ping") === 0) {
             static::renderJSON(array(
-                "runtime" => "PHP:TODO",
+                "runtime" => "php-" . phpversion(),
                 "version" => LeanClient::VERSION
             ));
         }
