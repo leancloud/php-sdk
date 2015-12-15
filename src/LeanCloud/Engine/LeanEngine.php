@@ -301,8 +301,8 @@ class LeanEngine {
             $params = LeanClient::decode($body, null);
         }
         try {
-            $result = Cloud::runFunc($funcName, $params,
-                                     LeanUser::getCurrentUser());
+            $result = Cloud::run($funcName, $params,
+                                 LeanUser::getCurrentUser());
         } catch (FunctionError $err) {
             static::renderError($err->getMessage(), $err->getCode());
         }

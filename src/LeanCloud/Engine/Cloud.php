@@ -69,7 +69,7 @@ class Cloud {
      *
      * @param string   $funcName
      * @param callable $func
-     * @see self::runFunc
+     * @see self::run
      */
     public static function define($funcName, $func) {
         self::$repo[$funcName] = $func;
@@ -245,7 +245,7 @@ class Cloud {
      * Example:
      *
      * ```php
-     * LeanEngine::runFunc("sayHello", array("name" => "alice"), $user);
+     * LeanEngine::run("sayHello", array("name" => "alice"), $user);
      * // sayHello(array("name" => "alice"), $user);
      * ```
      *
@@ -256,7 +256,7 @@ class Cloud {
      * @throws FunctionError
      * @see self::define
      */
-    public static function runFunc($funcName, $params, $user) {
+    public static function run($funcName, $params, $user) {
         $func = self::getFunc($funcName);
         if (!$func) {
             throw new FunctionError("Cloud function not found.", 404);

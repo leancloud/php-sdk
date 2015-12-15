@@ -16,7 +16,7 @@ class CloudTest extends PHPUnit_Framework_TestCase {
             return "hello";
         });
 
-        $result = Cloud::runFunc("hello", array(), null);
+        $result = Cloud::run("hello", array(), null);
         $this->assertEquals("hello", $result);
     }
 
@@ -25,7 +25,7 @@ class CloudTest extends PHPUnit_Framework_TestCase {
             return "hello {$params['name']}";
         });
 
-        $result = Cloud::runFunc("sayHello", array("name" => "alice"), null);
+        $result = Cloud::run("sayHello", array("name" => "alice"), null);
         $this->assertEquals("hello alice", $result);
     }
 
