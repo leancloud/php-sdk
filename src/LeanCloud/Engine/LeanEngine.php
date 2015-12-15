@@ -114,6 +114,13 @@ class LeanEngine {
             "CONTENT_TYPE",
             "HTTP_CONTENT_TYPE"
         ));
+        self::$ENV["REMOTE_ADDR"] = static::retrieveVal($headers, array(
+            "HTTP_X_REAL_IP",
+            "HTTP_X_FORWARDED_FOR"
+        ));
+        if (empty(self::$ENV["REMOTE_ADDR"])) {
+            self::$ENV["REMOTE_ADDR"] = $_SERVER["REMOTE_ADDR"];
+        }
 
         self::$ENV["LC_ID"] = static::retrieveVal($headers, array(
             "HTTP_X_LC_ID",
@@ -300,9 +307,12 @@ class LeanEngine {
         if ($decodeObj) {
             $params = LeanClient::decode($body, null);
         }
+        $meta["remoteAddress"] = self::$ENV["REMOTE_ADDR"];
         try {
-            $result = Cloud::run($funcName, $params,
-                                 LeanUser::getCurrentUser());
+            $result = Cloud::run($funcName,
+                                 $params,
+                                 LeanUser::getCurrentUser(),
+                                 $meta);
         } catch (FunctionError $err) {
             static::renderError($err->getMessage(), $err->getCode());
         }
@@ -338,17 +348,19 @@ class LeanEngine {
             }
         }
 
-        // in beforeUpdate hook, set updatedKeys so user can detect
-        // which keys are updated in the update.
+        // in beforeUpdate hook, attach updatedKeys to object so user
+        // can detect changed keys in hook.
         if (isset($json["_updatedKeys"])) {
             $obj->updatedKeys = $json["_updatedKeys"];
         }
 
+        $meta["remoteAddress"] = self::$ENV["REMOTE_ADDR"];
         try {
             $result = Cloud::runHook($className,
                                      $hookName,
                                      $obj,
-                                     LeanUser::getCurrentUser());
+                                     LeanUser::getCurrentUser(),
+                                     $meta);
         } catch (FunctionError $err) {
             static::renderError($err->getMessage(), $err->getCode());
         }
@@ -372,8 +384,9 @@ class LeanEngine {
     private static function dispatchOnVerified($type, $body) {
         $userObj = LeanClient::decode($body["object"], null);
         LeanUser::saveCurrentUser($userObj);
+        $meta["remoteAddress"] = self::$ENV["REMOTE_ADDR"];
         try {
-            Cloud::runOnVerified($type, $userObj);
+            Cloud::runOnVerified($type, $userObj, $meta);
         } catch (FunctionError $err) {
             static::renderError($err->getMessage(), $err->getCode());
         }
@@ -387,8 +400,9 @@ class LeanEngine {
      */
     private static function dispatchOnLogin($body) {
         $userObj = LeanClient::decode($body["object"], null);
+        $meta["remoteAddress"] = self::$ENV["REMOTE_ADDR"];
         try {
-            Cloud::runOnLogin($userObj);
+            Cloud::runOnLogin($userObj, $meta);
         } catch (FunctionError $err) {
             static::renderError($err->getMessage(), $err->getCode());
         }
@@ -401,8 +415,9 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private static function dispatchOnInsight($body) {
+        $meta["remoteAddress"] = self::$ENV["REMOTE_ADDR"];
         try {
-            Cloud::runOnInsight($body);
+            Cloud::runOnInsight($body, $meta);
         } catch (FunctionError $err) {
             static::renderError($err->getMessage(), $err->getCode());
         }

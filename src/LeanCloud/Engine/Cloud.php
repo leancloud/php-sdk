@@ -252,16 +252,18 @@ class Cloud {
      * @param string   $funcName Name of defined function
      * @param array    $data     Array of parameters passed to function
      * @param LeanUser $user     Request user
+     * @param array    $meta     Optional parameters that will be passed to
+     *                           user function
      * @return mixed
      * @throws FunctionError
      * @see self::define
      */
-    public static function run($funcName, $params, $user) {
+    public static function run($funcName, $params, $user=null, $meta=array()) {
         $func = self::getFunc($funcName);
         if (!$func) {
             throw new FunctionError("Cloud function not found.", 404);
         }
-        return call_user_func($func, $params, $user);
+        return call_user_func($func, $params, $user, $meta);
     }
 
     /**
@@ -278,29 +280,34 @@ class Cloud {
      * @param string $hookName   Hook name, e.g. beforeUpdate
      * @param LeanObject $object The object of attached hook
      * @param LeanUser   $user   Request user
+     * @param array      $meta   Optional parameters that will be passed to
+     *                           user function
      * @return mixed
      * @throws FunctionError
      */
     public static function runHook($className, $hookName, $object,
-                                   $user=null) {
+                                   $user=null,
+                                   $meta=array()) {
         $name = self::getHookPrefix($hookName) . $className;
         $func = self::getFunc($name);
         if (!$func) {
             throw new FunctionError("Cloud hook `{$name}' not found.",
                                     404);
         }
-        return call_user_func($func, $object, $user);
+        return call_user_func($func, $object, $user, $meta);
     }
 
     /**
      * Run hook when a user logs in
      *
-     * @param LeanUser $user The user that tries to login
+     * @param LeanUser $user The user object that tries to login
+     * @param array    $meta Optional parameters that will be passed to
+     *                       user function
      * @throws FunctionError
      * @see self::onLogin
      */
-    public static function runOnLogin($user) {
-        return self::runHook("_User", "onLogin", $user);
+    public static function runOnLogin($user, $meta=array()) {
+        return self::runHook("_User", "onLogin", $user, $meta);
     }
 
     /**
@@ -308,44 +315,53 @@ class Cloud {
      *
      * @param string   $type Either "sms" or "email", case-sensitive
      * @param LeanUser $user The verifying user
+     * @param array    $meta Optional parameters that will be passed to
+     *                       user function
      * @throws FunctionError
      * @see self::onVerified
      */
-    public static function runOnVerified($type, $user) {
+    public static function runOnVerified($type, $user, $meta=array()) {
         $name = "__on_verified_{$type}";
         $func = self::getFunc($name);
         if (!$func) {
             throw new FunctionError("Cloud hook `{$name}' not found.",
                                     404);
         }
-        return call_user_func($func, $user);
+        return call_user_func($func, $user, $meta);
     }
 
     /**
      * Run hook when BigQuery complete
      *
+     * @param array $params Big query job info
+     * @param array $meta   Optional parameters that will be passed to
+     *                      user function
+     * @return mixed
+     * @throws FunctionError
      * @see self::runOnInsight
      */
-    public static function runOnBigQuery($params) {
-        return self::runOnInsight($params);
+    public static function runOnBigQuery($params, $meta=array()) {
+        return self::runOnInsight($params, $meta);
     }
 
     /**
      * Run hook on big query complete
      *
-     * @param array $job Big query job info
+     * @param array $params Big query job info
+     * @param array $meta   Optional parameters that will be passed to
+     *                      user function
      * @return mixed
      * @throws FunctionError
      * @see self::onInsight
      */
-    public static function runOnInsight($job) {
+    public static function runOnInsight($params, $meta=array()) {
         $name = "__on_complete_bigquery_job";
         $func = self::getFunc($name);
         if (!$func) {
             throw new FunctionError("Cloud hook `{$name}' not found.",
                                     404);
         }
-        return call_user_func($func, $job);
+        return call_user_func($func, $params, $meta);
     }
 }
 

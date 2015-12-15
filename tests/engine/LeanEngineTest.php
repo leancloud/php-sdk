@@ -96,6 +96,13 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("hello alice", $resp["result"]);
     }
 
+    public function testMetaParamsShouldHaveRemoteAddress() {
+        $resp = $this->request("/1/functions/getMeta", "POST", array(
+            "name" => "alice"
+        ));
+        $this->assertNotEmpty($resp["result"]["remoteAddress"]);
+    }
+
     public function testOnInsight() {
         $resp = $this->request("/1/functions/BigQuery/onComplete", "POST", array(
             "id" => "id001",

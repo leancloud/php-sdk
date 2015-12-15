@@ -11,6 +11,16 @@ class CloudTest extends PHPUnit_Framework_TestCase {
         $this->assertContains($name, Cloud::getKeys());
     }
 
+    public function testDefineFunctionWithoutArg() {
+        // user function are free to accept positional arguments,
+        // this one should not error out.
+        Cloud::define("hello", function() {
+            return "hello";
+        });
+        $result = Cloud::run("hello", array("name" => "alice"), null);
+        $this->assertEquals("hello", $result);
+    }
+
     public function testFunctionWithoutArg() {
         Cloud::define("hello", function($params, $user) {
             return "hello";
@@ -27,6 +37,19 @@ class CloudTest extends PHPUnit_Framework_TestCase {
 
         $result = Cloud::run("sayHello", array("name" => "alice"), null);
         $this->assertEquals("hello alice", $result);
+    }
+
+    public function testFunctionAcceptMeta() {
+        Cloud::define("getMeta", function($params, $user, $meta) {
+            return $meta['remoteAddress'];
+        });
+
+        $result = Cloud::run("getMeta",
+                             array("name" => "alice"),
+                             null,
+                             array("remoteAddress" => "10.0.0.1")
+        );
+        $this->assertEquals("10.0.0.1 ", $result);
     }
 
     public function testClassHook() {
@@ -71,33 +94,6 @@ class CloudTest extends PHPUnit_Framework_TestCase {
             $count += 1;
         });
         Cloud::runOnInsight(null);
-        $this->assertEquals(43, $count);
-    }
-
-    public function testAfterSave() {
-        $count = 42;
-        Cloud::afterSave("TestObject", function($obj, $user) use (&$count) {
-            $count += 1;
-        });
-        Cloud::runHook("TestObject", "afterSave", null, null);
-        $this->assertEquals(43, $count);
-    }
-
-    public function testBeforeUpdate() {
-        $count = 42;
-        Cloud::beforeUpdate("TestObject", function($obj, $user) use (&$count) {
-            $count += 1;
-        });
-        Cloud::runHook("TestObject", "beforeUpdate", null, null);
-        $this->assertEquals(43, $count);
-    }
-
-    public function testAfterUpdate() {
-        $count = 42;
-        Cloud::afterUpdate("TestObject", function($obj, $user) use (&$count) {
-            $count += 1;
-        });
-        Cloud::runHook("TestObject", "afterUpdate", null, null);
         $this->assertEquals(43, $count);
     }
 

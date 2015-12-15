@@ -23,6 +23,10 @@ Cloud::define("sayHello", function($params, $user) {
     return "hello {$params['name']}";
 });
 
+Cloud::define("getMeta", function($params, $user, $meta) {
+    return array("remoteAddress" => $meta["remoteAddress"]);
+});
+
 Cloud::define("updateObject", function($params, $user) {
     $obj = $params["object"];
     $obj->set("__testKey", 42);
