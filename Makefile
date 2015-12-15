@@ -8,6 +8,6 @@ doc:
 	vendor/bin/apigen generate --source src --destination docs
 
 test_engine:
-	php -t tests/engine -S $(LC_APP_HOST):$(LC_APP_PORT)
+	php -S ${LC_APP_HOST}:${LC_APP_PORT} tests/engine/index.php
 
 .PHONY: test doc test_engine

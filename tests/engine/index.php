@@ -1,6 +1,6 @@
 <?php
 
-require_once "../../src/autoload.php";
+require_once "src/autoload.php";
 
 use LeanCloud\LeanClient;
 use LeanCloud\Engine\LeanEngine;

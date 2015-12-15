@@ -163,7 +163,7 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
             "objectId"  => "id002",
             "name"      => "alice"
         );
-        $resp = $this->request("/1/functions/TestObject/beforeDelete", "POST",
+        $resp = $this->request("/1.1/functions/TestObject/beforeDelete", "POST",
                                array("object" => $obj));
         $this->assertEmpty($resp);
     }
