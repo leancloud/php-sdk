@@ -59,5 +59,6 @@ Cloud::beforeDelete("TestObject", function($obj, $user) {
 });
 
 //HttpsRedirect::redirect();
-LeanEngine::start();
+$engine = new LeanEngine();
+$engine->start();
 
