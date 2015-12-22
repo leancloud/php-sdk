@@ -212,16 +212,6 @@ class Cloud {
     /**
      * Define on complete hook for big query
      *
-     * @param callable $func
-     * @alias self::onInsight()
-     */
-    public static function onBigQuery($func) {
-        self::onInsight($func);
-    }
-
-    /**
-     * Define on complete hook for big query
-     *
      * The function takes one argument, the big query job info as array:
      *
      * ```php
@@ -328,20 +318,6 @@ class Cloud {
                                     404);
         }
         return call_user_func($func, $user, $meta);
-    }
-
-    /**
-     * Run hook when BigQuery complete
-     *
-     * @param array $params Big query job info
-     * @param array $meta   Optional parameters that will be passed to
-     *                      user function
-     * @return mixed
-     * @throws FunctionError
-     * @see self::runOnInsight
-     */
-    public static function runOnBigQuery($params, $meta=array()) {
-        return self::runOnInsight($params, $meta);
     }
 
     /**

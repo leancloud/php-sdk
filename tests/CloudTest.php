@@ -49,7 +49,7 @@ class CloudTest extends PHPUnit_Framework_TestCase {
                              null,
                              array("remoteAddress" => "10.0.0.1")
         );
-        $this->assertEquals("10.0.0.1 ", $result);
+        $this->assertEquals("10.0.0.1", $result);
     }
 
     public function testClassHook() {
