@@ -5,7 +5,6 @@ require_once "src/autoload.php";
 use LeanCloud\LeanClient;
 use LeanCloud\Engine\LeanEngine;
 use LeanCloud\Engine\Cloud;
-use LeanCloud\Engine\HttpsRedirect;
 
 LeanClient::initialize(
     getenv("LC_APP_ID"),
@@ -58,7 +57,6 @@ Cloud::beforeDelete("TestObject", function($obj, $user) {
     return;
 });
 
-//HttpsRedirect::redirect();
 $engine = new LeanEngine();
 $engine->start();
 
