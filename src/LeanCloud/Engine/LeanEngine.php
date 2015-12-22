@@ -71,6 +71,7 @@ class LeanEngine {
     protected function send($body, $status) {
         http_response_code($status);
         echo $body;
+        exit;
     }
 
     /**
@@ -93,13 +94,10 @@ class LeanEngine {
      * @param array $data
      */
     private function renderJSON($data=null, $status=200) {
-        if (!is_null($data)) {
-            $out = json_encode($data);
-            $this->withHeader("Content-Type",
-                              "application/json; charset=utf-8;")
-                ->send($out, $status);
-        }
-        exit;
+        $out = is_null($data) ? "" : json_encode($data);
+        $this->withHeader("Content-Type",
+                          "application/json; charset=utf-8;")
+            ->send($out, $status);
     }
 
     /**
@@ -116,7 +114,6 @@ class LeanEngine {
         ));
         $this->withHeader("Content-Type", "application/json; charset=utf-8;")
             ->send($data, $status);
-        exit;
     }
 
     /**
