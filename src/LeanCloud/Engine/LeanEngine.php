@@ -31,6 +31,12 @@ class LeanEngine {
     );
 
     /**
+     * Redirect to https or not
+     * @var bool
+     */
+    protected static $useHttpsRedirect = false;
+
+    /**
      * Parsed LeanEngine env variables
      *
      * @var array
@@ -71,6 +77,17 @@ class LeanEngine {
     protected function send($body, $status) {
         http_response_code($status);
         echo $body;
+        exit;
+    }
+
+    /**
+     * Redirect to URL
+     *
+     * @param string $url
+     */
+    protected function redirect($url) {
+        http_response_code(302);
+        header("Location: {$url}");
         exit;
     }
 
@@ -283,6 +300,9 @@ class LeanEngine {
      * @param string $url    Request url
      */
     protected function dispatch($method, $url) {
+        if (static::$useHttpsRedirect) {
+            $this->httpsRedirect();
+        }
         $path = parse_url($url, PHP_URL_PATH);
         $path = rtrim($path, "/");
         if (strpos($path, "/__engine/1/ping") === 0) {
@@ -496,6 +516,41 @@ class LeanEngine {
     public function start() {
         $this->dispatch($_SERVER["REQUEST_METHOD"],
                         $_SERVER["REQUEST_URI"]);
+    }
+
+    /**
+     * Redirect to http request to https
+     */
+    private function httpsRedirect() {
+        $reqProto = "http"; // request protocol
+        $reqHost  = $this->getHeaderLine('HTTP_X_FORWARDED_HOST');
+        if ($reqHost) {
+            // request forwarded by proxy
+            $reqProto = $this->getHeaderLine("HTTP_X_FORWARDED_PROTO");
+            $reqProto = strtolower($reqProto);
+        } else {
+            $reqHost  = $this->getHeaderLine('HTTP_HOST');
+            // ISAPI with IIS set HTTPS to off for non-secure request
+            if (empty($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] == "off") ) {
+                $reqProto = "http";
+            } else {
+                $reqProto = "https";
+            }
+        }
+
+        // Only redirect in production environment
+        $prod = (getenv("LC_APP_ENV") == "production");
+        if ($prod && $reqProto != "https") {
+            $url = "https://{$reqHost}{$_SERVER['REQUEST_URI']}";
+            $this->redirect($url);
+        }
+    }
+
+    /**
+     * Enable https redirect
+     */
+    public static function enableHttpsRedirect() {
+        static::$useHttpsRedirect = true;
     }
 
 }
