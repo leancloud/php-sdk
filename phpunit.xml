@@ -5,13 +5,13 @@
   <testsuites>
     <testsuite name="unit">
       <directory suffix="Test.php">tests</directory>
+      <exclude>tests/engine</exclude>
     </testsuite>
   </testsuites>
 
   <filter>
     <whitelist>
       <directory suffix=".php">src</directory>
-      <file>src/LeanCloud/LeanClient.php</file>
     </whitelist>
   </filter>
 </phpunit>

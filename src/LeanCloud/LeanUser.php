@@ -218,7 +218,7 @@ class LeanUser extends LeanObject {
      *
      * @param LeanUser
      */
-    private static function saveCurrentUser($user) {
+    public static function saveCurrentUser($user) {
         self::$currentUser = $user;
         self::setCurrentSessionToken($user->getSessionToken());
     }

@@ -235,6 +235,49 @@ class LeanClient {
     }
 
     /**
+     * Verify app ID and sign
+     *
+     * The sign must be in the format of "{md5sum},{timestamp}[,master]",
+     * which follows the format as in header "X-LC-Sign".
+     *
+     * @param string $appId App Id
+     * @param string $sign  Request sign
+     * @return bool
+     */
+    public static function verifySign($appId, $sign) {
+        if (!$appId || ($appId != self::$appId)) {
+            return false;
+        }
+        $parts = explode(",", $sign);
+        $key   = self::$appKey;
+        if (isset($parts[2]) && "master" === trim($parts[2])) {
+            $key = self::$appMasterKey;
+        }
+        return $parts[0] === md5(trim($parts[1]) . $key);
+    }
+
+    /**
+     * Verify app ID and key
+     *
+     * The key shall be in format of "{key}[,master]", it will be verified
+     * as master key if master suffix present.
+     *
+     * @param string $appId App Id
+     * @param string $key   App key or master key
+     * @return bool
+     */
+    public static function verifyKey($appId, $key) {
+        if (!$appId || ($appId != self::$appId)) {
+            return false;
+        }
+        $parts = explode(",", $key);
+        if (isset($parts[1]) && "master" === trim($parts[1])) {
+            return self::$appMasterKey === $parts[0];
+        }
+        return self::$appKey === $parts[0];
+    }
+
+    /**
      * Issue request to LeanCloud
      *
      * The data is passing in as an associative array, which will be encoded
@@ -534,12 +577,36 @@ EOT;
     }
 
     /**
-     * Encode value for sending to LeanCloud
+     * Recursively encode value as JSON representation
      *
-     * @param mixed $value
+     * By default LeanObject will be encoded as pointer, though
+     * `$encoder` could be provided to encode to customized type, such
+     * as full `__type` annotated json object. The $encoder must be
+     * name of instance method of LeanObject.
+     *
+     * To vaoid infinite loop in the case of circular LeanObject
+     * references, previously seen objects (`$seen`) are encoded
+     * in pointer, even a customized encoder was provided.
+     *
+     * ```php
+     * $obj = new TestObject();
+     * $obj->set("owner", $user);
+     *
+     * // encode object to full JSON, with `__type` and `className`
+     * LeanClient::encode($obj, "toFullJSON");
+     *
+     * // encode object to literal JSON, without `__type` and `className`
+     * LeanClient::encode($obj, "toJSON");
+     * ```
+     *
+     * @param mixed  $value
+     * @param string $encoder LeanObject encoder name, e.g.: getPointer, toJSON
+     * @param array  $seen    Array of LeanObject that has been traversed
      * @return mixed
      */
-    public static function encode($value) {
+    public static function encode($value,
+                                  $encoder=null,
+                                  $seen=array()) {
         if (is_null($value) || is_scalar($value)) {
             return $value;
         } else if (($value instanceof \DateTime) ||
@@ -547,7 +614,12 @@ EOT;
             return array("__type" => "Date",
                          "iso"    => self::formatDate($value));
         } else if ($value instanceof LeanObject) {
-            return $value->getPointer();
+            if ($encoder && !in_array($value, $seen)) {
+                $seen[] = $value;
+                return call_user_func(array($value, $encoder), $seen);
+            } else {
+                return $value->getPointer();
+            }
         } else if ($value instanceof IOperation ||
                    $value instanceof GeoPoint   ||
                    $value instanceof LeanBytes  ||
@@ -557,7 +629,7 @@ EOT;
         } else if (is_array($value)) {
             $res = array();
             forEach($value as $key => $val) {
-                $res[$key] = self::encode($val);
+                $res[$key] = self::encode($val, $encoder, $seen);
             }
             return $res;
         } else {

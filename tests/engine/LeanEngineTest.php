@@ -1,0 +1,179 @@
+<?php
+
+use LeanCloud\LeanClient;
+use LeanCloud\CloudException;
+
+/**
+ * Test LeanEngine app server
+ *
+ * The test suite runs against a running server started at index.php, please
+ * see that for returned response.
+ */
+
+class LeanEngineTest extends PHPUnit_Framework_TestCase {
+    public static function setUpBeforeClass() {
+        LeanClient::initialize(
+            getenv("LC_APP_ID"),
+            getenv("LC_APP_KEY"),
+            getenv("LC_APP_MASTER_KEY"));
+    }
+
+    private function request($url, $method, $data=null) {
+        $appUrl = "http://" . getenv("LC_APP_HOST") . ":" .
+                getenv("LC_APP_PORT");
+        $url = $appUrl . $url;
+        $headers = LeanClient::buildHeaders(null, true);
+        $headers["Content-Type"] = "application/json;charset=utf-8";
+        $headers["Origin"] = getenv("LC_APP_HOST"); // emulate CORS
+        $h = array_map(
+            function($k, $v) {return "$k: $v";},
+            array_keys($headers),
+            $headers
+        );
+
+        $req = curl_init($url);
+        curl_setopt($req, CURLOPT_HTTPHEADER, $h);
+        curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+        if ($method == "POST") {
+            curl_setopt($req, CURLOPT_POST, 1);
+            curl_setopt($req, CURLOPT_POSTFIELDS, json_encode($data));
+        } else {
+            // GET
+            if ($data) {
+                curl_setopt($req, CURLOPT_URL,
+                            $url . "?" . http_build_query($data));
+            }
+        }
+        $resp = curl_exec($req);
+        $errno = curl_errno($req);
+        curl_close($req);
+        if ($errno > 0) {
+            throw new \RuntimeException("CURL connection error $errno: $url");
+        }
+        $data = json_decode($resp, true);
+        if (isset($data["error"])) {
+            $code = isset($data["code"]) ? $data["code"] : -1;
+            throw new CloudException("{$code} {$data['error']}", $code);
+        }
+        return $data;
+    }
+
+    public function testPingEngine() {
+        $resp = $this->request("/__engine/1/ping", "GET");
+        $this->assertArrayHasKey("runtime", $resp);
+        $this->assertArrayHasKey("version", $resp);
+    }
+
+    public function testGetFuncitonMetadata() {
+        $resp = $this->request("/1/functions/_ops/metadatas", "GET");
+        $this->assertContains("hello", $resp);
+    }
+
+    public function testCloudFunctionHello() {
+        $resp = $this->request("/1/functions/hello", "POST", array());
+        $this->assertEquals("hello", $resp["result"]);
+    }
+
+    public function testCallFunctionWithObject() {
+        $obj  = array(
+            "__type"    => "Object",
+            "className" => "TestObject",
+            "objectId"  => "id001",
+            "name"      => "alice"
+        );
+        $resp = $this->request("/1/call/updateObject", "POST", array(
+            "object" => $obj
+        ));
+        $this->assertEquals($obj["className"], $resp["result"]["className"]);
+        $this->assertEquals($obj["objectId"],  $resp["result"]["objectId"]);
+        $this->assertEquals(42,  $resp["result"]["__testKey"]);
+    }
+
+    public function testFunctionWithParam() {
+        $resp = $this->request("/1/functions/sayHello", "POST", array(
+            "name" => "alice"
+        ));
+        $this->assertEquals("hello alice", $resp["result"]);
+    }
+
+    public function testMetaParamsShouldHaveRemoteAddress() {
+        $resp = $this->request("/1/functions/getMeta", "POST", array(
+            "name" => "alice"
+        ));
+        $this->assertNotEmpty($resp["result"]["remoteAddress"]);
+    }
+
+    public function testOnInsight() {
+        $resp = $this->request("/1/functions/BigQuery/onComplete", "POST", array(
+            "id" => "id001",
+            "status" => "OK",
+            "message" => "Big query completed successfully."
+        ));
+        $this->assertEquals("ok", $resp["result"]);
+    }
+
+    public function testOnLogin() {
+        $resp = $this->request("/1/functions/_User/onLogin", "POST", array(
+            "object" => array(
+                "__type"    => "Object",
+                "className" => "_User",
+                "objectId"  => "id002",
+                "username"  => "alice"
+            )
+        ));
+        $this->assertEquals("ok", $resp["result"]);
+    }
+
+    public function testOnVerifiedSms() {
+        $resp = $this->request("/1/functions/onVerified/sms", "POST", array(
+            "object" => array(
+                "__type"    => "Object",
+                "className" => "_User",
+                "objectId"  => "id002",
+                "username"  => "alice"
+            )
+        ));
+        $this->assertEquals("ok", $resp["result"]);
+    }
+
+    public function testBeforeSave() {
+        $obj = array(
+            "__type"    => "Object",
+            "className" => "TestObject",
+            "objectId"  => "id002",
+            "name"      => "alice"
+        );
+        $resp = $this->request("/1/functions/TestObject/beforeSave", "POST",
+                               array("object" => $obj));
+        $obj2 = $resp;
+        $this->assertEquals($obj["objectId"], $obj2["objectId"]);
+        $this->assertEquals($obj["name"],     $obj2["name"]);
+        $this->assertEquals(42,               $obj2["__testKey"]);
+    }
+
+    public function testAfterSave() {
+        $obj = array(
+            "__type"    => "Object",
+            "className" => "TestObject",
+            "objectId"  => "id002",
+            "name"      => "alice"
+        );
+        $resp = $this->request("/1/functions/TestObject/afterSave", "POST",
+                               array("object" => $obj));
+        $this->assertEquals("ok", $resp["result"]);
+    }
+
+    public function testBeforeDelete() {
+        $obj = array(
+            "__type"    => "Object",
+            "className" => "TestObject",
+            "objectId"  => "id002",
+            "name"      => "alice"
+        );
+        $resp = $this->request("/1.1/functions/TestObject/beforeDelete", "POST",
+                               array("object" => $obj));
+        $this->assertEmpty($resp);
+    }
+
+}
+

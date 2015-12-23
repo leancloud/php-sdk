@@ -38,6 +38,36 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
                             "https://us-api.leancloud.cn/1.1");
     }
 
+    public function testVerifyKey() {
+        $result = LeanClient::verifyKey(
+            getenv("LC_APP_ID"),
+            getenv("LC_APP_KEY")
+        );
+        $this->assertTrue($result);
+    }
+
+    public function testVerifyKeyMaster() {
+        $result = LeanClient::verifyKey(
+            getenv("LC_APP_ID"),
+            getenv("LC_APP_MASTER_KEY") . ",master"
+        );
+        $this->assertTrue($result);
+    }
+
+    public function testVerifySign() {
+        $time = time();
+        $sign = md5($time . getenv("LC_APP_KEY")) . ",{$time}";
+        $result = LeanClient::verifySign(getenv("LC_APP_ID"), $sign);
+        $this->assertTrue($result);
+    }
+
+    public function testVerifySignMaster() {
+        $time = time();
+        $sign = md5($time . getenv("LC_APP_MASTER_KEY")) . ",{$time},master";
+        $result = LeanClient::verifySign(getenv("LC_APP_ID"), $sign);
+        $this->assertTrue($result);
+    }
+
     public function testUseMasterKeyByDefault() {
         LeanClient::useMasterKey(true);
         $headers = LeanClient::buildHeaders("token", null);
@@ -298,6 +328,64 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($val instanceof GeoPoint);
         $this->assertEquals(39.9, $val->getLatitude());
         $this->assertEquals(116.4, $val->getLongitude());
+    }
+
+    public function testEncodeObjectToJSON() {
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
+        $a->set("name", "A");
+        $b->set("name", "B");
+        $a->addIn("likes", $b);
+        $jsonA = LeanClient::encode($a, "toJSON");
+        $jsonB = $jsonA["likes"][0];
+        // top level object A will be encoded as literal json
+        $this->assertEquals("A",          $jsonA["name"]);
+        $this->assertEquals("id001",      $jsonA["objectId"]);
+        $this->assertEquals("B",          $jsonB["name"]);
+        $this->assertEquals("id002",      $jsonB["objectId"]);
+        $this->assertEquals("Object",     $jsonB["__type"]);
+        $this->assertEquals("TestObject", $jsonB["className"]);
+
+        $this->assertArrayNotHasKey("__type",    $jsonA);
+        $this->assertArrayNotHasKey("className", $jsonA);
+    }
+
+    public function testEncodeObjectToFullJSON() {
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
+        $a->set("name", "A");
+        $b->set("name", "B");
+        $a->addIn("likes", $b);
+        $jsonA = LeanClient::encode($a, "toFullJSON");
+        $jsonB = $jsonA["likes"][0];
+        $this->assertEquals("A",          $jsonA["name"]);
+        $this->assertEquals("id001",      $jsonA["objectId"]);
+        $this->assertEquals("Object",     $jsonA["__type"]);
+        $this->assertEquals("TestObject", $jsonA["className"]);
+        $this->assertEquals("B",          $jsonB["name"]);
+        $this->assertEquals("id002",      $jsonB["objectId"]);
+        $this->assertEquals("Object",     $jsonB["__type"]);
+        $this->assertEquals("TestObject", $jsonB["className"]);
+    }
+
+    public function testEncodeCircularObjectAsPointer() {
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
+        $c = new LeanObject("TestObject", "id003");
+        $a->set("name", "A");
+        $b->set("name", "B");
+        $c->set("name", "C");
+        $a->addIn("likes", $b);
+        $b->addIn("likes", $c);
+        $c->addIn("likes", $a);
+        $jsonA = LeanClient::encode($a, "toFullJSON");
+        $jsonB = $jsonA["likes"][0];
+        $jsonC = $jsonB["likes"][0];
+
+        $this->assertEquals("Object",  $jsonA["__type"]);
+        $this->assertEquals("Object",  $jsonB["__type"]);
+        $this->assertEquals("Object",  $jsonC["__type"]);
+        $this->assertEquals("Pointer", $jsonC["likes"][0]["__type"]);
     }
 }
 

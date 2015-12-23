@@ -7,4 +7,7 @@ release:
 doc:
 	vendor/bin/apigen generate --source src --destination docs
 
-.PHONY: test doc
+test_engine:
+	php -S ${LC_APP_HOST}:${LC_APP_PORT} tests/engine/index.php
+
+.PHONY: test doc test_engine
