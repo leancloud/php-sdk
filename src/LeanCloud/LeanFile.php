@@ -271,7 +271,7 @@ class LeanFile {
      * @return bool
      */
     private function isExternal() {
-        return $this->getMeta("__source") == "external";
+        return $this->getMeta("__source") === "external";
     }
 
     /**
