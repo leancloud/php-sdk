@@ -583,7 +583,7 @@ class LeanObject {
         $children = array(); // Array of unsaved objects excluding files
         forEach($unsavedChildren as $obj) {
             if ($obj instanceof LeanFile) {
-                $obj.save();
+                $obj->save();
             } else if ($obj instanceof LeanObject) {
                 if (!in_array($obj, $children)) {
                     $children[] = $obj;

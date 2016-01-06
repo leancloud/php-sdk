@@ -1,5 +1,6 @@
 <?php
 
+use LeanCloud\LeanObject;
 use LeanCloud\LeanClient;
 use LeanCloud\LeanFile;
 
@@ -89,6 +90,25 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(100, $file2->getMeta("downloads"));
 
         $file->destroy();
+    }
+
+    /*
+     * leancloud/php-sdk#46
+     */
+    public function testSaveObjectWithFile() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("name", "alice");
+
+        $file = LeanFile::createWithData("test.txt", "你好，中国!");
+        $obj->addIn("files", $file);
+        $obj->save();
+
+        $this->assertNotEmpty($obj->getObjectId());
+        $this->assertNotEmpty($file->getObjectId());
+        $this->assertNotEmpty($file->getUrl());
+
+        $file->destroy();
+        $obj->destroy();
     }
 }
 
