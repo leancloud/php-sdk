@@ -110,5 +110,6 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
         $file->destroy();
         $obj->destroy();
     }
+
 }
 
