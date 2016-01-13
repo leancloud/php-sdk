@@ -152,9 +152,17 @@ class LeanEngine {
 
     /**
      * Extract variant headers into env
+     *
+     * PHP prepends `HTTP_` to user-defined headers, so `X-MY-VAR`
+     * would be populated as `HTTP_X_MY_VAR`. But 3rd party frameworks
+     * (e.g. Laravel) may overwrite the behavior, and populate it as
+     * cleaner `X_MY_VAR`. So we try to retrieve header value from both
+     * versions.
+     *
      */
     private function parseHeaders() {
         $this->env["ORIGIN"] = $this->retrieveHeader(array(
+            "ORIGIN",
             "HTTP_ORIGIN"
         ));
         $this->env["CONTENT_TYPE"] = $this->retrieveHeader(array(
@@ -162,37 +170,55 @@ class LeanEngine {
             "HTTP_CONTENT_TYPE"
         ));
         $this->env["REMOTE_ADDR"] = $this->retrieveHeader(array(
+            "X_REAL_IP",
             "HTTP_X_REAL_IP",
+            "X_FORWARDED_FOR",
             "HTTP_X_FORWARDED_FOR",
             "REMOTE_ADDR"
         ));
 
         $this->env["LC_ID"] = $this->retrieveHeader(array(
+            "X_LC_ID",
             "HTTP_X_LC_ID",
+            "X_AVOSCLOUD_APPLICATION_ID",
             "HTTP_X_AVOSCLOUD_APPLICATION_ID",
+            "X_ULURU_APPLICATION_ID",
             "HTTP_X_ULURU_APPLICATION_ID"
         ));
         $this->env["LC_KEY"] = $this->retrieveHeader(array(
+            "X_LC_KEY",
             "HTTP_X_LC_KEY",
+            "X_AVOSCLOUD_APPLICATION_KEY",
             "HTTP_X_AVOSCLOUD_APPLICATION_KEY",
+            "X_ULURU_APPLICATION_KEY",
             "HTTP_X_ULURU_APPLICATION_KEY"
         ));
         $this->env["LC_MASTER_KEY"] = $this->retrieveHeader(array(
+            "X_AVOSCLOUD_MASTER_KEY",
             "HTTP_X_AVOSCLOUD_MASTER_KEY",
+            "X_ULURU_MASTER_KEY",
             "HTTP_X_ULURU_MASTER_KEY"
         ));
         $this->env["LC_SESSION"] = $this->retrieveHeader(array(
+            "X_LC_SESSION",
             "HTTP_X_LC_SESSION",
+            "X_AVOSCLOUD_SESSION_TOKEN",
             "HTTP_X_AVOSCLOUD_SESSION_TOKEN",
+            "X_ULURU_SESSION_TOKEN",
             "HTTP_X_ULURU_SESSION_TOKEN"
         ));
         $this->env["LC_SIGN"] = $this->retrieveHeader(array(
+            "X_LC_SIGN",
             "HTTP_X_LC_SIGN",
+            "X_AVOSCLOUD_REQUEST_SIGN",
             "HTTP_X_AVOSCLOUD_REQUEST_SIGN"
         ));
         $prod = $this->retrieveHeader(array(
+            "X_LC_PROD",
             "HTTP_X_LC_PROD",
+            "X_AVOSCLOUD_APPLICATION_PRODUCTION",
             "HTTP_X_AVOSCLOUD_APPLICATION_PRODUCTION",
+            "X_ULURU_APPLICATION_PRODUCTION",
             "HTTP_X_ULURU_APPLICATION_PRODUCTION"
         ));
         $this->env["useProd"] = true;
