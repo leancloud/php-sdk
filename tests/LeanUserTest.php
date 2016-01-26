@@ -2,6 +2,7 @@
 
 use LeanCloud\LeanClient;
 use LeanCloud\LeanUser;
+use LeanCloud\LeanFile;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
 
@@ -14,7 +15,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         LeanClient::useRegion(getenv("LC_API_REGION"));
         LeanClient::setStorage(new SessionStorage());
 
-        // make a default user so we can login
+        // Try to make a default user so we can login
         $user = new LeanUser();
         $user->setUsername("alice");
         $user->setPassword("blabla");
@@ -26,11 +27,12 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     public static function tearDownAfterClass() {
-        // destroy default user
+        // destroy default user if present
         try {
             $user = LeanUser::logIn("alice", "blabla");
-        } catch (CloudException $ex) {
             $user->destroy();
+        } catch (CloudException $ex) {
+            // skip
         }
     }
 
@@ -174,6 +176,27 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(!isset($authData["weixin"]));
 
         $user2->destroy();
+    }
+
+    /*
+     * Get current user with file attribute will result
+     * circular invoking getCurrentUser.
+     *
+     * @link github.com/leancloud/php-sdk#48
+     */
+    public function testCircularGetCurrentUser() {
+        // ensure getCurrentUser neither run indefinetely, nor throw maximum
+        // function all error
+        $avatar = LeanFile::createWithUrl("alice.png", "https://leancloud.cn/favicon.png");
+        $user = LeanUser::logIn("alice", "blabla");
+        $user->set("avatar", $avatar);
+        $user->save();
+        $token = LeanUser::getCurrentSessionToken();
+        $user->logOut();
+        LeanUser::setCurrentSessionToken($token);
+
+        $user2 = LeanUser::getCurrentUser();
+        $this->assertEquals($user2->getUsername(), "alice");
     }
 
 }

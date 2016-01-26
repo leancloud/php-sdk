@@ -318,6 +318,22 @@ class LeanClientTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($parent->getACL() instanceof LeanACL);
     }
 
+    /*
+     * Fix not type-safe string comparison
+     *
+     * e.g  `0 == 'ACL'`
+     *
+     * @link bug #43: https://github.com/leancloud/php-sdk/issues/43
+     */
+    public function testDecodeIndexedArrayValue() {
+        $val = LeanClient::decode(array(
+            '__type' => 'Pointer',
+            'className' => 'TestObject',
+            'objectId' => '5682bd'
+        ), 0);
+        $this->assertTrue($val instanceof LeanObject);
+    }
+
     public function testDecodeGeoPoint() {
         $type = array(
             '__type' => 'GeoPoint',
