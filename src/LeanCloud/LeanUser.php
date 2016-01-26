@@ -299,6 +299,7 @@ class LeanUser extends LeanObject {
                         "smsCode" => $smsCode);
         $resp = LeanClient::get("/login", $params);
         $user = new static();
+        $user->mergeAfterFetch($resp);
         static::saveCurrentUser($user);
         return $user;
     }
