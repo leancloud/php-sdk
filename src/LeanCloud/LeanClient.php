@@ -22,7 +22,7 @@ class LeanClient {
     /**
      * Client version
      */
-    const VERSION = '0.2.0';
+    const VERSION = '0.2.3';
 
     /**
      * API Endpoints for Regions
@@ -666,7 +666,7 @@ EOT;
         if (!is_array($value)) {
             return $value;
         }
-        if ($key == 'ACL') {
+        if ($key === 'ACL') {
             return new LeanACL($value);
         }
         if (!isset($value["__type"])) {
@@ -680,22 +680,22 @@ EOT;
         // Parse different data type from server.
         $type = $value["__type"];
 
-        if ($type == "Date") {
+        if ($type === "Date") {
             // return time in default time zone
             return new \DateTime($value["iso"]);
         }
-        if ($type == "Bytes") {
+        if ($type === "Bytes") {
             return LeanBytes::createFromBase64Data($value["base64"]);
         }
-        if ($type == "GeoPoint") {
+        if ($type === "GeoPoint") {
             return new GeoPoint($value["latitude"], $value["longitude"]);
         }
-        if ($type == "File") {
+        if ($type === "File") {
             $file = new LeanFile($value["name"]);
             $file->mergeAfterFetch($value);
             return $file;
         }
-        if ($type == "Pointer" || $type == "Object") {
+        if ($type === "Pointer" || $type === "Object") {
             $obj = LeanObject::create($value["className"], $value["objectId"]);
             unset($value["__type"]);
             unset($value["className"]);
@@ -704,7 +704,7 @@ EOT;
             }
             return $obj;
         }
-        if ($type == "Relation") {
+        if ($type === "Relation") {
             return new LeanRelation(null, $key, $value["className"]);
         }
     }

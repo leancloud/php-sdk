@@ -57,8 +57,10 @@ class LeanFile {
         }
         $this->_data["mime_type"] = $mimeType;
 
-        $user = LeanUser::getCurrentUser();
-        $this->_metaData["owner"] = $user ? $user->getObjectId() : "unknown";
+        $this->_metaData["owner"] = "unknown";
+        if (LeanUser::$currentUser) {
+            $this->_metaData["owner"] = LeanUser::$currentUser->getObjectId();
+        }
         if ($this->_source) {
             $this->_metaData["size"] = strlen($this->_source);
         }
@@ -271,7 +273,7 @@ class LeanFile {
      * @return bool
      */
     private function isExternal() {
-        return $this->getMeta("__source") == "external";
+        return $this->getMeta("__source") === "external";
     }
 
     /**

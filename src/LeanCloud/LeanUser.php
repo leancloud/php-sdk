@@ -49,7 +49,7 @@ class LeanUser extends LeanObject {
      *
      * @var LeanUser
      */
-    protected static $currentUser = null;
+    public static $currentUser = null;
 
     /**
      * Set username
@@ -185,7 +185,7 @@ class LeanUser extends LeanObject {
      *
      * @param string $token Session token of logged-in user
      */
-    protected static function setCurrentSessionToken($token) {
+    public static function setCurrentSessionToken($token) {
         LeanClient::getStorage()->set("LC_SessionToken", $token);
     }
 
@@ -299,6 +299,7 @@ class LeanUser extends LeanObject {
                         "smsCode" => $smsCode);
         $resp = LeanClient::get("/login", $params);
         $user = new static();
+        $user->mergeAfterFetch($resp);
         static::saveCurrentUser($user);
         return $user;
     }
