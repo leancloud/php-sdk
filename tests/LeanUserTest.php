@@ -3,6 +3,7 @@
 use LeanCloud\LeanClient;
 use LeanCloud\LeanUser;
 use LeanCloud\LeanFile;
+use LeanCloud\LeanQuery;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
 
@@ -197,6 +198,19 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
 
         $user2 = LeanUser::getCurrentUser();
         $this->assertEquals($user2->getUsername(), "alice");
+    }
+
+    /*
+     * To test this case, it is necessary to set "find" permission
+     * to be session user, i.e. allow current logged in user to query only.
+     *
+     * @link https://github.com/leancloud/php-sdk/issues/62
+     */
+    public function testFindUserWithSession() {
+        $user = LeanUser::logIn("alice", "blabla");
+        $query = new LeanQuery("_User");
+        // it should not raise: 1 Forbidden to find by class permission.
+        $query->first();
     }
 
 }
