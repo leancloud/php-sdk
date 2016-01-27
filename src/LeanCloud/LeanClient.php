@@ -6,6 +6,7 @@ use LeanCloud\LeanBytes;
 use LeanCloud\LeanObject;
 use LeanCloud\LeanACL;
 use LeanCloud\LeanFile;
+use LeanCloud\LeanUser;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Storage\IStorage;
 use LeanCloud\Storage\SessionStorage;
@@ -225,6 +226,10 @@ class LeanClient {
 
         if ($useMasterKey) {
             $h['X-LC-Sign'] .= ",master";
+        }
+
+        if (!$sessionToken) {
+            $sessionToken = LeanUser::getCurrentSessionToken();
         }
 
         if ($sessionToken) {
