@@ -102,6 +102,18 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($user, LeanUser::getCurrentUser());
     }
 
+    public function testLoginWithMobilePhone() {
+        $user = LeanUser::logIn("alice", "blabla");
+        $user->setMobilePhoneNumber("18612340000");
+        $user->save();
+        $user->logOut();
+        $this->assertNull(LeanUser::getCurrentUser());
+
+        LeanUser::logInWithMobilePhone("18612340000", "blabla");
+        $user2 = LeanUser::getCurrentUser();
+        $this->assertEquals("alice", $user2->getUsername());
+    }
+
     public function testBecome() {
         $user = LeanUser::logIn("alice", "blabla");
 

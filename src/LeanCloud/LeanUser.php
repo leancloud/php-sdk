@@ -285,6 +285,23 @@ class LeanUser extends LeanObject {
     }
 
     /**
+     * Log-in user by mobile phone and password
+     *
+     * @param string $phoneNumber
+     * @param string $password
+     * @return LeanUser
+     */
+    public static function logInWithMobilePhone($phoneNumber, $password) {
+        $params = array("mobilePhoneNumber" => $phoneNumber,
+                        "password" => $password);
+        $resp = LeanClient::get("/login", $params);
+        $user = new static();
+        $user->mergeAfterFetch($resp);
+        static::saveCurrentUser($user);
+        return $user;
+    }
+
+    /**
      * Log-in user by mobile phone and SMS code.
      *
      * Log-in user with SMS code, which can be requested by
