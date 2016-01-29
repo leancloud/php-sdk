@@ -291,10 +291,10 @@ class LeanUser extends LeanObject {
      * @param string $password
      * @return LeanUser
      */
-    public static function logInWithMobilePhone($phoneNumber, $password) {
+    public static function logInWithMobilePhoneNumber($phoneNumber, $password) {
         $params = array("mobilePhoneNumber" => $phoneNumber,
                         "password" => $password);
-        $resp = LeanClient::get("/login", $params);
+        $resp = LeanClient::post("/login", $params);
         $user = new static();
         $user->mergeAfterFetch($resp);
         static::saveCurrentUser($user);
