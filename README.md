@@ -228,7 +228,7 @@ try {
 }
 ```
 
-完整的 API 文档请参考: https://leancloud.cn/docs/api/php/
+完整的 API 文档请参考: https://leancloud.cn/api-docs/php
 
 贡献
 ----
