@@ -255,8 +255,10 @@ class LeanEngine {
                                   true;
             $this->env["useMaster"] = false;
             // remove internal fields set by API
+            // note we need to preserve `__type` field for object decoding
+            // see #61
             forEach($data as $key) {
-                if ($key[0] === "_") {
+                if ($key[0] === "_" && $key[1] !== "_") {
                     unset($data[$key]);
                 }
             }
