@@ -31,12 +31,12 @@ class LeanACL {
      * user will be granted both read and write access. While the
      * latter will be interpretted as JSON encoded array.
      *
+     * With empty param, it creates an ACL with no permission granted.
+     *
      * @param mixed $val LeanUser or JSON encoded ACL array
      */
-    public function __construct($val=null) {
+    public function __construct($val=array()) {
         $this->data = array();
-
-        if (!isset($val)) { return; }
 
         if ($val instanceof LeanUser) {
             $this->setReadAccess($val, true);
@@ -44,14 +44,16 @@ class LeanACL {
         } else if (is_array($val)) {
             forEach($val as $id => $attr) {
                 if (!is_string($id)) {
-                    throw new \RuntimeException("Invalid ACL data");
+                    throw new \RuntimeException("Invalid ACL target");
                 }
                 if (isset($attr["read"]) || isset($attr["write"])) {
                     $this->data[$id] = $attr;
                 } else {
-                    throw new \RuntimeException("Invalid ACL data");
+                    throw new \RuntimeException("Invalid ACL access type");
                 }
             }
+        } else {
+            throw new \RuntimeException("Invalid ACL data.");
         }
     }
 
@@ -65,7 +67,7 @@ class LeanACL {
      */
     private function setAccess($target, $accessType, $flag) {
         if (empty($target)) {
-            throw new \InvalidArgumentException("Access target cannot be empty");
+            throw new \InvalidArgumentException("ACL target cannot be empty");
         }
         if (!in_array($accessType, array("read", "write"))) {
             throw new \InvalidArgumentException("ACL access type must be" .
@@ -296,10 +298,14 @@ class LeanACL {
     /**
      * Encode to JSON representation
      *
-     * @return array
+     * It returns an associative array, or an empty object if
+     * empty. The latter is a workaround as we need to json encode
+     * empty ACL as json object, instead of array.
+     *
+     * @return array|object
      */
     public function encode() {
-        return $this->data;
+        return empty($this->data) ? new \stdClass() : $this->data;
     }
 }
 
