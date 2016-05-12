@@ -376,7 +376,7 @@ class LeanEngine {
             $this->processSession();
             if (strpos($pathParts["extra"], "/_ops/metadatas") === 0) {
                 if ($this->env["useMaster"]) {
-                    $this->renderJSON(Cloud::getKeys());
+                    $this->renderJSON(array("result" => Cloud::getKeys()));
                 } else {
                     $this->renderError("Unauthorized.", 401, 401);
                 }

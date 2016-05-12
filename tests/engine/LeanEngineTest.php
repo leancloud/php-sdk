@@ -66,7 +66,7 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
 
     public function testGetFuncitonMetadata() {
         $resp = $this->request("/1/functions/_ops/metadatas", "GET");
-        $this->assertContains("hello", $resp);
+        $this->assertContains("hello", $resp["result"]);
     }
 
     public function testCloudFunctionHello() {
