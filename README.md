@@ -70,7 +70,7 @@ use LeanCloud\LeanUser;
 use LeanCloud\CloudException;
 
 $user = new LeanUser();
-$user->setUsername("alice"):
+$user->setUsername("alice");
 $user->setEmail("alice@example.net");
 $user->setPassword("passpass");
 try {
