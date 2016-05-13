@@ -32,7 +32,7 @@ class SlimEngine extends LeanEngine {
      * @return string
      */
     protected function getBody() {
-        return $this->response->getBody()->getContents();
+        return $this->request->getBody()->getContents();
     }
 
     /*
