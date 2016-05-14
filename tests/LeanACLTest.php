@@ -61,7 +61,9 @@ class LeanACLTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetRoleAccess() {
-        $role = new LeanRole("admin", new LeanACL());
+        $role = new LeanRole();
+        $role->setName("admin");
+        $role->setACL(new LeanACL());
         $acl = new LeanACL();
         $acl->setRoleReadAccess($role, true);
         $out = $acl->encode();
