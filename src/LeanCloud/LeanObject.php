@@ -350,11 +350,18 @@ class LeanObject {
     /**
      * Save object and its children objects and files
      *
-     * @throws RuntimeException
+     * @throws CloudException
      */
     public function save() {
         if (!$this->isDirty()) {return;}
-        return self::saveAll(array($this));
+        try {
+            $result = self::saveAll(array($this));
+        } catch (BatchRequestError $batchRequestError) {
+            $err = $batchRequestError->getFirst();
+            if ($err)
+                throw new CloudException($err["error"], $err["code"]);
+        }
+        return $result;
     }
 
     /**
@@ -415,7 +422,13 @@ class LeanObject {
      * @throws RuntimeException, CloudException
      */
     public function fetch() {
-        static::fetchAll(array($this));
+        try {
+            static::fetchAll(array($this));
+        } catch (BatchRequestError $batchRequestError) {
+            $err = $batchRequestError->getFirst();
+            if ($err)
+                throw new CloudException($err["error"], $err["code"]);
+        }
     }
 
     /**
@@ -449,23 +462,21 @@ class LeanObject {
         $sessionToken = LeanUser::getCurrentSessionToken();
         $response = LeanClient::batch($requests, $sessionToken);
 
-        $errors = array();
+        $batchRequestError = new BatchRequestError();
         forEach($objects as $i => $obj) {
             if (isset($response[$i]["success"])) {
                 if (!empty($response[$i]["success"])) {
                     $obj->mergeAfterFetch($response[$i]["success"]);
                 } else {
-                    $errors[] = array("request" => $requests[$i],
-                                      "error" => "Object not found.");
+                    $batchRequestError->add($requests[$i],
+                                            array("error" => "Object not found."));
                 }
             } else {
-                $errors[] = array("request" => $requests[$i],
-                                  "error"   => $response[$i]["error"]);
+                $batchRequestError->add($requests[$i], $response[$i]);
             }
         }
-        if (count($errors) > 0) {
-            throw new CloudException("Batch requests error: " .
-                                    json_encode($errors));
+        if (!$batchRequestError->empty()) {
+            throw $batchRequestError;
         }
     }
 
@@ -480,7 +491,14 @@ class LeanObject {
         if (!$this->getObjectId()) {
             return false;
         }
-        return self::destroyAll(array($this));
+
+        try {
+            static::destroyAll(array($this));
+        } catch (BatchRequestError $batchRequestError) {
+            $err = $batchRequestError->getFirst();
+            if ($err)
+                throw new CloudException($err["error"], $err["code"]);
+        }
     }
 
     /**
@@ -645,18 +663,16 @@ class LeanObject {
 
         // TODO: append remaining unsaved items to errors, so user
         // knows all objects that failed to save?
-        $errors = array();
+        $batchRequestError = new BatchRequestError();
         forEach($objects as $i => $obj) {
             if (isset($response[$i]["success"])) {
                 $obj->mergeAfterSave($response[$i]["success"]);
             } else {
-                $errors[] = array("request" => $requests[$i],
-                                  "error"   => $response[$i]["error"]);
+                $batchRequestError->add($requests[$i], $response[$i]);
             }
         }
-        if (count($errors) > 0) {
-            throw new CloudException("Batch requests error: " .
-                                      json_encode($errors));
+        if (!$batchRequestError->empty()) {
+            throw $batchRequestError;
         }
 
         // start next batch
@@ -693,16 +709,14 @@ class LeanObject {
         $sessionToken = LeanUser::getCurrentSessionToken();
         $response = LeanClient::batch($requests, $sessionToken);
 
-        $errors = array();
+        $batchRequestError = new BatchRequestError();
         forEach($objects as $i => $obj) {
             if (isset($response[$i]["error"])) {
-                $errors[] = array("request" => $requests[$i],
-                                  "error"   => $response[$i]["error"]);
+                $batchRequestError->add($requests[$i], $response[$i]);
             }
         }
-        if (count($errors) > 0) {
-            throw new CloudException("Batch requests error: " .
-                                      json_encode($errors));
+        if (!$batchRequestError->empty()) {
+            throw $batchRequestError;
         }
     }
 }
