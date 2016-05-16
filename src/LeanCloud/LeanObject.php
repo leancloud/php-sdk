@@ -471,11 +471,9 @@ class LeanObject {
                     $batchRequestError->add($requests[$i],
                                             array("error" => "Object not found."));
                 }
-            } else {
-                $batchRequestError->add($requests[$i], $response[$i]);
             }
         }
-        if (!$batchRequestError->empty()) {
+        if (!$batchRequestError->isEmpty()) {
             throw $batchRequestError;
         }
     }
@@ -661,18 +659,10 @@ class LeanObject {
         $sessionToken = LeanUser::getCurrentSessionToken();
         $response = LeanClient::batch($requests, $sessionToken);
 
-        // TODO: append remaining unsaved items to errors, so user
-        // knows all objects that failed to save?
-        $batchRequestError = new BatchRequestError();
         forEach($objects as $i => $obj) {
             if (isset($response[$i]["success"])) {
                 $obj->mergeAfterSave($response[$i]["success"]);
-            } else {
-                $batchRequestError->add($requests[$i], $response[$i]);
             }
-        }
-        if (!$batchRequestError->empty()) {
-            throw $batchRequestError;
         }
 
         // start next batch
@@ -708,16 +698,6 @@ class LeanObject {
 
         $sessionToken = LeanUser::getCurrentSessionToken();
         $response = LeanClient::batch($requests, $sessionToken);
-
-        $batchRequestError = new BatchRequestError();
-        forEach($objects as $i => $obj) {
-            if (isset($response[$i]["error"])) {
-                $batchRequestError->add($requests[$i], $response[$i]);
-            }
-        }
-        if (!$batchRequestError->empty()) {
-            throw $batchRequestError;
-        }
     }
 }
 

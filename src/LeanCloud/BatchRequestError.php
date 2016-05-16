@@ -55,8 +55,9 @@ class BatchRequestError extends CloudException {
     /**
      * Get first error response as map
      *
-     * The returned map contains "code" for error code, "error" for message,
-     * and "request" for request.
+     * Returns associative array of following format:
+     *
+     * `{"code": 101, "error": "error message", "request": {...}}`
      *
      * @return array|null
      */
@@ -69,13 +70,13 @@ class BatchRequestError extends CloudException {
      *
      * @return bool
      */
-    public function empty() {
+    public function isEmpty() {
         return count($this->errors) == 0;
     }
 
     public function __toString() {
         $message = $this->message;
-        if (!$this->empty()) {
+        if (!$this->isEmpty()) {
             $message .= json_encode($this-errors);
         }
         return __CLASS__ . ": [{$this->code}]: {$message}\n";
