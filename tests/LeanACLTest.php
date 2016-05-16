@@ -22,6 +22,17 @@ class LeanACLTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(true, $out["id123"]["write"]);
     }
 
+    /**
+     * Empty ACL should be encoded as object, instead of array.
+     *
+     * @link https://github.com/leancloud/php-sdk/issues/84
+     */
+    public function testEmptyACL() {
+        $acl = new LeanACL();
+        $out = $acl->encode();
+        $this->assertEquals("{}", json_encode($out));
+    }
+
     public function testSetPublicAccess() {
         $acl = new LeanACL();
         $acl->setPublicReadAccess(true);
@@ -50,7 +61,9 @@ class LeanACLTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetRoleAccess() {
-        $role = new LeanRole("admin", new LeanACL());
+        $role = new LeanRole();
+        $role->setName("admin");
+        $role->setACL(new LeanACL());
         $acl = new LeanACL();
         $acl->setRoleReadAccess($role, true);
         $out = $acl->encode();

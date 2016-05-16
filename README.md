@@ -70,7 +70,7 @@ use LeanCloud\LeanUser;
 use LeanCloud\CloudException;
 
 $user = new LeanUser();
-$user->setUsername("alice"):
+$user->setUsername("alice");
 $user->setEmail("alice@example.net");
 $user->setPassword("passpass");
 try {
@@ -228,7 +228,7 @@ try {
 }
 ```
 
-完整的 API 文档请参考: https://leancloud.cn/docs/api/php/
+完整的 API 文档请参考: https://leancloud.cn/api-docs/php
 
 贡献
 ----
