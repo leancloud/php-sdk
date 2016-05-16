@@ -2,7 +2,11 @@
 namespace LeanCloud;
 
 /**
- * Exception thrown when doing batch request
+ * BatchRequestError
+ *
+ * A BatchRequestError object consists of zero or more request and
+ * response errors.
+ *
  */
 class BatchRequestError extends CloudException {
 
@@ -19,7 +23,7 @@ class BatchRequestError extends CloudException {
     }
 
     /**
-     * Add a request and error response pair
+     * Add failed request and its error response
      *
      * Both request and response are expected to be array. The response
      * array must contain an `error` message, while the request should
@@ -40,9 +44,19 @@ class BatchRequestError extends CloudException {
     }
 
     /**
-     * Get first error as array that contains request and error response
+     * Get all error response
      *
-     * It returns null if there are no errors yet.
+     * @return array
+     */
+    public function getAll() {
+        return $this->errors;
+    }
+
+    /**
+     * Get first error response as map
+     *
+     * The returned map contains "code" for error code, "error" for message,
+     * and "request" for request.
      *
      * @return array|null
      */
@@ -51,7 +65,7 @@ class BatchRequestError extends CloudException {
     }
 
     /**
-     * Contains error or not
+     * Contains error response or not
      *
      * @return bool
      */
