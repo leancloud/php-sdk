@@ -421,10 +421,18 @@ class LeanClient {
                                      $sessionToken,
                                      $headers,
                                      $useMasterKey);
-        if (count($requests) != count($response)) {
-            throw new CloudException("Number of resquest and response " .
-                                    "mismatch in batch operation!");
+
+        $batchRequestError = new BatchRequestError();
+        forEach($requests as $i => $req) {
+            if (isset($response[$i]["error"])) {
+                $batchRequestError->add($req, $response[$i]["error"]);
+            }
         }
+
+        if (!$batchRequestError->isEmpty()) {
+            throw $batchRequestError;
+        }
+
         return $response;
     }
 
