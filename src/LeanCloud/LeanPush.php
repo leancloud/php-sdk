@@ -143,11 +143,6 @@ class LeanPush {
      * @return array
      */
     public function encode() {
-        if (!isset($this->data["alert"])) {
-            throw new \RuntimeException("No `alert' message specified " .
-                                        "in notification data");
-        }
-
         $out = $this->options;
         $out["data"] = $this->data;
         if (isset($this->options["where"])) {

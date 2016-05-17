@@ -26,18 +26,16 @@ class LeanRole extends LeanObject {
     protected static $className = "_Role";
 
     /**
-     * Initialize a role
+     * Set name of role
      *
      * The name can contain only alphanumeric characters, _, -, and
      * space. It cannot be changed after being saved.
      *
-     * @param string  $name The name of role
-     * @param LeanACL $acl  The ACL specifies who can change **this role**
+     * @return LeanRole
      */
-    public function __construct($name, $acl) {
-        parent::__construct();
+    public function setName($name) {
         $this->set("name", $name);
-        $this->setACL($acl);
+        return $this;
     }
 
     /**

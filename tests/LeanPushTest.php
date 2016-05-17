@@ -30,6 +30,29 @@ class LeanPushTest extends PHPUnit_Framework_TestCase {
         ), $out["data"]);
     }
 
+    public function testSetPushForMultiplatform() {
+        $data = array(
+            "ios" => array(
+                "alert" => "Hello world!",
+                "badge" => 20,
+                "sound" => "APP/media/sound.mp3"
+            ),
+            "android" => array(
+                "alert" => "Hello world!",
+                "title" => "Hello from app",
+                "action" => "app.action"
+            ),
+            "wp" => array(
+                "alert" => "Hello world!",
+                "title" => "Hello from app",
+                "wp-param" => "/chat.xaml?NavigatedFrom=Toast Notification"
+            )
+        );
+        $push = new LeanPush($data);
+        $out = $push->encode();
+        $this->assertEquals($data, $out["data"]);
+    }
+
     public function testSetProd() {
         $push = new LeanPush(array(
             "alert" => "Hello world!"

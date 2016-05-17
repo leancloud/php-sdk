@@ -192,14 +192,14 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     /*
-     * Get current user with file attribute will result
-     * circular invoking getCurrentUser.
+     * Get current user with file attribute shall not
+     * circularly invoke getCurrentUser.
      *
      * @link github.com/leancloud/php-sdk#48
      */
     public function testCircularGetCurrentUser() {
         // ensure getCurrentUser neither run indefinetely, nor throw maximum
-        // function all error
+        // function call error
         $avatar = LeanFile::createWithUrl("alice.png", "https://leancloud.cn/favicon.png");
         $user = LeanUser::logIn("alice", "blabla");
         $user->set("avatar", $avatar);

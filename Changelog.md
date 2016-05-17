@@ -1,4 +1,13 @@
 
+0.2.6 发布日期：2016-05-16
+----
+* LeanPush 支持同时向多平台发送推送
+* LeanObject::save, fetch, destroy 不再返回批量查询错误
+* 修复 LeanACL 为空时被编码为 array 的问题
+  - LeanACL::encode 将返回 object (不兼容)
+* 修复 LeanRole 查询不能正常初识化
+  - LeanRole 构造函数接收两个可选参数 className, objectId (不兼容)
+
 0.2.5 发布日期：2016-02-01
 ----
 * 支持手机号码和密码登录
