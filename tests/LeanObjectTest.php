@@ -137,6 +137,19 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj->destroy();
     }
 
+    public function testCreateObjectWithId() {
+        $obj = new LeanObject("TestObject");
+        $obj->set("foo", "bar");
+        $obj->save();
+        $this->assertNotEmpty($obj->getCreatedAt());
+
+        $obj2 = LeanObject::create("TestObject", $obj->getObjectId());
+        $obj2->fetch();
+        $this->assertEquals("bar", $obj2->get("foo"));
+
+        $obj2->destroy();
+    }
+
     /**
      * Test decoding
      */
