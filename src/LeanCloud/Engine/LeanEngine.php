@@ -4,6 +4,7 @@ namespace LeanCloud\Engine;
 
 use LeanCloud\LeanClient;
 use LeanCloud\LeanUser;
+use LeanCloud\CloudException;
 
 class LeanEngine {
 
@@ -357,26 +358,32 @@ class LeanEngine {
             // extract func params from path:
             // /1.1/call/{0}/{1}
             $funcParams = explode("/", ltrim($pathParts["extra"], "/"));
-            if (count($funcParams) == 1) {
-                // {1,1.1}/functions/{funcName}
-                $this->dispatchFunc($funcParams[0], $json,
-                                    $pathParts["endpoint"] === "call");
-            } else {
-                if ($funcParams[0] == "onVerified") {
-                    // {1,1.1}/functions/onVerified/sms
-                    $this->dispatchOnVerified($funcParams[1], $json);
-                } else if ($funcParams[0] == "_User" &&
-                           $funcParams[1] == "onLogin") {
-                    // {1,1.1}/functions/_User/onLogin
-                    $this->dispatchOnLogin($json);
-                } else if ($funcParams[0] == "BigQuery" ||
-                           $funcParams[0] == "Insight") {
-                    // {1,1.1}/functions/Insight/onComplete
-                    $this->dispatchOnInsight($json);
-                } else if (count($funcParams) == 2) {
-                    // {1,1.1}/functions/{className}/beforeSave
-                    $this->dispatchHook($funcParams[0], $funcParams[1], $json);
+            try {
+                if (count($funcParams) == 1) {
+                    // {1,1.1}/functions/{funcName}
+                    $this->dispatchFunc($funcParams[0], $json,
+                                        $pathParts["endpoint"] === "call");
+                } else {
+                    if ($funcParams[0] == "onVerified") {
+                        // {1,1.1}/functions/onVerified/sms
+                        $this->dispatchOnVerified($funcParams[1], $json);
+                    } else if ($funcParams[0] == "_User" &&
+                               $funcParams[1] == "onLogin") {
+                        // {1,1.1}/functions/_User/onLogin
+                        $this->dispatchOnLogin($json);
+                    } else if ($funcParams[0] == "BigQuery" ||
+                               $funcParams[0] == "Insight") {
+                        // {1,1.1}/functions/Insight/onComplete
+                        $this->dispatchOnInsight($json);
+                    } else if (count($funcParams) == 2) {
+                        // {1,1.1}/functions/{className}/beforeSave
+                        $this->dispatchHook($funcParams[0], $funcParams[1], $json);
+                    }
                 }
+            } catch (CloudException $ex) {
+                $this->renderError($ex->getMessage(), $ex->getCode());
+            } catch (\Exception $ex) {
+                $this->renderError("Cloud script error: {$ex->getMessage()}", 141);
             }
         }
     }
