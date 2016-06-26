@@ -374,5 +374,15 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(116.4, $loc->getLongitude());
     }
 
+    public function testGeoPointLocation() {
+        $point = new GeoPoint(25.269876, 110.333061);
+
+        $location = new LeanObject("Location");
+        $location->set("location", $point);
+        $location->save();
+
+        $location->destroy();
+    }
+
 }
 
