@@ -132,6 +132,18 @@ class LeanObject {
         return $this->_className;
     }
 
+    public function disableBeforeHook() {
+        $this->set("__before",
+                   LeanClient::signHook("__before_for_{$this->getClassName()}",
+                                        round(microtime(true) * 1000)));
+    }
+
+    public function disableAfterHook() {
+        $this->set("__after",
+                   LeanClient::signHook("__after_for_{$this->getClassName()}",
+                                        round(microtime(true) * 1000)));
+    }
+
     /**
      * Pointer representation of object
      *

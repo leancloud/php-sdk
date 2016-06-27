@@ -58,6 +58,16 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         return $data;
     }
 
+    private function signHook($hookName, $msec=null) {
+        if (!$msec) {
+            $msec = round(microtime(true) * 1000);
+        }
+        $hash = hash_hmac("sha1",
+                          "{$hookName}:{$msec}",
+                          getenv("LC_APP_MASTER_KEY"));
+        return "{$msec},{$hash}";
+    }
+
     public function testPingEngine() {
         $resp = $this->request("/__engine/1/ping", "GET");
         $this->assertArrayHasKey("runtime", $resp);
@@ -105,9 +115,10 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
 
     public function testOnInsight() {
         $resp = $this->request("/1/functions/BigQuery/onComplete", "POST", array(
-            "id" => "id001",
-            "status" => "OK",
-            "message" => "Big query completed successfully."
+            "id"      => "id001",
+            "status"  => "OK",
+            "message" => "Big query completed successfully.",
+            "__sign"  => $this->signHook("__on_complete_bigquery_job")
         ));
         $this->assertEquals("ok", $resp["result"]);
     }
@@ -118,7 +129,8 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
                 "__type"    => "Object",
                 "className" => "_User",
                 "objectId"  => "id002",
-                "username"  => "alice"
+                "username"  => "alice",
+                "__sign"    => $this->signHook("__on_login__User")
             )
         ));
         $this->assertEquals("ok", $resp["result"]);
@@ -130,7 +142,8 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
                 "__type"    => "Object",
                 "className" => "_User",
                 "objectId"  => "id002",
-                "username"  => "alice"
+                "username"  => "alice",
+                "__sign"    => $this->signHook("__on_verified_sms")
             )
         ));
         $this->assertEquals("ok", $resp["result"]);
@@ -141,7 +154,8 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
             "__type"    => "Object",
             "className" => "TestObject",
             "objectId"  => "id002",
-            "name"      => "alice"
+            "name"      => "alice",
+            "__before"  => $this->signHook("__before_for_TestObject")
         );
         $resp = $this->request("/1/functions/TestObject/beforeSave", "POST",
                                array("object" => $obj));
@@ -156,7 +170,8 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
             "__type"    => "Object",
             "className" => "TestObject",
             "objectId"  => "id002",
-            "name"      => "alice"
+            "name"      => "alice",
+            "__after"   => $this->signHook("__after_for_TestObject")
         );
         $resp = $this->request("/1/functions/TestObject/afterSave", "POST",
                                array("object" => $obj));
@@ -168,7 +183,8 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
             "__type"    => "Object",
             "className" => "TestObject",
             "objectId"  => "id002",
-            "name"      => "alice"
+            "name"      => "alice",
+            "__before"  => $this->signHook("__before_for_TestObject")
         );
         $resp = $this->request("/1.1/functions/TestObject/beforeDelete", "POST",
                                array("object" => $obj));

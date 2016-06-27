@@ -427,6 +427,20 @@ class LeanEngine {
      * @param array  $body     JSON decoded body params
      */
     private function dispatchHook($className, $hookName, $body) {
+        $verified = false;
+        if (strpos($hookName, "before") === 0) {
+            $verified = LeanClient::verifyHookSign("__before_for_{$className}",
+                                                   $body["object"]["__before"]);
+        } else {
+            $verified = LeanClient::verifyHookSign("__after_for_{$className}",
+                                                   $body["object"]["__after"]);
+        }
+        if (!$verified) {
+            error_log("Invalid hook sign for {$hookName} {$className}" .
+            " from {$this->env['REMOTE_ADDR']}");
+            $this->renderError("Unauthorized.", 401, 401);
+        }
+
         $json              = $body["object"];
         $json["__type"]    = "Object";
         $json["className"] = $className;
@@ -435,9 +449,15 @@ class LeanEngine {
         // set hook marks to prevent infinite loop. For example if user
         // invokes `$obj->save` in an afterSave hook, API will not again
         // invoke afterSave if we set hook marks.
-        forEach(array("__before", "__after", "__after_update") as $key) {
-            if (isset($json[$key])) {
-                $obj->set($key, $json[$key]);
+        forEach(array("__before", "__after", "__after_update") as $mark) {
+            if (isset($json[$mark])) {
+                $obj->set($mark, $json[$mark]);
+            } else {
+                if (strpos($mark, "__before") === 0) {
+                    $obj->disableBeforeHook();
+                } else if (strpos($mark, "__after") === 0) {
+                    $obj->disableAfterHook();
+                }
             }
         }
 
@@ -475,6 +495,13 @@ class LeanEngine {
      * @param array  $body JSON decoded body params
      */
     private function dispatchOnVerified($type, $body) {
+        if (!LeanClient::verifyHookSign("__on_verified_{$type}",
+                                        $body["object"]["__sign"])) {
+            error_log("Invalid hook sign for onVerified {$type}" .
+            " from {$this->env['REMOTE_ADDR']}");
+            $this->renderError("Unauthorized.", 401, 401);
+        }
+
         $userObj = LeanClient::decode($body["object"], null);
         LeanUser::saveCurrentUser($userObj);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
@@ -492,6 +519,13 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private function dispatchOnLogin($body) {
+        if (!LeanClient::verifyHookSign("__on_login__User",
+                                        $body["object"]["__sign"])) {
+            error_log("Invalid hook sign for onLogin User" .
+            " from {$this->env['REMOTE_ADDR']}");
+            $this->renderError("Unauthorized.", 401, 401);
+        }
+
         $userObj = LeanClient::decode($body["object"], null);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
         try {
@@ -508,6 +542,13 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private function dispatchOnInsight($body) {
+        if (!LeanClient::verifyHookSign("__on_complete_bigquery_job",
+                                        $body["__sign"])) {
+            error_log("Invalid hook sign for onComplete Insight" .
+            " from {$this->env['REMOTE_ADDR']}");
+            $this->renderError("Unauthorized.", 401, 401);
+        }
+
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
         try {
             Cloud::runOnInsight($body, $meta);
