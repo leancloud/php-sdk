@@ -303,8 +303,9 @@ class LeanClient {
      */
     public static function verifyHookSign($hookName, $sign) {
         if ($sign) {
-            $ts = explode(",", $sign)[0];
-            return self::signHook($hookName, $ts) === $sign;
+            $parts = explode(",", $sign);
+            $msec  = $parts[0];
+            return self::signHook($hookName, $msec) === $sign;
         }
         return false;
     }
