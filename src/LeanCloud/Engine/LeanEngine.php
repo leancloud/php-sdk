@@ -15,6 +15,7 @@ class LeanEngine {
      */
     private static $allowedHeaders = array(
         'X-LC-Id', 'X-LC-Key', 'X-LC-Session', 'X-LC-Sign', 'X-LC-Prod',
+        'X-LC-UA',
         'X-Uluru-Application-Key',
         'X-Uluru-Application-Id',
         'X-Uluru-Application-Production',
