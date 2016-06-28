@@ -4,6 +4,7 @@ namespace LeanCloud\Engine;
 
 use LeanCloud\LeanClient;
 use LeanCloud\LeanUser;
+use LeanCloud\CloudException;
 
 class LeanEngine {
 
@@ -14,6 +15,7 @@ class LeanEngine {
      */
     private static $allowedHeaders = array(
         'X-LC-Id', 'X-LC-Key', 'X-LC-Session', 'X-LC-Sign', 'X-LC-Prod',
+        'X-LC-UA',
         'X-Uluru-Application-Key',
         'X-Uluru-Application-Id',
         'X-Uluru-Application-Production',
@@ -385,26 +387,32 @@ class LeanEngine {
             // extract func params from path:
             // /1.1/call/{0}/{1}
             $funcParams = explode("/", ltrim($pathParts["extra"], "/"));
-            if (count($funcParams) == 1) {
-                // {1,1.1}/functions/{funcName}
-                $this->dispatchFunc($funcParams[0], $json,
-                                    $pathParts["endpoint"] === "call");
-            } else {
-                if ($funcParams[0] == "onVerified") {
-                    // {1,1.1}/functions/onVerified/sms
-                    $this->dispatchOnVerified($funcParams[1], $json);
-                } else if ($funcParams[0] == "_User" &&
-                           $funcParams[1] == "onLogin") {
-                    // {1,1.1}/functions/_User/onLogin
-                    $this->dispatchOnLogin($json);
-                } else if ($funcParams[0] == "BigQuery" ||
-                           $funcParams[0] == "Insight") {
-                    // {1,1.1}/functions/Insight/onComplete
-                    $this->dispatchOnInsight($json);
-                } else if (count($funcParams) == 2) {
-                    // {1,1.1}/functions/{className}/beforeSave
-                    $this->dispatchHook($funcParams[0], $funcParams[1], $json);
+            try {
+                if (count($funcParams) == 1) {
+                    // {1,1.1}/functions/{funcName}
+                    $this->dispatchFunc($funcParams[0], $json,
+                                        $pathParts["endpoint"] === "call");
+                } else {
+                    if ($funcParams[0] == "onVerified") {
+                        // {1,1.1}/functions/onVerified/sms
+                        $this->dispatchOnVerified($funcParams[1], $json);
+                    } else if ($funcParams[0] == "_User" &&
+                               $funcParams[1] == "onLogin") {
+                        // {1,1.1}/functions/_User/onLogin
+                        $this->dispatchOnLogin($json);
+                    } else if ($funcParams[0] == "BigQuery" ||
+                               $funcParams[0] == "Insight") {
+                        // {1,1.1}/functions/Insight/onComplete
+                        $this->dispatchOnInsight($json);
+                    } else if (count($funcParams) == 2) {
+                        // {1,1.1}/functions/{className}/beforeSave
+                        $this->dispatchHook($funcParams[0], $funcParams[1], $json);
+                    }
                 }
+            } catch (CloudException $ex) {
+                $this->renderError($ex->getMessage(), $ex->getCode());
+            } catch (\Exception $ex) {
+                $this->renderError("Cloud script error: {$ex->getMessage()}", 141);
             }
         }
     }
@@ -448,6 +456,20 @@ class LeanEngine {
      * @param array  $body     JSON decoded body params
      */
     private function dispatchHook($className, $hookName, $body) {
+        $verified = false;
+        if (strpos($hookName, "before") === 0) {
+            $verified = LeanClient::verifyHookSign("__before_for_{$className}",
+                                                   $body["object"]["__before"]);
+        } else {
+            $verified = LeanClient::verifyHookSign("__after_for_{$className}",
+                                                   $body["object"]["__after"]);
+        }
+        if (!$verified) {
+            error_log("Invalid hook sign for {$hookName} {$className}" .
+            " from {$this->env['REMOTE_ADDR']}");
+            $this->renderError("Unauthorized.", 401, 401);
+        }
+
         $json              = $body["object"];
         $json["__type"]    = "Object";
         $json["className"] = $className;
@@ -456,9 +478,17 @@ class LeanEngine {
         // set hook marks to prevent infinite loop. For example if user
         // invokes `$obj->save` in an afterSave hook, API will not again
         // invoke afterSave if we set hook marks.
-        forEach(array("__before", "__after", "__after_update") as $key) {
-            if (isset($json[$key])) {
-                $obj->set($key, $json[$key]);
+        if (strpos($hookName, "before") === 0) {
+            if (isset($json["__before"])) {
+                $obj->set("__before", $json["__before"]);
+            } else {
+                $obj->disableBeforeHook();
+            }
+        } else {
+            if (isset($json["__after"])) {
+                $obj->set("__after", $json["__after"]);
+            } else {
+                $obj->disableAfterHook();
             }
         }
 
@@ -496,6 +526,13 @@ class LeanEngine {
      * @param array  $body JSON decoded body params
      */
     private function dispatchOnVerified($type, $body) {
+        if (!LeanClient::verifyHookSign("__on_verified_{$type}",
+                                        $body["object"]["__sign"])) {
+            error_log("Invalid hook sign for onVerified {$type}" .
+            " from {$this->env['REMOTE_ADDR']}");
+            $this->renderError("Unauthorized.", 401, 401);
+        }
+
         $userObj = LeanClient::decode($body["object"], null);
         LeanUser::saveCurrentUser($userObj);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
@@ -513,6 +550,13 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private function dispatchOnLogin($body) {
+        if (!LeanClient::verifyHookSign("__on_login__User",
+                                        $body["object"]["__sign"])) {
+            error_log("Invalid hook sign for onLogin User" .
+            " from {$this->env['REMOTE_ADDR']}");
+            $this->renderError("Unauthorized.", 401, 401);
+        }
+
         $userObj = LeanClient::decode($body["object"], null);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
         try {
@@ -529,6 +573,13 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private function dispatchOnInsight($body) {
+        if (!LeanClient::verifyHookSign("__on_complete_bigquery_job",
+                                        $body["__sign"])) {
+            error_log("Invalid hook sign for onComplete Insight" .
+            " from {$this->env['REMOTE_ADDR']}");
+            $this->renderError("Unauthorized.", 401, 401);
+        }
+
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
         try {
             Cloud::runOnInsight($body, $meta);

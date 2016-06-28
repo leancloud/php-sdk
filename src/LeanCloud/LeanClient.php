@@ -283,6 +283,34 @@ class LeanClient {
     }
 
     /**
+     * Generate a sign used to auth hook invocation on LeanEngine
+     *
+     * @param string  $hookName E.g. "__before_for_Object"
+     * @param integer $msec Timestamap in microseconds
+     * @return string
+     */
+    public static function signHook($hookName, $msec) {
+        $hash = hash_hmac("sha1", "{$hookName}:{$msec}", self::$appMasterKey);
+        return "{$msec},{$hash}";
+    }
+
+    /**
+     * Verify a signed hook
+     *
+     * @param string $hookName
+     * @param string $sign
+     * @return bool
+     */
+    public static function verifyHookSign($hookName, $sign) {
+        if ($sign) {
+            $parts = explode(",", $sign);
+            $msec  = $parts[0];
+            return self::signHook($hookName, $msec) === $sign;
+        }
+        return false;
+    }
+
+    /**
      * Issue request to LeanCloud
      *
      * The data is passing in as an associative array, which will be encoded
