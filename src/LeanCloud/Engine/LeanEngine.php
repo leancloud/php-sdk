@@ -601,26 +601,10 @@ class LeanEngine {
      * Redirect to http request to https
      */
     private function httpsRedirect() {
-        $reqProto = "http"; // request protocol
-        $reqHost  = $this->getHeaderLine('HTTP_X_FORWARDED_HOST');
-        if ($reqHost) {
-            // request forwarded by proxy
-            $reqProto = $this->getHeaderLine("HTTP_X_FORWARDED_PROTO");
-            $reqProto = strtolower($reqProto);
-        } else {
-            $reqHost  = $this->getHeaderLine('HTTP_HOST');
-            // ISAPI with IIS set HTTPS to off for non-secure request
-            if (empty($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] == "off") ) {
-                $reqProto = "http";
-            } else {
-                $reqProto = "https";
-            }
-        }
-
-        // Only redirect in production environment
-        $prod = (getenv("LC_APP_ENV") == "production");
-        if ($prod && $reqProto != "https") {
-            $url = "https://{$reqHost}{$_SERVER['REQUEST_URI']}";
+        $reqProto = $this->getHeaderLine("HTTP_X_FORWARDED_PROTO");
+        if ($reqProto === "http" &&
+            getenv("LC_APP_ENV") === "production") {
+            $url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
             $this->redirect($url);
         }
     }
