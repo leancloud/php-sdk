@@ -477,15 +477,17 @@ class LeanEngine {
         // set hook marks to prevent infinite loop. For example if user
         // invokes `$obj->save` in an afterSave hook, API will not again
         // invoke afterSave if we set hook marks.
-        forEach(array("__before", "__after", "__after_update") as $mark) {
-            if (isset($json[$mark])) {
-                $obj->set($mark, $json[$mark]);
+        if (strpos($hookName, "before") === 0) {
+            if (isset($json["__before"])) {
+                $obj->set("__before", $json["__before"]);
             } else {
-                if (strpos($mark, "__before") === 0) {
-                    $obj->disableBeforeHook();
-                } else if (strpos($mark, "__after") === 0) {
-                    $obj->disableAfterHook();
-                }
+                $obj->disableBeforeHook();
+            }
+        } else {
+            if (isset($json["__after"])) {
+                $obj->set("__after", $json["__after"]);
+            } else {
+                $obj->disableAfterHook();
             }
         }
 
