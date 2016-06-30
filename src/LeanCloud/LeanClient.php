@@ -23,7 +23,7 @@ class LeanClient {
     /**
      * Client version
      */
-    const VERSION = '0.2.6';
+    const VERSION = '0.3.0';
 
     /**
      * API Endpoints for Regions
