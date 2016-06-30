@@ -228,7 +228,8 @@ try {
 }
 ```
 
-完整的 API 文档请参考: https://leancloud.cn/api-docs/php
+更多文档请参考
+[PHP 数据存储开发指南](https://leancloud.cn/docs/leanstorage_guide-php.html)
 
 贡献
 ----
