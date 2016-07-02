@@ -372,6 +372,10 @@ class LeanFile {
             $data["key"]    = $key;
             $data["__type"] = "File";
             $resp = LeanClient::post("/fileTokens", $data);
+            if (!isset($resp["token"])) {
+                // adapt for S3, when there is no token
+                $resp["token"] = null;
+            }
 
             try {
                 $uploader = static::getFileUploader($resp["provider"]);
