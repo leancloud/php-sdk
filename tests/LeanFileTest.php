@@ -47,7 +47,7 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSaveUTF8TextFile() {
-        $file = LeanFile::createWithData("test.txt", "你好，中国!");
+        $file = LeanFile::createWithData("testChinese.txt", "你好，中国!");
         $file->save();
         $this->assertNotEmpty($file->getUrl());
         $this->assertEquals("text/plain", $file->getMimeType());
@@ -58,7 +58,7 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testFetchFile() {
-        $file = LeanFile::createWithData("test.txt", "你好，中国!");
+        $file = LeanFile::createWithData("testFetch.txt", "你好，中国!");
         $file->save();
         $file2 = LeanFile::fetch($file->getObjectId());
         $this->assertEquals($file->getUrl(), $file2->getUrl());
@@ -69,7 +69,7 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetCreatedAtAndUpdatedAt() {
-        $file = LeanFile::createWithData("test.txt", "你好，中国!");
+        $file = LeanFile::createWithData("testTimestamp.txt", "你好，中国!");
         $file->save();
         $this->assertNotEmpty($file->getUrl());
         $this->assertNotEmpty($file->getCreatedAt());
@@ -79,7 +79,7 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMetaData() {
-        $file = LeanFile::createWithData("test.txt", "你好，中国!");
+        $file = LeanFile::createWithData("testMetadata.txt", "你好，中国!");
         $file->setMeta("language", "zh-CN");
         $file->setMeta("bool", false);
         $file->setMeta("downloads", 100);

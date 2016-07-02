@@ -5,6 +5,9 @@ use LeanCloud\LeanObject;
 use LeanCloud\LeanClient;
 use LeanCloud\CloudException;
 use LeanCloud\MIMEType;
+use LeanCloud\Uploader\QiniuUploader;
+use LeanCloud\Uploader\S3Uploader;
+use LeanCloud\Uploader\QCloudUploader;
 
 /**
  * File object on LeanCloud
@@ -366,16 +369,36 @@ class LeanFile {
             $this->mergeAfterSave($resp);
         } else {
             $key = static::genFileKey();
-            $key .= "." . pathinfo($this->getName(), PATHINFO_EXTENSION);
-            $data["key"] = $key;
-            $resp  = LeanClient::post("/qiniu", $data);
-            $token = $resp["token"];
-            unset($resp["token"]);
-            $this->mergeAfterSave($resp);
+            $data["key"]    = $key;
+            $data["__type"] = "File";
+            $resp = LeanClient::post("/fileTokens", $data);
 
-            LeanClient::uploadToQiniu($token, $this->_source, $key,
-                                      $this->getMimeType());
+            try {
+                $uploader = static::getFileUploader($resp["provider"]);
+                $uploader->initialize($resp["upload_url"], $resp["token"]);
+                $uploader->upload($this->_source, $this->getMimeType(), $key);
+            } catch (\Exception $ex) {
+                $this->destroy();
+                throw $ex;
+            }
+            forEach(array("upload_url", "token") as $k) {
+                if (isset($resp[$k])) {
+                    unset($resp[$k]);
+                }
+            }
+            $this->mergeAfterSave($resp);
         }
+    }
+
+    public function getFileUploader($provider) {
+        if ($provider === "qiniu") {
+            return new QiniuUploader();
+        } else if ($provider === "s3") {
+            return new S3Uploader();
+        } else if ($provider === "qcloud") {
+            return new QCloudUploader();
+        }
+        throw new \Exception("File provider not supported: {$provider}");
     }
 
     /**

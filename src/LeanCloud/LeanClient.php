@@ -156,7 +156,7 @@ class LeanClient {
      *
      * @return string
      */
-    private static function getVersionString() {
+    public static function getVersionString() {
         return "LeanCloud PHP SDK " . self::VERSION;
     }
 
@@ -558,63 +558,6 @@ EOT;
 EOT;
 
         return $body;
-    }
-
-    /**
-     * Upload file content to Qiniu storage
-     *
-     * @param string $token    Qiniu token
-     * @param string $content  File content
-     * @param string $name     File name
-     * @param string $mimeType MIME type of file
-     * @return array           JSON response from qiniu
-     * @throws CloudException, RuntimeException
-     */
-    public static function uploadToQiniu($token, $content, $name,
-                                          $mimeType=null) {
-        $boundary = md5(microtime());
-        $file     = array("name"     => $name,
-                          "content"  => $content,
-                          "mimeType" => $mimeType);
-        $params   = array("token" => $token, "key" => $name);
-        $body     = static::multipartEncode($file, $params, $boundary);
-
-        $headers[] = "User-Agent: " . self::getVersionString();
-        $headers[] = "Content-Type: multipart/form-data;" .
-                     " boundary={$boundary}";
-        $headers[] = "Content-Length: " . strlen($body);
-
-        $url = "http://upload.qiniu.com";
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-        $resp     = curl_exec($ch);
-        $respCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $respType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        $error    = curl_errno($ch);
-        $errno    = curl_errno($ch);
-        curl_close($ch);
-
-        /** type of error:
-         *  - curl error
-         *  - http status error 4xx, 5xx
-         *  - rest api error
-         */
-        if ($errno > 0) {
-            throw new \RuntimeException("CURL connection ($url) error: " .
-                                        "$errno $error",
-                                        $errno);
-        }
-
-        $data = json_decode($resp, true);
-        if (isset($data["error"])) {
-            $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new CloudException("{$code} {$data['error']}", $code);
-        }
-        return $data;
     }
 
     /**
