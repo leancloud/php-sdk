@@ -25,12 +25,12 @@ class QiniuUploader extends AbstractUploader {
     public function upload($content, $mimeType, $key) {
         $boundary = md5(microtime(true));
 
-        $body = LeanClient::multipartEncode(array(
-            "name"  => $key,
+        $body = $this->multipartEncode(array(
+            "name"      => $key,
             "mimeType"  => $mimeType,
             "content"   => $content,
         ), array(
-            "token" => $this->authToken,
+            "token" => $this->getAuthToken(),
             "key"   => $key,
         ), $boundary);
 
@@ -39,7 +39,7 @@ class QiniuUploader extends AbstractUploader {
                      " boundary={$boundary}";
         $headers[] = "Content-Length: " . strlen($body);
 
-        $url = static::getUploadUrl();
+        $url = $this->getUploadUrl();
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -66,8 +66,9 @@ class QiniuUploader extends AbstractUploader {
 
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
-            $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new \RuntimeException("{$code} {$data['error']}", $code);
+            $code = isset($data["code"]) ? $data["code"] : 1;
+            throw new \RuntimeException("Upload to Qiniu failed: {$url}".
+                                        "{$code} {$data['error']}", $code);
         }
         return $data;
     }

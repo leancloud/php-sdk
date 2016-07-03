@@ -1,6 +1,7 @@
 <?php
 
 namespace LeanCloud\Uploader;
+use LeanCloud\LeanClient;
 
 /**
  * Pre-signed URL Uploader for S3
@@ -14,8 +15,10 @@ class S3Uploader extends AbstractUploader {
         if (!$this->getUploadUrl()) {
             throw new \RuntimeException("Please initialize with pre-signed url.");
         }
+        $headers[] = "User-Agent: " . LeanClient::getVersionString();
         $headers[] = "Content-Type: $mimeType";
-        $ch = curl_init($this->getUploadUrl());
+        $url       = $this->getUploadUrl();
+        $ch        = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -29,14 +32,14 @@ class S3Uploader extends AbstractUploader {
         curl_close($ch);
 
         if ($errno > 0) {
-            throw new \RuntimeException("CURL ({$this->getUploadUrl()}) error: " .
+            throw new \RuntimeException("CURL ({$url}) error: " .
                                         "{$errno} {$error}",
                                         $errno);
         }
 
         if ($respCode >= "300") {
             $S3Error = simplexml_load_string($resp);
-            throw new \RuntimeException("Upload to S3 failed: " .
+            throw new \RuntimeException("Upload to S3 failed: {$url} " .
                                         "{$S3Error->Code} {$S3Error->Message}");
         }
         return true;

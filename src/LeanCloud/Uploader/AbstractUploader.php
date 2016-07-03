@@ -18,12 +18,12 @@ abstract class AbstractUploader {
     /**
      * Encode file with params in multipart format
      *
-     * @param array  $file     File data and attributes
+     * @param array  $file     File content, name, and mimeType
      * @param array  $params   Additional form params for provider
      * @param string $boundary Boundary string used for frontier
      * @return string          Multipart encoded string
      */
-    public static function multipartEncode($file, $params, $boundary) {
+    public function multipartEncode($file, $params, $boundary) {
         $body = "";
 
         forEach($params as $key => $val) {
@@ -41,13 +41,14 @@ EOT;
             if (isset($file["mimeType"])) {
                 $mimeType = $file["mimeType"];
             }
+            $fieldname = static::getFileFieldName();
             // escape quotes in file name
             $filename = filter_var($file["name"],
                                    FILTER_SANITIZE_MAGIC_QUOTES);
 
             $body .= <<<EOT
 --{$boundary}
-Content-Disposition: form-data; name="{$this->getFileFieldName}"; filename="{$filename}"
+Content-Disposition: form-data; name="{$fieldname}"; filename="{$filename}"
 Content-Type: {$mimeType}
 
 {$file['content']}
@@ -57,7 +58,7 @@ EOT;
 
         // append end frontier
         $body .=<<<EOT
---{$boundary}
+--{$boundary}--
 
 EOT;
 
@@ -65,13 +66,23 @@ EOT;
     }
 
 
-    public function initialize($url, $token) {
-        $this->uploadUrl = $url;
-        $this->authToken = $token;
+    /**
+     * Initialize uploader with url and auth token
+     *
+     * @param string $uploadUrl File provider url
+     * @param string $authToken Auth token for file provider
+     */
+    public function initialize($uploadUrl, $authToken) {
+        $this->uploadUrl = $uploadUrl;
+        $this->authToken = $authToken;
     }
 
     public function getUploadUrl() {
         return $this->uploadUrl;
+    }
+
+    public function getAuthToken() {
+        return $this->authToken;
     }
 
     abstract public function upload($content, $mimeType, $key);

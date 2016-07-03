@@ -32,7 +32,9 @@ class LeanClient {
      */
     private static $api = array(
         "CN" => "https://api.leancloud.cn",
-        "US" => "https://us-api.leancloud.cn");
+        "US" => "https://us-api.leancloud.cn",
+        "E1" => "https://e1-api.leancloud.cn",
+    );
 
     /**
      * API Region
@@ -505,59 +507,6 @@ class LeanClient {
         }
 
         return $response;
-    }
-
-    /**
-     * Encode file with params in multipart format
-     *
-     * @param array  $file     File data and attributes
-     * @param array  $params   Key-value params
-     * @param string $boundary Boundary string used for frontier
-     * @return string          Multipart encoded string
-     */
-    public static function multipartEncode($file, $params,
-                                            $boundary=null) {
-        if (!$boundary) {
-            $boundary = md5(microtime());
-        }
-
-        $body = "";
-        forEach($params as $key => $val) {
-            $body .= <<<EOT
---{$boundary}
-Content-Disposition: form-data; name="{$key}"
-
-{$val}
-
-EOT;
-        }
-
-        if (!empty($file)) {
-            $mimeType = "application/octet-stream";
-            if (isset($file["mimeType"])) {
-                $mimeType = $file["mimeType"];
-            }
-            // escape quotes in file name
-            $filename = filter_var($file["name"],
-                                   FILTER_SANITIZE_MAGIC_QUOTES);
-
-            $body .= <<<EOT
---{$boundary}
-Content-Disposition: form-data; name="file"; filename="{$filename}"
-Content-Type: {$mimeType}
-
-{$file['content']}
-
-EOT;
-        }
-
-        // append end frontier
-        $body .=<<<EOT
---{$boundary}
-
-EOT;
-
-        return $body;
     }
 
     /**
