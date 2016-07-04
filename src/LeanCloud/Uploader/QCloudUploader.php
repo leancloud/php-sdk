@@ -1,33 +1,20 @@
 <?php
 
 namespace LeanCloud\Uploader;
-
 use LeanCloud\LeanClient;
 
 /**
- * Qiniu file uploader
+ * QCloud COS file uploader
  *
- * @link http://developer.qiniu.com/code/v6/api/kodo-api/up/upload.html
+ * @link https://www.qcloud.com/doc/product/227/3377
  */
-class QiniuUploader extends AbstractUploader {
 
-    public function getUploadUrl() {
-        return "https://up.qbox.me/";
+class QCloudUploader extends AbstractUploader {
+
+    protected static function getFileFieldName() {
+        return "filecontent";
     }
 
-    public function crc32Data($data) {
-        $hex  = hash("crc32b", $data);
-        $ints = unpack("N", pack("H*", $hex));
-        return sprintf("%u", $ints[1]);
-    }
-
-    /**
-     * Upload file to qiniu
-     *
-     * @param string $content  File content
-     * @param string $mimeType MIME type of file
-     * @param string $key      Generated file name
-     */
     public function upload($content, $mimeType, $key) {
         $boundary = md5(microtime(true));
 
@@ -36,16 +23,15 @@ class QiniuUploader extends AbstractUploader {
             "mimeType"  => $mimeType,
             "content"   => $content,
         ), array(
-            "token" => $this->getAuthToken(),
-            "key"   => $key,
-            "crc32" => $this->crc32Data($content)
+            "op"  => "upload",
+            "sha" => hash("sha1", $content)
         ), $boundary);
 
         $headers[] = "User-Agent: " . LeanClient::getVersionString();
         $headers[] = "Content-Type: multipart/form-data;" .
                      " boundary={$boundary}";
-        $headers[] = "Content-Length: " . strlen($body);
-
+        // $headers[] = "Content-Length: " . strlen($body);
+        $headers[] = "Authorization: {$this->getAuthToken()}";
         $url = $this->getUploadUrl();
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -72,10 +58,10 @@ class QiniuUploader extends AbstractUploader {
         }
 
         $data = json_decode($resp, true);
-        if (isset($data["error"])) {
-            $code = isset($data["code"]) ? $data["code"] : 1;
-            throw new \RuntimeException("Upload to Qiniu failed: {$url} ".
-                                        "{$code} {$data['error']}", $code);
+        if ($data["code"] != 0) {
+            throw new \RuntimeException("Upload to Qcloud failed: {$url} ".
+                                        "{$data['code']} {$data['message']}",
+                                        $data["code"]);
         }
         return $data;
     }

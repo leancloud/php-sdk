@@ -24,16 +24,12 @@ abstract class AbstractUploader {
      * @return string          Multipart encoded string
      */
     public function multipartEncode($file, $params, $boundary) {
-        $body = "";
+        $body = "\r\n";
 
         forEach($params as $key => $val) {
-            $body .= <<<EOT
---{$boundary}
-Content-Disposition: form-data; name="{$key}"
-
-{$val}
-
-EOT;
+            $body .= "--{$boundary}\r\n";
+            $body .= "Content-Disposition: form-data; name=\"{$key}\"\r\n\r\n";
+            $body .= "{$val}\r\n";
         }
 
         if (!empty($file)) {
@@ -46,25 +42,17 @@ EOT;
             $filename = filter_var($file["name"],
                                    FILTER_SANITIZE_MAGIC_QUOTES);
 
-            $body .= <<<EOT
---{$boundary}
-Content-Disposition: form-data; name="{$fieldname}"; filename="{$filename}"
-Content-Type: {$mimeType}
-
-{$file['content']}
-
-EOT;
+            $body .= "--{$boundary}\r\n";
+            $body .= "Content-Disposition: form-data; name=\"{$fieldname}\"; filename=\"{$filename}\"\r\n";
+            $body .= "Content-Type: {$mimeType}\r\n\r\n";
+            $body .= "{$file['content']}\r\n";
         }
 
         // append end frontier
-        $body .=<<<EOT
---{$boundary}--
-
-EOT;
+        $body .= "--{$boundary}--\r\n";
 
         return $body;
     }
-
 
     /**
      * Initialize uploader with url and auth token
