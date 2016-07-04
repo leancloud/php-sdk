@@ -74,7 +74,7 @@ class QiniuUploader extends AbstractUploader {
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
             $code = isset($data["code"]) ? $data["code"] : 1;
-            throw new \RuntimeException("Upload to Qiniu failed: {$url} ".
+            throw new \RuntimeException("Upload to Qiniu ({$url}) failed: ".
                                         "{$code} {$data['error']}", $code);
         }
         return $data;

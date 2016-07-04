@@ -59,7 +59,7 @@ class QCloudUploader extends AbstractUploader {
 
         $data = json_decode($resp, true);
         if ($data["code"] != 0) {
-            throw new \RuntimeException("Upload to Qcloud failed: {$url} ".
+            throw new \RuntimeException("Upload to Qcloud ({$url}) failed: ".
                                         "{$data['code']} {$data['message']}",
                                         $data["code"]);
         }

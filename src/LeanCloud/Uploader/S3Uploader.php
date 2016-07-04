@@ -39,7 +39,7 @@ class S3Uploader extends AbstractUploader {
 
         if ($respCode >= "300") {
             $S3Error = simplexml_load_string($resp);
-            throw new \RuntimeException("Upload to S3 failed: {$url} " .
+            throw new \RuntimeException("Upload to S3 ({$url}) failed: " .
                                         "{$S3Error->Code} {$S3Error->Message}");
         }
         return true;
