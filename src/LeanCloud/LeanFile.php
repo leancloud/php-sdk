@@ -369,6 +369,7 @@ class LeanFile {
             $this->mergeAfterSave($resp);
         } else {
             $key = static::genFileKey();
+            $key = "{$key}." . pathinfo($this->getName(), PATHINFO_EXTENSION);
             $data["key"]    = $key;
             $data["__type"] = "File";
             $resp = LeanClient::post("/fileTokens", $data);
