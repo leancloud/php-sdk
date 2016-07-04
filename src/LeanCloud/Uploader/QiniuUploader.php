@@ -15,6 +15,12 @@ class QiniuUploader extends AbstractUploader {
         return "https://up.qbox.me/";
     }
 
+    public function crc32Data($data) {
+        $hex  = hash("crc32b", $data);
+        $ints = unpack("N", pack("H*", $hex));
+        return sprintf("%u", $ints[1]);
+    }
+
     /**
      * Upload file to qiniu
      *
@@ -32,6 +38,7 @@ class QiniuUploader extends AbstractUploader {
         ), array(
             "token" => $this->getAuthToken(),
             "key"   => $key,
+            "crc32" => $this->crc32Data($content)
         ), $boundary);
 
         $headers[] = "User-Agent: " . LeanClient::getVersionString();
