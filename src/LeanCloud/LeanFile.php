@@ -5,9 +5,7 @@ use LeanCloud\LeanObject;
 use LeanCloud\LeanClient;
 use LeanCloud\CloudException;
 use LeanCloud\MIMEType;
-use LeanCloud\Uploader\QiniuUploader;
-use LeanCloud\Uploader\S3Uploader;
-use LeanCloud\Uploader\QCloudUploader;
+use LeanCloud\Uploader\SimpleUploader;
 
 /**
  * File object on LeanCloud
@@ -379,7 +377,7 @@ class LeanFile {
             }
 
             try {
-                $uploader = static::getFileUploader($resp["provider"]);
+                $uploader = SimpleUploader::createUploader($resp["provider"]);
                 $uploader->initialize($resp["upload_url"], $resp["token"]);
                 $uploader->upload($this->_source, $this->getMimeType(), $key);
             } catch (\Exception $ex) {
@@ -393,17 +391,6 @@ class LeanFile {
             }
             $this->mergeAfterSave($resp);
         }
-    }
-
-    public function getFileUploader($provider) {
-        if ($provider === "qiniu") {
-            return new QiniuUploader();
-        } else if ($provider === "s3") {
-            return new S3Uploader();
-        } else if ($provider === "qcloud") {
-            return new QCloudUploader();
-        }
-        throw new \Exception("File provider not supported: {$provider}");
     }
 
     /**

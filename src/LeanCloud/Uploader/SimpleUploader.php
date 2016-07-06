@@ -2,9 +2,26 @@
 
 namespace LeanCloud\Uploader;
 
-abstract class AbstractUploader {
+abstract class SimpleUploader {
     protected $uploadUrl;
     protected $authToken;
+
+    /**
+     * Create uploader by provider
+     *
+     * @param string $provider File provider: qiniu, s3, etc
+     * @return SimpleUploader
+     */
+    public static function createUploader($provider) {
+        if ($provider === "qiniu") {
+            return new QiniuUploader();
+        } else if ($provider === "s3") {
+            return new S3Uploader();
+        } else if ($provider === "qcloud") {
+            return new QCloudUploader();
+        }
+        throw new \RuntimeException("File provider not supported: {$provider}");
+    }
 
     /**
      * The form field name of file content in multipart encoded data

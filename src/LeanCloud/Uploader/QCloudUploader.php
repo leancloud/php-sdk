@@ -9,7 +9,7 @@ use LeanCloud\LeanClient;
  * @link https://www.qcloud.com/doc/product/227/3377
  */
 
-class QCloudUploader extends AbstractUploader {
+class QCloudUploader extends SimpleUploader {
 
     protected static function getFileFieldName() {
         return "filecontent";

@@ -9,7 +9,7 @@ use LeanCloud\LeanClient;
  *
  * @link http://developer.qiniu.com/code/v6/api/kodo-api/up/upload.html
  */
-class QiniuUploader extends AbstractUploader {
+class QiniuUploader extends SimpleUploader {
 
     public function getUploadUrl() {
         return "https://up.qbox.me/";

@@ -9,7 +9,7 @@ use LeanCloud\LeanClient;
  * @link http://docs.aws.amazon.com/AmazonS3/latest/dev/PresignedUrlUploadObject.html
  */
 
-class S3Uploader extends AbstractUploader {
+class S3Uploader extends SimpleUploader {
 
     public function upload($content, $mimeType, $name=null) {
         if (!$this->getUploadUrl()) {
