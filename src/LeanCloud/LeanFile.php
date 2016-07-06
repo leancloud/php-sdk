@@ -5,6 +5,7 @@ use LeanCloud\LeanObject;
 use LeanCloud\LeanClient;
 use LeanCloud\CloudException;
 use LeanCloud\MIMEType;
+use LeanCloud\Uploader\SimpleUploader;
 
 /**
  * File object on LeanCloud
@@ -366,15 +367,29 @@ class LeanFile {
             $this->mergeAfterSave($resp);
         } else {
             $key = static::genFileKey();
-            $key .= "." . pathinfo($this->getName(), PATHINFO_EXTENSION);
-            $data["key"] = $key;
-            $resp  = LeanClient::post("/qiniu", $data);
-            $token = $resp["token"];
-            unset($resp["token"]);
-            $this->mergeAfterSave($resp);
+            $key = "{$key}." . pathinfo($this->getName(), PATHINFO_EXTENSION);
+            $data["key"]    = $key;
+            $data["__type"] = "File";
+            $resp = LeanClient::post("/fileTokens", $data);
+            if (!isset($resp["token"])) {
+                // adapt for S3, when there is no token
+                $resp["token"] = null;
+            }
 
-            LeanClient::uploadToQiniu($token, $this->_source, $key,
-                                      $this->getMimeType());
+            try {
+                $uploader = SimpleUploader::createUploader($resp["provider"]);
+                $uploader->initialize($resp["upload_url"], $resp["token"]);
+                $uploader->upload($this->_source, $this->getMimeType(), $key);
+            } catch (\Exception $ex) {
+                $this->destroy();
+                throw $ex;
+            }
+            forEach(array("upload_url", "token") as $k) {
+                if (isset($resp[$k])) {
+                    unset($resp[$k]);
+                }
+            }
+            $this->mergeAfterSave($resp);
         }
     }
 
