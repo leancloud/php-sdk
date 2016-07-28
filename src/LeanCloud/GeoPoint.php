@@ -6,10 +6,10 @@ namespace LeanCloud;
  * GeoPoint type representation
  *
  * It represents a geographic point, and supports computing geo
- * distance from point to point. It can also be used in LeanQuery to
+ * distance from point to point. It can also be used in Query to
  * build proximity-based queries.
  *
- * @see LeanQuery
+ * @see Query
  */
 class GeoPoint {
     /**

@@ -1,42 +1,42 @@
 <?php
 
-use LeanCloud\LeanObject;
+use LeanCloud\Object;
 use LeanCloud\GeoPoint;
-use LeanCloud\LeanClient;
-use LeanCloud\LeanRelation;
+use LeanCloud\Client;
+use LeanCloud\Relation;
 use LeanCloud\Storage\SessionStorage;
 
-class Movie extends LeanObject {
+class Movie extends Object {
     protected static $className = "Movie";
 }
 Movie::registerClass();
 
-class LeanObjectTest extends PHPUnit_Framework_TestCase {
+class ObjectTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        LeanClient::initialize(
+        Client::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion(getenv("LC_API_REGION"));
-        LeanClient::setStorage(new SessionStorage());
+        Client::useRegion(getenv("LC_API_REGION"));
+        Client::setStorage(new SessionStorage());
     }
 
     public function testInitializePlainObjectWithoutName() {
         $this->setExpectedException("InvalidArgumentException",
                                     "className is invalid.");
-        new LeanObject();
+        new Object();
     }
 
     public function testInitializeSubClass() {
         $movie = new Movie();
         $this->assertTrue($movie instanceof Movie);
-        $this->assertTrue($movie instanceof LeanObject);
+        $this->assertTrue($movie instanceof Object);
     }
 
     public function testInitializePlainObject() {
-        $movie = new LeanObject("Movie");
+        $movie = new Object("Movie");
         $this->assertFalse($movie instanceof Movie);
-        $this->assertTrue($movie instanceof LeanObject);
+        $this->assertTrue($movie instanceof Object);
     }
 
     public function testSetGet() {
@@ -75,7 +75,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSaveNewObject() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("name", "Alice in wonderland");
         $obj->set("score", 81);
         $obj->save();
@@ -88,14 +88,14 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSaveFetchObject() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("name", "Alice in wonderland");
         $obj->set("score", 81);
         $obj->save();
         $this->assertNotEmpty($obj->getObjectId());
 
         $id   = $obj->getObjectId();
-        $obj2 = new LeanObject("TestObject", $id);
+        $obj2 = new Object("TestObject", $id);
         $obj2->fetch();
         $this->assertEquals($obj2->get("name"), "Alice in wonderland");
         $this->assertEquals($obj2->get("score"), 81);
@@ -104,7 +104,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSaveExistingObject() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("foo", "bar");
         $obj->save();
         $this->assertNotEmpty($obj->getObjectId());
@@ -114,7 +114,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $obj->save();
         $this->assertNotEmpty($obj->getUpdatedAt());
 
-        $obj2 = new LeanObject("TestObject", $obj->getObjectId());
+        $obj2 = new Object("TestObject", $obj->getObjectId());
         $obj2->fetch();
         $this->assertEquals($obj2->get("name"), "Alice in wonderland");
         $this->assertEquals($obj2->get("score"), 81);
@@ -123,7 +123,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetCreatedAtAndUpdatedAt() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("foo", "bar");
         $obj->save();
         $this->assertNotEmpty($obj->getCreatedAt());
@@ -138,12 +138,12 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testCreateObjectWithId() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("foo", "bar");
         $obj->save();
         $this->assertNotEmpty($obj->getCreatedAt());
 
-        $obj2 = LeanObject::create("TestObject", $obj->getObjectId());
+        $obj2 = Object::create("TestObject", $obj->getObjectId());
         $obj2->fetch();
         $this->assertEquals("bar", $obj2->get("foo"));
 
@@ -155,12 +155,12 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
      */
 
     public function testGetDateShouldReturnDateTime() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $date = new DateTime();
         $obj->set("release", $date);
         $obj->save();
         $this->assertNotEmpty($obj->getObjectId());
-        $obj2 = new LeanObject("TestObject", $obj->getObjectId());
+        $obj2 = new Object("TestObject", $obj->getObjectId());
         $obj2->fetch();
         $this->assertTrue($obj2->get("release") instanceof DateTime);
         $this->assertEquals($obj->get("release"), $obj2->get("release"));
@@ -169,23 +169,23 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRelationDecode() {
-        $a = new LeanObject("TestObject");
+        $a = new Object("TestObject");
         $a->set("name", "Pap");
         $rel = $a->getRelation("likes_relation");
-        $b = new LeanObject("TestObject");
+        $b = new Object("TestObject");
         $b->set("name", "alice");
         $b->save();
         $rel->add($b);
         $a->save();
         $this->assertNotEmpty($a->getObjectId());
 
-        $a2 = new LeanObject("TestObject", $a->getObjectId());
+        $a2 = new Object("TestObject", $a->getObjectId());
         $a2->fetch();
         $val = $a2->get("likes_relation");
-        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertTrue($val instanceof Relation);
         $this->assertEquals("TestObject", $val->getTargetClassName());
 
-        LeanObject::destroyAll(array($a, $b));
+        Object::destroyAll(array($a, $b));
     }
 
     /**
@@ -193,7 +193,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
      */
 
     public function testAddField() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->addIn("tags", "frontend");
         $this->assertEquals(array("frontend"), $obj->get("tags"));
 
@@ -208,7 +208,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testAddUniqueOnField() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->addUniqueIn("tags", "frontend");
         $this->assertEquals(array("frontend"), $obj->get("tags"));
 
@@ -220,7 +220,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRemoveOnField() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->removeIn("tags", "frontend");
         $this->assertEquals(array(), $obj->get("tags"));
 
@@ -232,7 +232,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testDeleteField() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->delete("tags");
         $this->assertNull($obj->get("tags"));
 
@@ -247,7 +247,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testDestroyObject() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("tags", array("frontend"));
         $obj->save();
 
@@ -263,15 +263,15 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
      */
 
     public function testAddRelation() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $rel = $obj->getRelation("authors");
-        $rel->add(new LeanObject("TestAuthor", "abc101"));
+        $rel->add(new Object("TestAuthor", "abc101"));
         $out = $rel->encode();
         $this->assertEquals("Relation", $out["__type"]);
         $this->assertEquals("TestAuthor", $out["className"]);
 
         $val = $obj->get("authors");
-        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertTrue($val instanceof Relation);
         $out = $val->encode();
         $this->assertEquals("Relation", $out["__type"]);
         $this->assertEquals("TestAuthor", $out["className"]);
@@ -282,17 +282,17 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
      */
 
     public function testObjectTraverseACycle() {
-        $a = new LeanObject("TestObject");
-        $b = new LeanObject("TestObject");
-        $c = new LeanObject("TestObject");
+        $a = new Object("TestObject");
+        $b = new Object("TestObject");
+        $c = new Object("TestObject");
         $a->set("likes", array($b, "foo"));
         $b->set("likes", array($c, 42));
         $c->set("likes", $a);
         $objects = array(); // collected objects
         $seen    = array();
-        LeanObject::traverse($a, $seen,
+        Object::traverse($a, $seen,
                              function($val) use (&$objects) {
-                                 if ($val instanceof LeanObject) {
+                                 if ($val instanceof Object) {
                                      $objects[] = $val;
                                  }
                              });
@@ -302,9 +302,9 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         // now start from $c
         $objects = array(); // collected objects
         $seen    = array();
-        LeanObject::traverse($c, $seen,
+        Object::traverse($c, $seen,
                              function($val) use (&$objects) {
-                                 if ($val instanceof LeanObject) {
+                                 if ($val instanceof Object) {
                                      $objects[] = $val;
                                  }
                              });
@@ -313,9 +313,9 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testFindUnsavedChildren() {
-        $a = new LeanObject("TestObject");
-        $b = new LeanObject("TestObject");
-        $c = new LeanObject("TestObject");
+        $a = new Object("TestObject");
+        $b = new Object("TestObject");
+        $c = new Object("TestObject");
         $a->set("likes", array($b, "foo"));
         $b->set("likes", array($c, 42));
         $c->set("likes", $a);
@@ -328,9 +328,9 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSaveObjectWithNewChildren() {
-        $a = new LeanObject("TestObject");
-        $b = new LeanObject("TestObject");
-        $c = new LeanObject("TestObject");
+        $a = new Object("TestObject");
+        $b = new Object("TestObject");
+        $c = new Object("TestObject");
         $a->set("foo", "aar");
         $b->set("foo", "bar");
         $c->set("foo", "car");
@@ -342,14 +342,14 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($b->getObjectId());
         $this->assertNotEmpty($c->getObjectId());
 
-        LeanObject::destroyAll(array($a, $b, $c));
+        Object::destroyAll(array($a, $b, $c));
     }
 
     // it cannnot save when children's children is new
     public function testSaveWithNewGrandChildren() {
-        $a = new LeanObject("TestObject");
-        $b = new LeanObject("TestObject");
-        $c = new LeanObject("TestObject");
+        $a = new Object("TestObject");
+        $b = new Object("TestObject");
+        $c = new Object("TestObject");
         $a->set("foo", "aar");
         $b->set("foo", "bar");
         $c->set("foo", "car");
@@ -362,11 +362,11 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetGeoPoint() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("location", new GeoPoint(39.9, 116.4));
         $obj->save();
 
-        $obj2 = new LeanObject("TestObject", $obj->getObjectId());
+        $obj2 = new Object("TestObject", $obj->getObjectId());
         $obj2->fetch();
         $loc = $obj2->get("location");
         $this->assertTrue($loc instanceof GeoPoint);
@@ -377,7 +377,7 @@ class LeanObjectTest extends PHPUnit_Framework_TestCase {
     public function testGeoPointLocation() {
         $point = new GeoPoint(25.269876, 110.333061);
 
-        $location = new LeanObject("Location");
+        $location = new Object("Location");
         $location->set("location", $point);
         $location->save();
 

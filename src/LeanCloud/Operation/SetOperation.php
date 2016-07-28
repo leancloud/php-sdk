@@ -1,7 +1,7 @@
 <?php
 namespace LeanCloud\Operation;
 
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 
 /**
  * Set operation
@@ -59,7 +59,7 @@ class SetOperation implements IOperation {
      * @return array
      */
     public function encode() {
-        return LeanClient::encode($this->value);
+        return Client::encode($this->value);
     }
 
     /**

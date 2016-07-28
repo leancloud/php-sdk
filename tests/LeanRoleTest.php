@@ -1,47 +1,47 @@
 <?php
 
-use LeanCloud\LeanClient;
-use LeanCloud\LeanACL;
-use LeanCloud\LeanUser;
-use LeanCloud\LeanRole;
-use LeanCloud\LeanRelation;
+use LeanCloud\Client;
+use LeanCloud\ACL;
+use LeanCloud\User;
+use LeanCloud\Role;
+use LeanCloud\Relation;
 
-class LeanRoleTest extends PHPUnit_Framework_TestCase {
+class RoleTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        LeanClient::initialize(
+        Client::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion(getenv("LC_API_REGION"));
+        Client::useRegion(getenv("LC_API_REGION"));
     }
 
     public function testInitializeRole() {
         // It should not raise error
-        $role = new LeanRole();
-        $role = new LeanRole("_Role");
+        $role = new Role();
+        $role = new Role("_Role");
 
-        $role = new LeanRole(null, "id123");
+        $role = new Role(null, "id123");
         $this->assertEquals("id123", $role->getObjectId());
     }
 
     public function testGetChildrenAsRelation() {
-        $role = new LeanRole();
-        $this->assertTrue($role->getUsers() instanceof LeanRelation);
-        $this->assertTrue($role->getRoles() instanceof LeanRelation);
+        $role = new Role();
+        $this->assertTrue($role->getUsers() instanceof Relation);
+        $this->assertTrue($role->getRoles() instanceof Relation);
     }
 
     public function testSaveRole() {
-        $role = new LeanRole();
+        $role = new Role();
         $role->setName("admin");
 
-        $acl = new LeanACL();
+        $acl = new ACL();
         $acl->setPublicWriteAccess(true); // so it can be destroyed
         $role->setACL($acl);
 
         $role->save();
         $this->assertNotEmpty($role->getObjectId());
-        $this->assertTrue($role->getUsers() instanceof LeanRelation);
-        $this->assertTrue($role->getRoles() instanceof LeanRelation);
+        $this->assertTrue($role->getUsers() instanceof Relation);
+        $this->assertTrue($role->getRoles() instanceof Relation);
 
         $role->destroy();
     }

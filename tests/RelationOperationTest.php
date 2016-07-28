@@ -1,17 +1,17 @@
 <?php
 
-use LeanCloud\LeanObject;
-use LeanCloud\LeanClient;
-use LeanCloud\LeanRelation;
+use LeanCloud\Object;
+use LeanCloud\Client;
+use LeanCloud\Relation;
 use LeanCloud\Operation\RelationOperation;
 
 class RelationOperationTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        LeanClient::initialize(
+        Client::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion(getenv("LC_API_REGION"));
+        Client::useRegion(getenv("LC_API_REGION"));
     }
 
     public function testBothEmpty() {
@@ -21,7 +21,7 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testAddOpEncode() {
-        $child1 = new LeanObject("TestObject", "ab123");
+        $child1 = new Object("TestObject", "ab123");
         $op = new RelationOperation("foo", array($child1), null);
         $out = $op->encode();
         $this->assertEquals("AddRelation", $out["__op"]);
@@ -29,14 +29,14 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testAddUnsavedObjects() {
-        $child1 = new LeanObject("TestObject");
+        $child1 = new Object("TestObject");
         $this->setExpectedException("RuntimeException",
                                     "Cannot add unsaved object to relation.");
         $op = new RelationOperation("foo", array($child1), null);
     }
 
     public function testAddDuplicateObjects() {
-        $child1 = new LeanObject("TestObject", "ab123");
+        $child1 = new Object("TestObject", "ab123");
         $op = new RelationOperation("foo", array($child1, $child1), null);
         $out = $op->encode();
         $this->assertEquals("AddRelation", $out["__op"]);
@@ -45,7 +45,7 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRemoveOpEncode() {
-        $child1 = new LeanObject("TestObject", "ab123");
+        $child1 = new Object("TestObject", "ab123");
         $op = new RelationOperation("foo", null, array($child1));
         $out = $op->encode();
         $this->assertEquals("RemoveRelation", $out["__op"]);
@@ -53,7 +53,7 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRemoveDuplicateObjects() {
-        $child1 = new LeanObject("TestObject", "ab123");
+        $child1 = new Object("TestObject", "ab123");
         $op = new RelationOperation("foo", null, array($child1, $child1));
         $out = $op->encode();
         $this->assertEquals("RemoveRelation", $out["__op"]);
@@ -62,7 +62,7 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testAddWinsOverRemove() {
-        $child1 = new LeanObject("TestObject", "ab101");
+        $child1 = new Object("TestObject", "ab101");
         $op = new RelationOperation("foo",
                                     array($child1),
                                     array($child1));
@@ -73,9 +73,9 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testAddAndRemove() {
-        $child1 = new LeanObject("TestObject", "ab101");
-        $child2 = new LeanObject("TestObject", "ab102");
-        $child3 = new LeanObject("TestObject", "ab103");
+        $child1 = new Object("TestObject", "ab101");
+        $child2 = new Object("TestObject", "ab102");
+        $child3 = new Object("TestObject", "ab103");
         $op = new RelationOperation("foo",
                                     array($child1, $child2),
                                     array($child2, $child3));
@@ -93,8 +93,8 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMultipleClassesNotAllowed() {
-        $child1 = new LeanObject("TestObject",  "abc101");
-        $child2 = new LeanObject("Test2Object", "bac102");
+        $child1 = new Object("TestObject",  "abc101");
+        $child2 = new Object("Test2Object", "bac102");
         $this->setExpectedException("RuntimeException",
                                     "Object type incompatible with " .
                                     "relation.");
@@ -104,17 +104,17 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testApplyOperation() {
-        $child1 = new LeanObject("TestObject",  "abc101");
+        $child1 = new Object("TestObject",  "abc101");
         $op     = new RelationOperation("foo", array($child1), null);
-        $parent = new LeanObject("Test2Object");
+        $parent = new Object("Test2Object");
         $val    = $op->applyOn(null, $parent);
-        $this->assertTrue($val instanceof LeanRelation);
+        $this->assertTrue($val instanceof Relation);
         $out    = $val->encode();
         $this->assertEquals("TestObject", $out["className"]);
     }
 
     public function testMergeWithNull() {
-        $child1 = new LeanObject("TestObject",  "abc101");
+        $child1 = new Object("TestObject",  "abc101");
         $op     = new RelationOperation("foo", array($child1), null);
         $op2    = $op->mergeWith(null);
         $this->assertTrue($op2 instanceof RelationOperation);
@@ -122,10 +122,10 @@ class RelationOperationTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMergeWithRelationOperation() {
-        $child1 = new LeanObject("TestObject",  "abc101");
+        $child1 = new Object("TestObject",  "abc101");
         $op     = new RelationOperation("foo", array($child1), null);
 
-        $child2 = new LeanObject("TestObject",  "abc102");
+        $child2 = new Object("TestObject",  "abc102");
         $op2    = new RelationOperation("foo", null, array($child2));
 
         $op3 = $op->mergeWith($op2);

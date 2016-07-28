@@ -1,6 +1,6 @@
 <?php
 
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 use LeanCloud\CloudException;
 
 /**
@@ -12,7 +12,7 @@ use LeanCloud\CloudException;
 
 class LeanEngineTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        LeanClient::initialize(
+        Client::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
@@ -22,7 +22,7 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         $appUrl = "http://" . getenv("LC_APP_HOST") . ":" .
                 getenv("LC_APP_PORT");
         $url = $appUrl . $url;
-        $headers = LeanClient::buildHeaders(null, true);
+        $headers = Client::buildHeaders(null, true);
         $headers["Content-Type"] = "application/json;charset=utf-8";
         $headers["Origin"] = getenv("LC_APP_HOST"); // emulate CORS
         $h = array_map(

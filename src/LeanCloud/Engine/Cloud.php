@@ -241,7 +241,7 @@ class Cloud {
      *
      * @param string   $funcName Name of defined function
      * @param array    $data     Array of parameters passed to function
-     * @param LeanUser $user     Request user
+     * @param User $user     Request user
      * @param array    $meta     Optional parameters that will be passed to
      *                           user function
      * @return mixed
@@ -268,8 +268,8 @@ class Cloud {
      *
      * @param string $className  Classname
      * @param string $hookName   Hook name, e.g. beforeUpdate
-     * @param LeanObject $object The object of attached hook
-     * @param LeanUser   $user   Request user
+     * @param Object $object The object of attached hook
+     * @param User   $user   Request user
      * @param array      $meta   Optional parameters that will be passed to
      *                           user function
      * @return mixed
@@ -290,7 +290,7 @@ class Cloud {
     /**
      * Run hook when a user logs in
      *
-     * @param LeanUser $user The user object that tries to login
+     * @param User $user The user object that tries to login
      * @param array    $meta Optional parameters that will be passed to
      *                       user function
      * @throws FunctionError
@@ -304,7 +304,7 @@ class Cloud {
      * Run hook when user verified by Email or SMS
      *
      * @param string   $type Either "sms" or "email", case-sensitive
-     * @param LeanUser $user The verifying user
+     * @param User $user The verifying user
      * @param array    $meta Optional parameters that will be passed to
      *                       user function
      * @throws FunctionError

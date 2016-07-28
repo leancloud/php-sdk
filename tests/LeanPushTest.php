@@ -1,23 +1,23 @@
 <?php
 
-use LeanCloud\LeanClient;
-use LeanCloud\LeanQuery;
-use LeanCloud\LeanPush;
+use LeanCloud\Client;
+use LeanCloud\Query;
+use LeanCloud\Push;
 
-class LeanPushTest extends PHPUnit_Framework_TestCase {
+class PushTest extends PHPUnit_Framework_TestCase {
     public function testMessageEncode() {
         $data = array(
             "alert" => "Hello world!",
             "badge" => 20,
             "sound" => "APP/media/sound.mp3"
         );
-        $push = new LeanPush($data);
+        $push = new Push($data);
         $out = $push->encode();
         $this->assertEquals($data, $out["data"]);
     }
 
     public function testSetData() {
-        $push = new LeanPush(array(
+        $push = new Push(array(
             "alert" => "Hello world!"
         ));
         $push->setData("badge", 20);
@@ -48,13 +48,13 @@ class LeanPushTest extends PHPUnit_Framework_TestCase {
                 "wp-param" => "/chat.xaml?NavigatedFrom=Toast Notification"
             )
         );
-        $push = new LeanPush($data);
+        $push = new Push($data);
         $out = $push->encode();
         $this->assertEquals($data, $out["data"]);
     }
 
     public function testSetProd() {
-        $push = new LeanPush(array(
+        $push = new Push(array(
             "alert" => "Hello world!"
         ));
         $push->setOption("prod", "dev");
@@ -63,7 +63,7 @@ class LeanPushTest extends PHPUnit_Framework_TestCase {
     }
     
     public function testSetChannels() {
-        $push = new LeanPush(array(
+        $push = new Push(array(
             "alert" => "Hello world!"
         ));
         $channels = array("vip", "premium");
@@ -73,7 +73,7 @@ class LeanPushTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetPushTime() {
-        $push = new LeanPush(array(
+        $push = new Push(array(
             "alert" => "Hello world!"
         ));
         $time = new DateTime();
@@ -83,7 +83,7 @@ class LeanPushTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetExpirationInterval() {
-        $push = new LeanPush(array(
+        $push = new Push(array(
             "alert" => "Hello world!"
         ));
         $push->setExpirationInterval(86400);
@@ -92,7 +92,7 @@ class LeanPushTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetExpirationTime() {
-        $push = new LeanPush(array(
+        $push = new Push(array(
             "alert" => "Hello world!"
         ));
         $date = new DateTime();
@@ -102,17 +102,17 @@ class LeanPushTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetWhere() {
-        $push = new LeanPush(array(
+        $push = new Push(array(
             "alert" => "Hello world!"
         ));
-        $query = new LeanQuery("_Installation"); 
+        $query = new Query("_Installation"); 
         $date = new DateTime();
         $query->lessThan("updatedAt", $date);
         $push->setWhere($query);
         $out = $push->encode();
         $this->assertEquals(array(
             "updatedAt" => array(
-                '$lt' => LeanClient::encode($date)
+                '$lt' => Client::encode($date)
             )
         ), $out["where"]);
     }

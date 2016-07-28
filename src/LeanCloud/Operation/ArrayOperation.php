@@ -1,7 +1,7 @@
 <?php
 namespace LeanCloud\Operation;
 
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\DeleteOperation;
 
@@ -86,7 +86,7 @@ class ArrayOperation implements IOperation {
     public function encode() {
         return array(
             "__op"    => $this->getOpType(),
-            "objects" => LeanClient::encode($this->value),
+            "objects" => Client::encode($this->value),
         );
     }
 
@@ -112,12 +112,12 @@ class ArrayOperation implements IOperation {
         $newval = $oldval; // New result array
         $found  = array(); // Hash map of objects with objectId as key
         forEach($oldval as $obj) {
-            if (($obj instanceof LeanObject) && ($obj->getObjectId())) {
+            if (($obj instanceof Object) && ($obj->getObjectId())) {
                 $found[$obj->getObjectId()] = true;
             }
         }
         forEach($this->getValue() as $obj) {
-            if (($obj instanceof LeanObject) && ($obj->getObjectId())) {
+            if (($obj instanceof Object) && ($obj->getObjectId())) {
                 if (isset($found[$obj->getObjectId()])) {
                     // skip duplicate object
                 } else {

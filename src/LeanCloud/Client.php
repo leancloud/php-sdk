@@ -2,11 +2,11 @@
 
 namespace LeanCloud;
 
-use LeanCloud\LeanBytes;
-use LeanCloud\LeanObject;
-use LeanCloud\LeanACL;
-use LeanCloud\LeanFile;
-use LeanCloud\LeanUser;
+use LeanCloud\Bytes;
+use LeanCloud\Object;
+use LeanCloud\ACL;
+use LeanCloud\File;
+use LeanCloud\User;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Storage\IStorage;
 use LeanCloud\Storage\SessionStorage;
@@ -19,7 +19,7 @@ use LeanCloud\Storage\SessionStorage;
  * such as `::randomFloat` to generate a random float number.
  *
  */
-class LeanClient {
+class Client {
     /**
      * Client version
      */
@@ -134,8 +134,8 @@ class LeanClient {
             self::$storage = new SessionStorage();
         }
 
-        LeanUser::registerClass();
-        LeanRole::registerClass();
+        User::registerClass();
+        Role::registerClass();
     }
 
     /**
@@ -149,7 +149,7 @@ class LeanClient {
             !isset(self::$appMasterKey)) {
             throw new \RuntimeException("Client is not initialized, " .
                                         "please specify application key " .
-                                        "with LeanClient::initialize.");
+                                        "with Client::initialize.");
         }
     }
 
@@ -209,7 +209,7 @@ class LeanClient {
     /**
      * Build authentication headers
      *
-     * @param string $sessionToken Session token of a LeanUser
+     * @param string $sessionToken Session token of a User
      * @param bool   $useMasterKey
      * @return array
      */
@@ -231,7 +231,7 @@ class LeanClient {
         }
 
         if (!$sessionToken) {
-            $sessionToken = LeanUser::getCurrentSessionToken();
+            $sessionToken = User::getCurrentSessionToken();
         }
 
         if ($sessionToken) {
@@ -325,7 +325,7 @@ class LeanClient {
      * @param string $method       GET, POST, PUT, DELETE
      * @param string $path         Request path (without version string)
      * @param array  $data         Payload data
-     * @param string $sessionToken Session token of a LeanUser
+     * @param string $sessionToken Session token of a User
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not
      * @return array               JSON decoded associative array
@@ -415,7 +415,7 @@ class LeanClient {
      *
      * @param string $path         Request path (without version string)
      * @param array  $data         Payload data
-     * @param string $sessionToken Session token of a LeanUser
+     * @param string $sessionToken Session token of a User
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not
      * @return array               JSON decoded associated array
@@ -432,7 +432,7 @@ class LeanClient {
      *
      * @param string $path         Request path (without version string)
      * @param array  $data         Payload data
-     * @param string $sessionToken Session token of a LeanUser
+     * @param string $sessionToken Session token of a User
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               JSON decoded associated array
@@ -449,7 +449,7 @@ class LeanClient {
      *
      * @param string $path         Request path (without version string)
      * @param array  $data         Payload data
-     * @param string $sessionToken Session token of a LeanUser
+     * @param string $sessionToken Session token of a User
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               JSON decoded associated array
@@ -465,7 +465,7 @@ class LeanClient {
      * Issue DELETE request to LeanCloud
      *
      * @param string $path         Request path (without version string)
-     * @param string $sessionToken Session token of a LeanUser
+     * @param string $sessionToken Session token of a User
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array               JSON decoded associated array
@@ -481,7 +481,7 @@ class LeanClient {
      * Issue a batch request
      *
      * @param array  $requests     Array of requests in batch op
-     * @param string $sessionToken Session token of a LeanUser
+     * @param string $sessionToken Session token of a User
      * @param array  $headers      Optional headers
      * @param bool   $useMasterkey Use master key or not, optional
      * @return array              JSON decoded associated array
@@ -489,7 +489,7 @@ class LeanClient {
      */
     public static function batch($requests, $sessionToken=null,
                                  $headers=array(), $useMasterKey=null) {
-        $response = LeanClient::post("/batch",
+        $response = Client::post("/batch",
                                      array("requests" => $requests),
                                      $sessionToken,
                                      $headers,
@@ -512,12 +512,12 @@ class LeanClient {
     /**
      * Recursively encode value as JSON representation
      *
-     * By default LeanObject will be encoded as pointer, though
+     * By default Object will be encoded as pointer, though
      * `$encoder` could be provided to encode to customized type, such
      * as full `__type` annotated json object. The $encoder must be
-     * name of instance method of LeanObject.
+     * name of instance method of Object.
      *
-     * To vaoid infinite loop in the case of circular LeanObject
+     * To vaoid infinite loop in the case of circular Object
      * references, previously seen objects (`$seen`) are encoded
      * in pointer, even a customized encoder was provided.
      *
@@ -526,15 +526,15 @@ class LeanClient {
      * $obj->set("owner", $user);
      *
      * // encode object to full JSON, with `__type` and `className`
-     * LeanClient::encode($obj, "toFullJSON");
+     * Client::encode($obj, "toFullJSON");
      *
      * // encode object to literal JSON, without `__type` and `className`
-     * LeanClient::encode($obj, "toJSON");
+     * Client::encode($obj, "toJSON");
      * ```
      *
      * @param mixed  $value
-     * @param string $encoder LeanObject encoder name, e.g.: getPointer, toJSON
-     * @param array  $seen    Array of LeanObject that has been traversed
+     * @param string $encoder Object encoder name, e.g.: getPointer, toJSON
+     * @param array  $seen    Array of Object that has been traversed
      * @return mixed
      */
     public static function encode($value,
@@ -546,7 +546,7 @@ class LeanClient {
                    ($value instanceof \DateTimeImmutable)) {
             return array("__type" => "Date",
                          "iso"    => self::formatDate($value));
-        } else if ($value instanceof LeanObject) {
+        } else if ($value instanceof Object) {
             if ($encoder && !in_array($value, $seen)) {
                 $seen[] = $value;
                 return call_user_func(array($value, $encoder), $seen);
@@ -555,9 +555,9 @@ class LeanClient {
             }
         } else if ($value instanceof IOperation ||
                    $value instanceof GeoPoint   ||
-                   $value instanceof LeanBytes  ||
-                   $value instanceof LeanACL    ||
-                   $value instanceof LeanFile) {
+                   $value instanceof Bytes  ||
+                   $value instanceof ACL    ||
+                   $value instanceof File) {
             return $value->encode();
         } else if (is_array($value)) {
             $res = array();
@@ -600,7 +600,7 @@ class LeanClient {
             return $value;
         }
         if ($key === 'ACL') {
-            return new LeanACL($value);
+            return new ACL($value);
         }
         if (!isset($value["__type"])) {
             $out = array();
@@ -618,18 +618,18 @@ class LeanClient {
             return new \DateTime($value["iso"]);
         }
         if ($type === "Bytes") {
-            return LeanBytes::createFromBase64Data($value["base64"]);
+            return Bytes::createFromBase64Data($value["base64"]);
         }
         if ($type === "GeoPoint") {
             return new GeoPoint($value["latitude"], $value["longitude"]);
         }
         if ($type === "File") {
-            $file = new LeanFile($value["name"]);
+            $file = new File($value["name"]);
             $file->mergeAfterFetch($value);
             return $file;
         }
         if ($type === "Pointer" || $type === "Object") {
-            $obj = LeanObject::create($value["className"], $value["objectId"]);
+            $obj = Object::create($value["className"], $value["objectId"]);
             unset($value["__type"]);
             unset($value["className"]);
             if (!empty($value)) {
@@ -638,7 +638,7 @@ class LeanClient {
             return $obj;
         }
         if ($type === "Relation") {
-            return new LeanRelation(null, $key, $value["className"]);
+            return new Relation(null, $key, $value["className"]);
         }
     }
 

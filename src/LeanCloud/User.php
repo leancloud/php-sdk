@@ -1,8 +1,8 @@
 <?php
 namespace LeanCloud;
 
-use LeanCloud\LeanClient;
-use LeanCloud\LeanObject;
+use LeanCloud\Client;
+use LeanCloud\Object;
 use LeanCloud\CloudException;
 
 /**
@@ -17,25 +17,25 @@ use LeanCloud\CloudException;
  * of logged-in user is available at
  *
  * ```
- * LeanUser::getCurrentSessionToken()
+ * User::getCurrentSessionToken()
  * ```
  *
  * and current user at
  *
  * ```
- * LeanUser::getCurrentUser()
+ * User::getCurrentUser()
  * ```
  *
  * Providing a token, the user can be conveniently authenticated and
  * fetched by
  *
  * ```
- * LeanUser::become($token)
+ * User::become($token)
  * ```
  *
  */
 
-class LeanUser extends LeanObject {
+class User extends Object {
 
     /**
      * className on LeanCloud
@@ -47,7 +47,7 @@ class LeanUser extends LeanObject {
     /**
      * Current logged-in user
      *
-     * @var LeanUser
+     * @var User
      */
     public static $currentUser = null;
 
@@ -134,7 +134,7 @@ class LeanUser extends LeanObject {
     public function updatePassword($old, $new) {
         if ($this->getObjectId()) {
             $path = "/users/{$this->getObjectId()}/updatePassword";
-            $resp = LeanClient::put($path, array("old_password" => $old,
+            $resp = Client::put($path, array("old_password" => $old,
                                                  "new_password" => $new),
                                     $this->getSessionToken());
             $this->mergeAfterFetch($resp);
@@ -186,7 +186,7 @@ class LeanUser extends LeanObject {
      * @param string $token Session token of logged-in user
      */
     public static function setCurrentSessionToken($token) {
-        LeanClient::getStorage()->set("LC_SessionToken", $token);
+        Client::getStorage()->set("LC_SessionToken", $token);
     }
 
     /**
@@ -195,16 +195,16 @@ class LeanUser extends LeanObject {
      * @return string
      */
     public static function getCurrentSessionToken() {
-        return LeanClient::getStorage()->get("LC_SessionToken");
+        return Client::getStorage()->get("LC_SessionToken");
     }
 
     /**
      * Get currently logged-in user
      *
-     * @return LeanUser
+     * @return User
      */
     public static function getCurrentUser() {
-        if (self::$currentUser instanceof LeanUser) {
+        if (self::$currentUser instanceof User) {
             return self::$currentUser;
         }
         $token = static::getCurrentSessionToken();
@@ -216,7 +216,7 @@ class LeanUser extends LeanObject {
     /**
      * Save logged-in user and session token
      *
-     * @param LeanUser
+     * @param User
      */
     public static function saveCurrentUser($user) {
         self::$currentUser = $user;
@@ -237,11 +237,11 @@ class LeanUser extends LeanObject {
      * And set current user.
      *
      * @param string $token Session token
-     * @return LeanUser
+     * @return User
      * @throws CloudException
      */
     public static function become($token) {
-        $resp = LeanClient::get("/users/me",
+        $resp = Client::get("/users/me",
                                 array("session_token" => $token));
         $user = new static();
         $user->mergeAfterFetch($resp);
@@ -257,11 +257,11 @@ class LeanUser extends LeanObject {
      *
      * @param string $username
      * @param string $password
-     * @return LeanUser
+     * @return User
      * @throws CloudException
      */
     public static function logIn($username, $password) {
-        $resp = LeanClient::post("/login", array("username" => $username,
+        $resp = Client::post("/login", array("username" => $username,
                                                  "password" => $password));
         $user = new static();
         $user->mergeAfterFetch($resp);
@@ -276,7 +276,7 @@ class LeanUser extends LeanObject {
         $user = static::getCurrentUser();
         if ($user) {
             try {
-                LeanClient::post("/logout", null, $user->getSessionToken());
+                Client::post("/logout", null, $user->getSessionToken());
             } catch (CloudException $exp) {
                 // skip
             }
@@ -289,12 +289,12 @@ class LeanUser extends LeanObject {
      *
      * @param string $phoneNumber
      * @param string $password
-     * @return LeanUser
+     * @return User
      */
     public static function logInWithMobilePhoneNumber($phoneNumber, $password) {
         $params = array("mobilePhoneNumber" => $phoneNumber,
                         "password" => $password);
-        $resp = LeanClient::post("/login", $params);
+        $resp = Client::post("/login", $params);
         $user = new static();
         $user->mergeAfterFetch($resp);
         static::saveCurrentUser($user);
@@ -309,12 +309,12 @@ class LeanUser extends LeanObject {
      *
      * @param string $phoneNumber Registered mobile phone number
      * @param string $smsCode
-     * @return LeanUser
+     * @return User
      */
     public static function logInWithSmsCode($phoneNumber, $smsCode) {
         $params = array("mobilePhoneNumber" => $phoneNumber,
                         "smsCode" => $smsCode);
-        $resp = LeanClient::get("/login", $params);
+        $resp = Client::get("/login", $params);
         $user = new static();
         $user->mergeAfterFetch($resp);
         static::saveCurrentUser($user);
@@ -330,7 +330,7 @@ class LeanUser extends LeanObject {
      * @param string $phoneNumber Register mobile phone number
      */
     public static function requestLoginSmsCode($phoneNumber) {
-        LeanClient::post("/requestLoginSmsCode",
+        Client::post("/requestLoginSmsCode",
                          array("mobilePhoneNumber" => $phoneNumber));
     }
 
@@ -342,7 +342,7 @@ class LeanUser extends LeanObject {
      * @param string $email
      */
     public static function requestEmailVerify($email) {
-        LeanClient::post("/requestEmailVerify", array("email" => $email));
+        Client::post("/requestEmailVerify", array("email" => $email));
     }
 
     /**
@@ -351,7 +351,7 @@ class LeanUser extends LeanObject {
      * @param string $email Registered email
      */
     public static function requestPasswordReset($email) {
-        LeanClient::post("/requestPasswordReset", array("email" => $email));
+        Client::post("/requestPasswordReset", array("email" => $email));
     }
 
     /**
@@ -362,7 +362,7 @@ class LeanUser extends LeanObject {
      * @param string $phoneNumber Registered mobile phone number
      */
     public static function requestPasswordResetBySmsCode($phoneNumber) {
-        LeanClient::post("/requestPasswordResetBySmsCode",
+        Client::post("/requestPasswordResetBySmsCode",
                          array("mobilePhoneNumber" => $phoneNumber));
     }
 
@@ -373,7 +373,7 @@ class LeanUser extends LeanObject {
      * @param string $newPassword
      */
     public static function resetPasswordBySmsCode($smsCode, $newPassword) {
-        LeanClient::put("/resetPasswordBySmsCode/{$smsCode}",
+        Client::put("/resetPasswordBySmsCode/{$smsCode}",
                         array("password" => $newPassword));
     }
 
@@ -385,7 +385,7 @@ class LeanUser extends LeanObject {
      * @param string $phoneNumber
      */
     public static function requestMobilePhoneVerify($phoneNumber) {
-        LeanClient::post("/requestMobilePhoneVerify",
+        Client::post("/requestMobilePhoneVerify",
                          array("mobilePhoneNumber" => $phoneNumber));
     }
 
@@ -395,7 +395,7 @@ class LeanUser extends LeanObject {
      * @param string $smsCode
      */
     public static function verifyMobilePhone($smsCode) {
-        LeanClient::post("/verifyMobilePhone/{$smsCode}", null);
+        Client::post("/verifyMobilePhone/{$smsCode}", null);
     }
 
 
@@ -425,7 +425,7 @@ class LeanUser extends LeanObject {
      *
      * @param string $provider  Provider name
      * @param array  $authToken Auth token
-     * @return LeanUser
+     * @return User
      */
     public static function logInWith($provider, $authToken) {
         $user = new static();

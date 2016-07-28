@@ -5,7 +5,7 @@ namespace LeanCloud;
 /**
  * Send Push notification to mobile devices
  */
-class LeanPush {
+class Push {
     /**
      * Notification data
      *
@@ -86,11 +86,11 @@ class LeanPush {
      *
      * The query must be over _Installation table.
      *
-     * @param LeanQuery $query A query over _Installation
+     * @param Query $query A query over _Installation
      * @return self
      * @see self::setOption()
      */
-    public function setWhere(LeanQuery $query) {
+    public function setWhere(Query $query) {
         if ($query->getClassName() != "_Installation") {
             throw new \RuntimeException("Query must be over " .
                                         "_Installation table.");
@@ -159,7 +159,7 @@ class LeanPush {
      */
     public function send() {
         $out  = $this->encode();
-        $resp = LeanClient::post("/push", $out);
+        $resp = Client::post("/push", $out);
         return $resp;
     }
 }

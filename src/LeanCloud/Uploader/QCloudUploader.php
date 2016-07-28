@@ -1,7 +1,7 @@
 <?php
 
 namespace LeanCloud\Uploader;
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 
 /**
  * QCloud COS file uploader
@@ -27,7 +27,7 @@ class QCloudUploader extends SimpleUploader {
             "sha" => hash("sha1", $content)
         ), $boundary);
 
-        $headers[] = "User-Agent: " . LeanClient::getVersionString();
+        $headers[] = "User-Agent: " . Client::getVersionString();
         $headers[] = "Content-Type: multipart/form-data;" .
                      " boundary={$boundary}";
         // $headers[] = "Content-Length: " . strlen($body);

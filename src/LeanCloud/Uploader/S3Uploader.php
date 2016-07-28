@@ -1,7 +1,7 @@
 <?php
 
 namespace LeanCloud\Uploader;
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 
 /**
  * Pre-signed URL Uploader for S3
@@ -15,7 +15,7 @@ class S3Uploader extends SimpleUploader {
         if (!$this->getUploadUrl()) {
             throw new \RuntimeException("Please initialize with pre-signed url.");
         }
-        $headers[] = "User-Agent: " . LeanClient::getVersionString();
+        $headers[] = "User-Agent: " . Client::getVersionString();
         $headers[] = "Content-Type: $mimeType";
         $url       = $this->getUploadUrl();
         $ch        = curl_init($url);

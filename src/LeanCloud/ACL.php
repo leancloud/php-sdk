@@ -9,9 +9,9 @@ namespace LeanCloud;
  * users and roles. There can be as many users and roles as possible
  * in an ACL.
  *
- * @see LeanRole
+ * @see Role
  */
-class LeanACL {
+class ACL {
     /**
      * Public access key in ACL field
      */
@@ -33,12 +33,12 @@ class LeanACL {
      *
      * With empty param, it creates an ACL with no permission granted.
      *
-     * @param mixed $val LeanUser or JSON encoded ACL array
+     * @param mixed $val User or JSON encoded ACL array
      */
     public function __construct($val=array()) {
         $this->data = array();
 
-        if ($val instanceof LeanUser) {
+        if ($val instanceof User) {
             $this->setReadAccess($val, true);
             $this->setWriteAccess($val, true);
         } else if (is_array($val)) {
@@ -151,11 +151,11 @@ class LeanACL {
      * Even if it returns false, the group may still be able to access
      * object if object is accessible to public.
      *
-     * @param string|LeanRole Role object or name
+     * @param string|Role Role object or name
      * @return bool
      */
     public function getRoleReadAccess($role) {
-        if ($role instanceof LeanRole) {
+        if ($role instanceof Role) {
             $role = $role->getName();
         }
         return $this->getAccess("role:$role", "read");
@@ -167,11 +167,11 @@ class LeanACL {
      * Even if it returns false, the group may still be able to access
      * object if object is accessible to public.
      *
-     * @param string|LeanRole Role object or name
+     * @param string|Role Role object or name
      * @return bool
      */
     public function getRoleWriteAccess($role) {
-        if ($role instanceof LeanRole) {
+        if ($role instanceof Role) {
             $role = $role->getName();
         }
         return $this->getAccess("role:$role", "write");
@@ -180,17 +180,17 @@ class LeanACL {
     /**
      * Set read access for role
      *
-     * @param string|LeanRole $role Role object or role name
+     * @param string|Role $role Role object or role name
      * @param bool            $flag
      * @return self
      */
     public function setRoleReadAccess($role, $flag) {
-        if ($role instanceof LeanRole) {
+        if ($role instanceof Role) {
             $role = $role->getName();
         }
         if (!is_string($role)) {
             throw new \InvalidArgumentException("role must be either " .
-                                                "LeanRole or string.");
+                                                "Role or string.");
         }
         $this->setAccess("role:$role", "read", $flag);
         return $this;
@@ -199,17 +199,17 @@ class LeanACL {
     /**
      * Set write access for role
      *
-     * @param string|LeanRole $role Role object or role name
+     * @param string|Role $role Role object or role name
      * @param bool            $flag
      * @return self
      */
     public function setRoleWriteAccess($role, $flag) {
-        if ($role instanceof LeanRole) {
+        if ($role instanceof Role) {
             $role = $role->getName();
         }
         if (!is_string($role)) {
             throw new \InvalidArgumentException("role must be either " .
-                                                "LeanRole or string.");
+                                                "Role or string.");
         }
         $this->setAccess("role:$role", "write", $flag);
         return $this;
@@ -222,11 +222,11 @@ class LeanACL {
      * object if object is accessible to public or a role the user
      * belongs to.
      *
-     * @param string|LeanUser $user Target user or user id
+     * @param string|User $user Target user or user id
      * @return bool
      */
     public function getReadAccess($user) {
-        if ($user instanceof LeanUser) {
+        if ($user instanceof User) {
             $user = $user->getObjectId();
         }
         return $this->getAccess($user, "read");
@@ -239,11 +239,11 @@ class LeanACL {
      * object if object is accessible to public or a role the user
      * belongs to.
      *
-     * @param string|LeanUser $user Target user or user id
+     * @param string|User $user Target user or user id
      * @return bool
      */
     public function getWriteAccess($user) {
-        if ($user instanceof LeanUser) {
+        if ($user instanceof User) {
             $user = $user->getObjectId();
         }
         return $this->getAccess($user, "write");
@@ -252,12 +252,12 @@ class LeanACL {
     /**
      * Set read access for user
      *
-     * @param string|LeanUser $user Target user or user id
+     * @param string|User $user Target user or user id
      * @param bool            $flag Enable or disable read for user
      * @return self
      */
     public function setReadAccess($user, $flag) {
-        if ($user instanceof LeanUser) {
+        if ($user instanceof User) {
             if (!$user->getObjectId()) {
                 throw new \RuntimeException("user must be saved before " .
                                             "being assigned in ACL.");
@@ -266,7 +266,7 @@ class LeanACL {
         }
         if (!is_string($user)) {
             throw new \InvalidArgumentException("user must be either " .
-                                                " LeanUser or objectId.");
+                                                " User or objectId.");
         }
         $this->setAccess($user, "read", $flag);
         return $this;
@@ -275,12 +275,12 @@ class LeanACL {
     /**
      * Set write access for user
      *
-     * @param string|LeanUser $user Target user or user id
+     * @param string|User $user Target user or user id
      * @param bool            $flag Enable or disable write for user
      * @return self
      */
     public function setWriteAccess($user, $flag) {
-        if ($user instanceof LeanUser) {
+        if ($user instanceof User) {
             if (!$user->getObjectId()) {
                 throw new \RuntimeException("user must be saved before " .
                                             "being assigned in ACL.");
@@ -289,7 +289,7 @@ class LeanACL {
         }
         if (!is_string($user)) {
             throw new \InvalidArgumentException("user must be either " .
-                                                " LeanUser or objectId.");
+                                                " User or objectId.");
         }
         $this->setAccess($user, "write", $flag);
         return $this;

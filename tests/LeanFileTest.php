@@ -1,40 +1,40 @@
 <?php
 
-use LeanCloud\LeanObject;
-use LeanCloud\LeanClient;
-use LeanCloud\LeanFile;
+use LeanCloud\Object;
+use LeanCloud\Client;
+use LeanCloud\File;
 
-class LeanFileTest extends PHPUnit_Framework_TestCase {
+class FileTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        LeanClient::initialize(
+        Client::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion(getenv("LC_API_REGION"));
+        Client::useRegion(getenv("LC_API_REGION"));
     }
 
     public function testInitializeEmptyFileName() {
-        $file = new LeanFile("");
+        $file = new File("");
         $this->assertEquals("", $file->getName());
     }
 
     public function testInitializeMimeType() {
-        $file = new LeanFile("test.txt");
+        $file = new File("test.txt");
         $this->assertEquals("text/plain", $file->getMimeType());
 
-        $file = new LeanFile("test.txt", null, "image/png");
+        $file = new File("test.txt", null, "image/png");
         $this->assertEquals("image/png", $file->getMimeType());
     }
 
     public function testCreateWithURL() {
-        $file = LeanFile::createWithUrl("blabla.png", "https://leancloud.cn/favicon.png");
+        $file = File::createWithUrl("blabla.png", "https://leancloud.cn/favicon.png");
         $this->assertEquals("blabla.png", $file->getName());
         $this->assertEquals("https://leancloud.cn/favicon.png", $file->getUrl());
         $this->assertEquals("image/png",   $file->getMimeType());
     }
 
     public function testSaveTextFile() {
-        $file = LeanFile::createWithData("test.txt", "Hello World!");
+        $file = File::createWithData("test.txt", "Hello World!");
         $file->save();
         $this->assertNotEmpty($file->getObjectId());
         $this->assertNotEmpty($file->getUrl());
@@ -47,7 +47,7 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSaveUTF8TextFile() {
-        $file = LeanFile::createWithData("testChinese.txt", "你好，中国!");
+        $file = File::createWithData("testChinese.txt", "你好，中国!");
         $file->save();
         $this->assertNotEmpty($file->getUrl());
         $this->assertEquals("text/plain", $file->getMimeType());
@@ -58,9 +58,9 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testFetchFile() {
-        $file = LeanFile::createWithData("testFetch.txt", "你好，中国!");
+        $file = File::createWithData("testFetch.txt", "你好，中国!");
         $file->save();
-        $file2 = LeanFile::fetch($file->getObjectId());
+        $file2 = File::fetch($file->getObjectId());
         $this->assertEquals($file->getUrl(), $file2->getUrl());
         $this->assertEquals($file->getName(), $file2->getName());
         $this->assertEquals($file->getSize(), $file2->getSize());
@@ -69,7 +69,7 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetCreatedAtAndUpdatedAt() {
-        $file = LeanFile::createWithData("testTimestamp.txt", "你好，中国!");
+        $file = File::createWithData("testTimestamp.txt", "你好，中国!");
         $file->save();
         $this->assertNotEmpty($file->getUrl());
         $this->assertNotEmpty($file->getCreatedAt());
@@ -79,12 +79,12 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMetaData() {
-        $file = LeanFile::createWithData("testMetadata.txt", "你好，中国!");
+        $file = File::createWithData("testMetadata.txt", "你好，中国!");
         $file->setMeta("language", "zh-CN");
         $file->setMeta("bool", false);
         $file->setMeta("downloads", 100);
         $file->save();
-        $file2 = LeanFile::fetch($file->getObjectId());
+        $file2 = File::fetch($file->getObjectId());
         $this->assertEquals("zh-CN", $file2->getMeta("language"));
         $this->assertEquals(false, $file2->getMeta("bool"));
         $this->assertEquals(100, $file2->getMeta("downloads"));
@@ -96,10 +96,10 @@ class LeanFileTest extends PHPUnit_Framework_TestCase {
      * leancloud/php-sdk#46
      */
     public function testSaveObjectWithFile() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("name", "alice");
 
-        $file = LeanFile::createWithData("test.txt", "你好，中国!");
+        $file = File::createWithData("test.txt", "你好，中国!");
         $obj->addIn("files", $file);
         $obj->save();
 

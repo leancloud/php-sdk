@@ -1,13 +1,13 @@
 <?php
 namespace LeanCloud;
 
-use LeanCloud\LeanClient;
-use LeanCloud\LeanObject;
+use LeanCloud\Client;
+use LeanCloud\Object;
 
 /**
  * Query representation for finding objects on LeanCloud
  */
-class LeanQuery {
+class Query {
     /**
      * ClassName the query will operate on
      *
@@ -65,7 +65,7 @@ class LeanQuery {
     public function __construct($queryClass) {
         if (is_string($queryClass)) {
             $this->className = $queryClass;
-        } else if (is_subclass_of($queryClass, "LeanObject")) {
+        } else if (is_subclass_of($queryClass, "Object")) {
             $this->className = $queryClass::$className;
         } else {
             throw new \InvalidArgumentException("Query class invalid.");
@@ -96,7 +96,7 @@ class LeanQuery {
      * @param mixed  $val Condition value(s)
      */
     private function _addCondition($key, $op, $val) {
-        $this->where[$key][$op] = LeanClient::encode($val);
+        $this->where[$key][$op] = Client::encode($val);
     }
 
     /**
@@ -112,7 +112,7 @@ class LeanQuery {
      * @return self
      */
     public function equalTo($key, $val) {
-        $this->where[$key] = LeanClient::encode($val);
+        $this->where[$key] = Client::encode($val);
         return $this;
     }
 
@@ -323,7 +323,7 @@ class LeanQuery {
      * Matches result objects returned from a sub-query
      *
      * @param string    $key
-     * @param LeanQuery $query The sub-query
+     * @param Query $query The sub-query
      * @return self
      */
     public function matchesInQuery($key, $query) {
@@ -338,7 +338,7 @@ class LeanQuery {
      * Not-match result objects returned from a sub-query
      *
      * @param string    $key
-     * @param LeanQuery $query The sub-query
+     * @param Query $query The sub-query
      * @return self
      */
     public function notMatchInQuery($key, $query) {
@@ -354,7 +354,7 @@ class LeanQuery {
      *
      * @param string    $key
      * @param string    $queryKey Target field key in sub-query
-     * @param LeanQuery $query    The sub-query
+     * @param Query $query    The sub-query
      * @return self
      */
     public function matchesFieldInQuery($key, $queryKey, $query) {
@@ -373,7 +373,7 @@ class LeanQuery {
      *
      * @param string    $key
      * @param string    $queryKey Target field key in sub-query
-     * @param LeanQuery $query    The sub-query
+     * @param Query $query    The sub-query
      * @return self
      */
     public function notMatchFieldInQuery($key, $queryKey, $query) {
@@ -391,7 +391,7 @@ class LeanQuery {
      * Relation field related to an object
      *
      * @param string $key     A relation field key
-     * @param LeanObject $obj Target object to relate
+     * @param Object $obj Target object to relate
      * @return self
      */
     public function relatedTo($key, $obj) {
@@ -598,8 +598,8 @@ class LeanQuery {
      * Compose AND/OR query from queries
      *
      * @param string $op      Operator string, either `$and` or `$or`
-     * @param array  $queries Array of LeanQuery
-     * @return LeanQuery
+     * @param array  $queries Array of Query
+     * @return Query
      */
     private static function composeQuery($op, $queries) {
         $className = $queries[0]->getClassName();
@@ -610,7 +610,7 @@ class LeanQuery {
             }
             $conds[] = $q->where;
         }
-        $query = new LeanQuery($className);
+        $query = new Query($className);
         $query->where[$op] = $conds;
         return $query;
     }
@@ -622,7 +622,7 @@ class LeanQuery {
      * LeanQueries.
      *
      * @param ...
-     * @return LeanQuery
+     * @return Query
      */
     public static function orQuery($queries) {
         if (!is_array($queries)) {
@@ -638,7 +638,7 @@ class LeanQuery {
      * LeanQueries.
      *
      * @param ...
-     * @return LeanQuery
+     * @return Query
      */
     public static function andQuery($queries) {
         if (!is_array($queries)) {
@@ -698,7 +698,7 @@ class LeanQuery {
      * Query object by id
      *
      * @param string $objectId
-     * @return LeanObject
+     * @return Object
      */
     public function get($objectId) {
         $this->equalTo('objectId', $objectId);
@@ -708,7 +708,7 @@ class LeanQuery {
     /**
      * Find the first object by the query
      *
-     * @return LeanObject
+     * @return Object
      */
     public function first() {
         $objects = $this->find($this->skip, 1);
@@ -738,10 +738,10 @@ class LeanQuery {
             $params["limit"] = $limit;
         }
 
-        $resp = LeanClient::get("/classes/{$this->getClassName()}", $params);
+        $resp = Client::get("/classes/{$this->getClassName()}", $params);
         $objects = array();
         forEach($resp["results"] as $props) {
-            $obj = LeanObject::create($this->getClassName());
+            $obj = Object::create($this->getClassName());
             $obj->mergeAfterFetch($props);
             $objects[] = $obj;
         }
@@ -757,7 +757,7 @@ class LeanQuery {
         $params = $this->encode();
         $params["limit"] = 0;
         $params["count"] = 1;
-        $resp = LeanClient::get("/classes/{$this->getClassName()}", $params);
+        $resp = Client::get("/classes/{$this->getClassName()}", $params);
         return $resp["count"];
     }
 
@@ -778,12 +778,12 @@ class LeanQuery {
     public static function doCloudQuery($cql, $pvalues=array()) {
         $data = array("cql" => $cql);
         if (!empty($pvalues)) {
-            $data["pvalues"] = json_encode(LeanClient::encode($pvalues));
+            $data["pvalues"] = json_encode(Client::encode($pvalues));
         }
-        $resp = LeanClient::get('/cloudQuery', $data);
+        $resp = Client::get('/cloudQuery', $data);
         $objects = array();
         forEach($resp["results"] as $val) {
-            $obj = LeanObject::create($resp["className"], $val["objectId"]);
+            $obj = Object::create($resp["className"], $val["objectId"]);
             $obj->mergeAfterFetch($val);
             $objects[] = $obj;
         }

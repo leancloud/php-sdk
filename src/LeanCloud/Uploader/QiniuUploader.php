@@ -2,7 +2,7 @@
 
 namespace LeanCloud\Uploader;
 
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 
 /**
  * Qiniu file uploader
@@ -41,7 +41,7 @@ class QiniuUploader extends SimpleUploader {
             "crc32" => $this->crc32Data($content)
         ), $boundary);
 
-        $headers[] = "User-Agent: " . LeanClient::getVersionString();
+        $headers[] = "User-Agent: " . Client::getVersionString();
         $headers[] = "Content-Type: multipart/form-data;" .
                      " boundary={$boundary}";
         $headers[] = "Content-Length: " . strlen($body);

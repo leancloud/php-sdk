@@ -1,8 +1,8 @@
 <?php
 namespace LeanCloud;
 
-use LeanCloud\LeanObject;
-use LeanCloud\LeanClient;
+use LeanCloud\Object;
+use LeanCloud\Client;
 use LeanCloud\CloudException;
 use LeanCloud\MIMEType;
 use LeanCloud\Uploader\SimpleUploader;
@@ -11,7 +11,7 @@ use LeanCloud\Uploader\SimpleUploader;
  * File object on LeanCloud
  *
  */
-class LeanFile {
+class File {
 
     /**
      * File object data on LeanCloud
@@ -59,8 +59,8 @@ class LeanFile {
         $this->_data["mime_type"] = $mimeType;
 
         $this->_metaData["owner"] = "unknown";
-        if (LeanUser::$currentUser) {
-            $this->_metaData["owner"] = LeanUser::$currentUser->getObjectId();
+        if (User::$currentUser) {
+            $this->_metaData["owner"] = User::$currentUser->getObjectId();
         }
         if ($this->_source) {
             $this->_metaData["size"] = strlen($this->_source);
@@ -73,10 +73,10 @@ class LeanFile {
      * @param string $name     File base name
      * @param string $url      Public URL
      * @param string $mimeType (optional)
-     * @return LeanFile
+     * @return File
      */
     public static function createWithUrl($name, $url, $mimeType=null) {
-        $file = new LeanFile($name, null, $mimeType);
+        $file = new File($name, null, $mimeType);
         $file->_data["url"]          = $url;
         $file->_metaData["__source"] = "external";
         return $file;
@@ -88,10 +88,10 @@ class LeanFile {
      * @param string $name File name
      * @param string $data File content
      * @param string $mimeType
-     * @return LeanFile
+     * @return File
      */
     public static function createWithData($name, $data, $mimeType=null) {
-        $file = new LeanFile($name, $data, $mimeType);
+        $file = new File($name, $data, $mimeType);
         return $file;
     }
 
@@ -100,7 +100,7 @@ class LeanFile {
      *
      * @param string $filepath Absolute file path
      * @param string $mimeType
-     * @return LeanFile
+     * @return File
      * @throws RuntimeException
      */
     public static function createWithLocalFile($filepath, $mimeType=null) {
@@ -262,7 +262,7 @@ class LeanFile {
      */
     private static function genFileKey() {
         $octets = array_map(function() {
-            $num = floor((1 + LeanClient::randomFloat()) * 0x10000);
+            $num = floor((1 + Client::randomFloat()) * 0x10000);
             return substr(dechex($num), 1);
         }, range(0, 4));
         return implode("", $octets);
@@ -294,11 +294,11 @@ class LeanFile {
         }
 
         forEach($data as $key => $val) {
-            $this->_data[$key] = LeanClient::decode($val, $key);
+            $this->_data[$key] = Client::decode($val, $key);
         }
 
         forEach($meta as $key => $val) {
-            $this->_metaData[$key] = LeanClient::decode($val, $key);
+            $this->_metaData[$key] = Client::decode($val, $key);
         }
     }
 
@@ -363,14 +363,14 @@ class LeanFile {
 
         if ($this->isExternal()) {
             $data["url"] = $this->getUrl();
-            $resp = LeanClient::post("/files/{$this->getName()}", $data);
+            $resp = Client::post("/files/{$this->getName()}", $data);
             $this->mergeAfterSave($resp);
         } else {
             $key = static::genFileKey();
             $key = "{$key}." . pathinfo($this->getName(), PATHINFO_EXTENSION);
             $data["key"]    = $key;
             $data["__type"] = "File";
-            $resp = LeanClient::post("/fileTokens", $data);
+            $resp = Client::post("/fileTokens", $data);
             if (!isset($resp["token"])) {
                 // adapt for S3, when there is no token
                 $resp["token"] = null;
@@ -399,11 +399,11 @@ class LeanFile {
      * Note it fetches descriptive data from LeanCloud, but not file content.
      * The content should be fetched from file URL.
      *
-     * @return LeanFile
+     * @return File
      */
     public static function fetch($objectId) {
-        $file = new LeanFile("");
-        $resp = LeanClient::get("/files/{$objectId}");
+        $file = new File("");
+        $resp = Client::get("/files/{$objectId}");
         $file->mergeAfterFetch($resp);
         return $file;
     }
@@ -417,7 +417,7 @@ class LeanFile {
         if (!$this->getObjectId()) {
             return false;
         }
-        LeanClient::delete("/files/{$this->getObjectId()}");
+        Client::delete("/files/{$this->getObjectId()}");
     }
 
     /**
