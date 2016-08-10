@@ -24,7 +24,7 @@ mv  Changelog.md.0 Changelog.md
 
 # portable solution in perl
 perl -pi -e "s/const VERSION = .*\;/const VERSION = \'$version\'\;/" \
-    src/LeanCloud/LeanClient.php
+    src/LeanCloud/Client.php
 
 echo "Done! Ready to commit and release $version!"
 
