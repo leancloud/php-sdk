@@ -3,9 +3,9 @@
 namespace LeanCloud;
 
 /**
- * Byte array data type for LeanObject
+ * Byte array data type for Object
  */
-class LeanBytes {
+class Bytes {
     /**
      * Byte array
      *
@@ -14,25 +14,25 @@ class LeanBytes {
     private $byteArray = array();
 
     /**
-     * Create LeanBytes from byte array
+     * Create Bytes from byte array
      *
      * @param array $byteArray
-     * @return LeanBytes
+     * @return Bytes
      */
     public static function createFromByteArray(array $byteArray) {
-        $bytes = new LeanBytes();
+        $bytes = new Bytes();
         $bytes->byteArray = $byteArray;
         return $bytes;
     }
 
     /**
-     * Create LeanBytes from base64 encoded string
+     * Create Bytes from base64 encoded string
      *
      * @param string $data Base64 encoded string
-     * @return LeanBytes
+     * @return Bytes
      */
     public static function createFromBase64Data($data) {
-        $bytes = new LeanBytes();
+        $bytes = new Bytes();
 
         // convert unpacked associative array to sequence array
         $byteMap = unpack('C*', base64_decode($data));

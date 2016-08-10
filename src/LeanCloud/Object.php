@@ -1,7 +1,7 @@
 <?php
 namespace LeanCloud;
 
-// use LeanCloud\LeanClient;
+// use LeanCloud\Client;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\DeleteOperation;
@@ -12,7 +12,7 @@ use LeanCloud\Operation\IncrementOperation;
  * Object interface to LeanCloud storage API
  *
  */
-class LeanObject {
+class Object {
     /**
      * Map of registered className to class.
      *
@@ -42,7 +42,7 @@ class LeanObject {
     private $_operationSet;
 
     /**
-     * Make a new *plain* LeanObject.
+     * Make a new *plain* Object.
      *
      * @param string $className
      * @param string $objectId
@@ -71,24 +71,24 @@ class LeanObject {
      *
      * @param string $className
      * @param string $objectId
-     * @return LeanObject
+     * @return Object
      */
     public static function create($className, $objectId=null) {
         if (isset(self::$_registeredClasses[$className])) {
             return new self::$_registeredClasses[$className]($className,
                                                                $objectId);
         } else {
-            return new LeanObject($className, $objectId);
+            return new Object($className, $objectId);
         }
     }
 
     /**
-     * Register a sub-class to LeanObject.
+     * Register a sub-class to Object.
      *
-     * When a sub-class extends LeanObject, it should specify a static
+     * When a sub-class extends Object, it should specify a static
      * string variable `::$className`, which corresponds to a className on
      * LeanCloud. It shall then invoke `->registerClass` to register
-     * itself to LeanObject. Such that LeanObject maintains a map of
+     * itself to Object. Such that Object maintains a map of
      * className to sub-classes.
      *
      * It is only callable on sub-class.
@@ -134,13 +134,13 @@ class LeanObject {
 
     public function disableBeforeHook() {
         $this->set("__before",
-                   LeanClient::signHook("__before_for_{$this->getClassName()}",
+                   Client::signHook("__before_for_{$this->getClassName()}",
                                         round(microtime(true) * 1000)));
     }
 
     public function disableAfterHook() {
         $this->set("__after",
-                   LeanClient::signHook("__after_for_{$this->getClassName()}",
+                   Client::signHook("__after_for_{$this->getClassName()}",
                                         round(microtime(true) * 1000)));
     }
 
@@ -190,7 +190,7 @@ class LeanObject {
     public function toFullJSON($seen=array()) {
         $out = array();
         forEach($this->_data as $key => $val) {
-            $out[$key] = LeanClient::encode($val, "toFullJSON", $seen);
+            $out[$key] = Client::encode($val, "toFullJSON", $seen);
         }
         $out["__type"]    = "Object";
         $out["className"] = $this->getClassName();
@@ -244,17 +244,17 @@ class LeanObject {
     /**
      * Set ACL for object
      *
-     * @param LeanACL $acl
+     * @param ACL $acl
      * @return self
      */
-    public function setACL(LeanACL $acl) {
+    public function setACL(ACL $acl) {
         return $this->set("ACL", $acl);
     }
 
     /**
      * Get ACL for object
      *
-     * @return null|LeanACL
+     * @return null|ACL
      */
     public function getACL() {
         return $this->get("ACL");
@@ -282,7 +282,7 @@ class LeanObject {
             return null;
         }
         $val = $this->_data[$key];
-        if ($val instanceof LeanRelation) {
+        if ($val instanceof Relation) {
             return $this->getRelation($key);
         }
         return $this->_data[$key];
@@ -392,7 +392,7 @@ class LeanObject {
      * @return array
      */
     private function getSaveData() {
-        return LeanClient::encode($this->_operationSet);
+        return Client::encode($this->_operationSet);
     }
 
     /**
@@ -428,7 +428,7 @@ class LeanObject {
         }
 
         forEach($data as $key => $val) {
-            $this->_data[$key] = LeanClient::decode($val, $key);
+            $this->_data[$key] = Client::decode($val, $key);
         }
     }
 
@@ -507,8 +507,8 @@ class LeanObject {
             $objects[] = $obj;
         }
 
-        $sessionToken = LeanUser::getCurrentSessionToken();
-        $response = LeanClient::batch($requests, $sessionToken);
+        $sessionToken = User::getCurrentSessionToken();
+        $response = Client::batch($requests, $sessionToken);
 
         $batchRequestError = new BatchRequestError();
         forEach($objects as $i => $obj) {
@@ -550,36 +550,36 @@ class LeanObject {
     /**
      * Return query object based on the object class
      *
-     * @return LeanQuery
+     * @return Query
      */
     public function getQuery() {
-        return new LeanQuery($this->getClassName());
+        return new Query($this->getClassName());
     }
 
     /**
      * Get (or build) relation on field
      *
      * @param  string $key Field key
-     * @return LeanRelation
+     * @return Relation
      * @throws RuntimeException
      */
     public function getRelation($key) {
         $val = isset($this->_data[$key]) ? $this->_data[$key] : null;
         if ($val) {
-            if ($val instanceof LeanRelation) {
+            if ($val instanceof Relation) {
                 $val->setParentAndKey($this, $key);
                 return $val;
             } else {
                 throw new \RuntimeException("Field {$key} is not relation.");
             }
         }
-        return new LeanRelation($this, $key);
+        return new Relation($this, $key);
     }
 
     /**
      * Traverse value in a hierarchy of arrays and objects
      *
-     * Array and data attributes of LeanObject will be traversed, each time
+     * Array and data attributes of Object will be traversed, each time
      * a non-array value found the func will be invoked with the value as
      * arguement.
      *
@@ -587,7 +587,7 @@ class LeanObject {
      * @param function $func A function to call when non-array value found.
      */
     public static function traverse($value, &$seen, $func) {
-        if ($value instanceof LeanObject) {
+        if ($value instanceof Object) {
             if (!in_array($value, $seen)) {
                 $seen[] = $value;
                 static::traverse($value->_data, $seen, $func);
@@ -597,7 +597,7 @@ class LeanObject {
             forEach($value as $val) {
                 if (is_array($val)) {
                     static::traverse($val, $seen, $func);
-                } else if ($val instanceof LeanObject) {
+                } else if ($val instanceof Object) {
                     static::traverse($val, $seen, $func);
                 } else {
                     $func($val);
@@ -618,8 +618,8 @@ class LeanObject {
         $seen            = array($this); // excluding object itself
         static::traverse($this->_data, $seen,
                        function($val) use (&$unsavedChildren) {
-                           if (($val instanceof LeanObject) ||
-                               ($val instanceof LeanFile)) {
+                           if (($val instanceof Object) ||
+                               ($val instanceof File)) {
                                if ($val->isDirty()) {
                                    $unsavedChildren[] = $val;
                                }
@@ -646,9 +646,9 @@ class LeanObject {
 
         $children = array(); // Array of unsaved objects excluding files
         forEach($unsavedChildren as $obj) {
-            if ($obj instanceof LeanFile) {
+            if ($obj instanceof File) {
                 $obj->save();
-            } else if ($obj instanceof LeanObject) {
+            } else if ($obj instanceof Object) {
                 if (!in_array($obj, $children)) {
                     $children[] = $obj;
                 }
@@ -704,8 +704,8 @@ class LeanObject {
             $objects[]  = $obj;
         }
 
-        $sessionToken = LeanUser::getCurrentSessionToken();
-        $response = LeanClient::batch($requests, $sessionToken);
+        $sessionToken = User::getCurrentSessionToken();
+        $response = Client::batch($requests, $sessionToken);
 
         forEach($objects as $i => $obj) {
             if (isset($response[$i]["success"])) {
@@ -720,7 +720,7 @@ class LeanObject {
     /**
      * Delete objects in batch
      *
-     * @param array $objects Array of LeanObjects to destroy
+     * @param array $objects Array of Objects to destroy
      */
     public static function destroyAll($objects) {
         $batch = array();
@@ -744,8 +744,8 @@ class LeanObject {
             $objects[] = $obj;
         }
 
-        $sessionToken = LeanUser::getCurrentSessionToken();
-        $response = LeanClient::batch($requests, $sessionToken);
+        $sessionToken = User::getCurrentSessionToken();
+        $response = Client::batch($requests, $sessionToken);
     }
 }
 

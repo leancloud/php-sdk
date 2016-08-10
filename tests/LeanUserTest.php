@@ -1,23 +1,23 @@
 <?php
 
-use LeanCloud\LeanClient;
-use LeanCloud\LeanUser;
-use LeanCloud\LeanFile;
-use LeanCloud\LeanQuery;
+use LeanCloud\Client;
+use LeanCloud\User;
+use LeanCloud\File;
+use LeanCloud\Query;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
 
-class LeanUserTest extends PHPUnit_Framework_TestCase {
+class UserTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        LeanClient::initialize(
+        Client::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion(getenv("LC_API_REGION"));
-        LeanClient::setStorage(new SessionStorage());
+        Client::useRegion(getenv("LC_API_REGION"));
+        Client::setStorage(new SessionStorage());
 
         // Try to make a default user so we can login
-        $user = new LeanUser();
+        $user = new User();
         $user->setUsername("alice");
         $user->setPassword("blabla");
         try {
@@ -30,7 +30,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     public static function tearDownAfterClass() {
         // destroy default user if present
         try {
-            $user = LeanUser::logIn("alice", "blabla");
+            $user = User::logIn("alice", "blabla");
             $user->destroy();
         } catch (CloudException $ex) {
             // skip
@@ -39,7 +39,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
         // logout current user if any
-        LeanUser::logOut();
+        User::logOut();
         $this->openToken = array();
         $this->openToken["openid"]       = "0395BA18A";
         $this->openToken["expires_in"]   = "36000";
@@ -47,7 +47,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetGetFields() {
-        $user = new LeanUser();
+        $user = new User();
         $user->setUsername("alice");
         $user->setEmail("alice@example.com");
         $user->setMobilePhoneNumber("18612340000");
@@ -62,7 +62,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSaveNewUser() {
-        $user = new LeanUser();
+        $user = new User();
         $user->setUsername("alice");
         $user->setPassword("blabla");
         $this->setExpectedException("LeanCloud\CloudException",
@@ -71,7 +71,7 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testUserSignUp() {
-        $user = new LeanUser();
+        $user = new User();
         $user->setUsername("alice2");
         $user->setPassword("blabla");
 
@@ -83,54 +83,54 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testUserUpdate() {
-        $user = LeanUser::logIn("alice", "blabla");
+        $user = User::logIn("alice", "blabla");
 
         $user->setEmail("alice@example.com");
         $user->set("age", 24);
         $user->save();
         $this->assertNotEmpty($user->getUpdatedAt());
 
-        $user2 = LeanUser::become($user->getSessionToken());
+        $user2 = User::become($user->getSessionToken());
         $this->assertEquals("alice@example.com", $user2->getEmail());
         $this->assertEquals(24, $user2->get("age"));
     }
 
     public function testUserLogIn() {
-        $user = LeanUser::logIn("alice", "blabla");
+        $user = User::logIn("alice", "blabla");
 
         $this->assertNotEmpty($user->getObjectId());
-        $this->assertEquals($user, LeanUser::getCurrentUser());
+        $this->assertEquals($user, User::getCurrentUser());
     }
 
     public function testLoginWithMobilePhoneNumber() {
-        $user = LeanUser::logIn("alice", "blabla");
+        $user = User::logIn("alice", "blabla");
         $user->setMobilePhoneNumber("18612340000");
         $user->save();
         $user->logOut();
-        $this->assertNull(LeanUser::getCurrentUser());
+        $this->assertNull(User::getCurrentUser());
 
-        LeanUser::logInWithMobilePhoneNumber("18612340000", "blabla");
-        $user2 = LeanUser::getCurrentUser();
+        User::logInWithMobilePhoneNumber("18612340000", "blabla");
+        $user2 = User::getCurrentUser();
         $this->assertEquals("alice", $user2->getUsername());
     }
 
     public function testBecome() {
-        $user = LeanUser::logIn("alice", "blabla");
+        $user = User::logIn("alice", "blabla");
 
-        $user2 = LeanUser::become($user->getSessionToken());
+        $user2 = User::become($user->getSessionToken());
         $this->assertNotEmpty($user2->getObjectId());
-        $this->assertEquals($user2, LeanUser::getCurrentUser());
+        $this->assertEquals($user2, User::getCurrentUser());
     }
 
     public function testLogOut() {
-        $user = LeanUser::logIn("alice", "blabla");
-        $this->assertEquals($user, LeanUser::getCurrentUser());
-        LeanUser::logOut();
-        $this->assertNull(LeanUser::getCurrentUser());
+        $user = User::logIn("alice", "blabla");
+        $this->assertEquals($user, User::getCurrentUser());
+        User::logOut();
+        $this->assertNull(User::getCurrentUser());
     }
 
     public function testUpdatePassword() {
-        $user = new LeanUser();
+        $user = new User();
         $user->setUsername("alice3");
         $user->setPassword("blabla");
         $user->signUp();
@@ -148,17 +148,17 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     public function testVerifyMobilePhone() {
         // Ensure the post format is correct
         $this->setExpectedException("LeanCloud\CloudException", null, 603);
-        LeanUser::verifyMobilePhone("000000");
+        User::verifyMobilePhone("000000");
     }
 
     public function testLogInWithLinkedService() {
-        $user = LeanUser::logIn("alice", "blabla");
+        $user = User::logIn("alice", "blabla");
 
         $user->linkWith("weixin", $this->openToken);
         $auth = $user->get("authData");
         $this->assertEquals($this->openToken, $auth["weixin"]);
 
-        $user2 = LeanUser::logInWith("weixin", $this->openToken);
+        $user2 = User::logInWith("weixin", $this->openToken);
         $this->assertEquals($user->getUsername(),
                             $user2->getUsername());
         $this->assertEquals($user->getSessionToken(),
@@ -168,23 +168,23 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSignUpWithLinkedService() {
-        $user = LeanUser::logInWith("weixin", $this->openToken);
+        $user = User::logInWith("weixin", $this->openToken);
         $this->assertNotEmpty($user->getSessionToken());
         $this->assertNotEmpty($user->getObjectId());
-        $this->assertEquals($user, LeanUser::getCurrentUser());
+        $this->assertEquals($user, User::getCurrentUser());
 
         $user->destroy();
     }
 
     public function testUnlinkService() {
-        $user = LeanUser::logInWith("weixin", $this->openToken);
+        $user = User::logInWith("weixin", $this->openToken);
         $token = $user->getSessionToken();
         $authData = $user->get("authData");
         $this->assertEquals($this->openToken, $authData["weixin"]);
         $user->unlinkWith("weixin");
 
         // re-login with user session token
-        $user2    = LeanUser::become($token);
+        $user2    = User::become($token);
         $authData = $user2->get("authData");
         $this->assertTrue(!isset($authData["weixin"]));
 
@@ -200,15 +200,15 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
     public function testCircularGetCurrentUser() {
         // ensure getCurrentUser neither run indefinetely, nor throw maximum
         // function call error
-        $avatar = LeanFile::createWithUrl("alice.png", "https://leancloud.cn/favicon.png");
-        $user = LeanUser::logIn("alice", "blabla");
+        $avatar = File::createWithUrl("alice.png", "https://leancloud.cn/favicon.png");
+        $user = User::logIn("alice", "blabla");
         $user->set("avatar", $avatar);
         $user->save();
-        $token = LeanUser::getCurrentSessionToken();
+        $token = User::getCurrentSessionToken();
         $user->logOut();
-        LeanUser::setCurrentSessionToken($token);
+        User::setCurrentSessionToken($token);
 
-        $user2 = LeanUser::getCurrentUser();
+        $user2 = User::getCurrentUser();
         $this->assertEquals($user2->getUsername(), "alice");
     }
 
@@ -219,8 +219,8 @@ class LeanUserTest extends PHPUnit_Framework_TestCase {
      * @link https://github.com/leancloud/php-sdk/issues/62
      */
     public function testFindUserWithSession() {
-        $user = LeanUser::logIn("alice", "blabla");
-        $query = new LeanQuery("_User");
+        $user = User::logIn("alice", "blabla");
+        $query = new Query("_User");
         // it should not raise: 1 Forbidden to find by class permission.
         $query->first();
     }

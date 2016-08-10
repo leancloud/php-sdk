@@ -2,11 +2,11 @@
 
 require_once "src/autoload.php";
 
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 use LeanCloud\Engine\LeanEngine;
 use LeanCloud\Engine\Cloud;
 
-LeanClient::initialize(
+Client::initialize(
     getenv("LC_APP_ID"),
     getenv("LC_APP_KEY"),
     getenv("LC_APP_MASTER_KEY")
@@ -33,6 +33,7 @@ Cloud::define("updateObject", function($params, $user) {
 });
 
 Cloud::onLogin(function($user) {
+    error_log("Logging a user");
     return;
 });
 

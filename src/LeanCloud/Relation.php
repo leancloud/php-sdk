@@ -5,17 +5,17 @@ namespace LeanCloud;
 use LeanCloud\Operation\RelationOperation;
 
 /**
- * Many-to-many relationship for LeanObject
+ * Many-to-many relationship for Object
  *
  * A relation consists of an array of objects, of which items can be
  * added to, and removed from. Each field could only have one kind of
  * object.
  */
-class LeanRelation {
+class Relation {
     /**
      * The parent object of relation.
      *
-     * @var LeanObject
+     * @var Object
      */
     private $parent;
 
@@ -39,7 +39,7 @@ class LeanRelation {
      * Build a relation on parent field. It shall be rarely used
      * directly, use `$parent->getRelation($key)` instead.
      *
-     * @param LeanObject $parent    Parent object
+     * @param Object $parent    Parent object
      * @param string     $key       Field key on parent object
      * @param string     $className ClassName the object relatedTo
      */
@@ -62,7 +62,7 @@ class LeanRelation {
     /**
      * Attempt to set and validate parent of relation
      *
-     * @param LeanObject $parent Parent object of relation
+     * @param Object $parent Parent object of relation
      * @param string     $key    Field key
      * @throws RuntimeException
      */
@@ -89,7 +89,7 @@ class LeanRelation {
     /**
      * Add object(s) to the field as relation
      *
-     * @param object|array $objects LeanObject(s) to add
+     * @param object|array $objects Object(s) to add
      */
     public function add($objects) {
         if (!is_array($objects)) { $objects = array($objects); }
@@ -103,7 +103,7 @@ class LeanRelation {
     /**
      * Remove object(s) from the field
      *
-     * @param object|array $objects LeanObject(s) to remove
+     * @param object|array $objects Object(s) to remove
      */
     public function remove($objects) {
         if (!is_array($objects)) { $objects = array($objects); }
@@ -117,13 +117,13 @@ class LeanRelation {
     /**
      * Query on the target class of relation
      *
-     * @return LeanQuery
+     * @return Query
      */
     public function getQuery() {
         if ($this->targetClassName) {
-            $query = new LeanQuery($this->targetClassName);
+            $query = new Query($this->targetClassName);
         } else {
-            $query = new LeanQuery($this->parent->getClassName());
+            $query = new Query($this->parent->getClassName());
             $query->addOption("redirectClassNameForKey", $this->key);
         }
         $query->relatedTo($this->key, $this->parent);
@@ -133,11 +133,11 @@ class LeanRelation {
     /**
      * Query on the parent class where child is in the relation
      *
-     * @param LeanObject $child  Child object
-     * @return LeanQuery
+     * @param Object $child  Child object
+     * @return Query
      */
-    public function getReverseQuery(LeanObject $child) {
-        $query = new LeanQuery($this->parent->getClassName());
+    public function getReverseQuery(Object $child) {
+        $query = new Query($this->parent->getClassName());
         $query->equalTo($this->key, $child->getPointer());
         return $query;
     }

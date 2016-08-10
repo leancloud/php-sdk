@@ -4,7 +4,7 @@ use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\ArrayOperation;
 use LeanCloud\Operation\DeleteOperation;
 use LeanCloud\Operation\IncrementOperation;
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 
 class SetOperationTest extends PHPUnit_Framework_TestCase {
     public function testGetKey() {
@@ -35,7 +35,7 @@ class SetOperationTest extends PHPUnit_Framework_TestCase {
         $out  = $op->encode();
         $this->assertEquals($out['__type'], "Date");
         $this->assertEquals($out['iso'],
-                            LeanClient::formatDate($date));
+                            Client::formatDate($date));
     }
 
     public function testMergeWithAnyOp() {

@@ -1,22 +1,22 @@
 <?php
 
-use LeanCloud\LeanClient;
-use LeanCloud\LeanACL;
-use LeanCloud\LeanUser;
-use LeanCloud\LeanRole;
+use LeanCloud\Client;
+use LeanCloud\ACL;
+use LeanCloud\User;
+use LeanCloud\Role;
 
-class LeanACLTest extends PHPUnit_Framework_TestCase {
+class ACLTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        LeanClient::initialize(
+        Client::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion(getenv("LC_API_REGION"));
+        Client::useRegion(getenv("LC_API_REGION"));
     }
 
     public function testInitializeUserACL() {
-        $user = new LeanUser(null, "id123");
-        $acl  = new LeanACL($user);
+        $user = new User(null, "id123");
+        $acl  = new ACL($user);
         $out  = $acl->encode();
         $this->assertEquals(true, $out["id123"]["read"]);
         $this->assertEquals(true, $out["id123"]["write"]);
@@ -28,27 +28,27 @@ class LeanACLTest extends PHPUnit_Framework_TestCase {
      * @link https://github.com/leancloud/php-sdk/issues/84
      */
     public function testEmptyACL() {
-        $acl = new LeanACL();
+        $acl = new ACL();
         $out = $acl->encode();
         $this->assertEquals("{}", json_encode($out));
     }
 
     public function testSetPublicAccess() {
-        $acl = new LeanACL();
+        $acl = new ACL();
         $acl->setPublicReadAccess(true);
         $out = $acl->encode();
-        $this->assertEquals(true, $out[LeanACL::PUBLIC_KEY]["read"]);
+        $this->assertEquals(true, $out[ACL::PUBLIC_KEY]["read"]);
         $this->assertEquals(true, $acl->getPublicReadAccess());
 
         $acl->setPublicWriteAccess(false);
         $out = $acl->encode();
-        $this->assertEquals(false, $out[LeanACL::PUBLIC_KEY]["write"]);
+        $this->assertEquals(false, $out[ACL::PUBLIC_KEY]["write"]);
         $this->assertEquals(false, $acl->getPublicWriteAccess());
     }
 
     public function testSetUserAccess() {
-        $user = new LeanUser(null, "id123");
-        $acl = new LeanACL();
+        $user = new User(null, "id123");
+        $acl = new ACL();
         $acl->setReadAccess($user, true);
         $out = $acl->encode();
         $this->assertEquals(true, $out[$user->getObjectId()]["read"]);
@@ -61,10 +61,10 @@ class LeanACLTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetRoleAccess() {
-        $role = new LeanRole();
+        $role = new Role();
         $role->setName("admin");
-        $role->setACL(new LeanACL());
-        $acl = new LeanACL();
+        $role->setACL(new ACL());
+        $acl = new ACL();
         $acl->setRoleReadAccess($role, true);
         $out = $acl->encode();
         $this->assertEquals(true, $out["role:admin"]["read"]);
@@ -77,7 +77,7 @@ class LeanACLTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetRoleAccessWithRoleName() {
-        $acl = new LeanACL();
+        $acl = new ACL();
         $acl->setRoleReadAccess("admin", true);
         $out = $acl->encode();
         $this->assertEquals(true, $out["role:admin"]["read"]);

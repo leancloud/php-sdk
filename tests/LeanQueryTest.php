@@ -1,37 +1,37 @@
 <?php
 
-use LeanCloud\LeanObject;
-use LeanCloud\LeanQuery;
+use LeanCloud\Object;
+use LeanCloud\Query;
 use LeanCloud\GeoPoint;
-use LeanCloud\LeanClient;
+use LeanCloud\Client;
 use LeanCloud\CloudException;
 
-class LeanQueryTest extends PHPUnit_Framework_TestCase {
+class QueryTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
-        LeanClient::initialize(
+        Client::initialize(
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
-        LeanClient::useRegion(getenv("LC_API_REGION"));
+        Client::useRegion(getenv("LC_API_REGION"));
     }
 
     public function testInitializeWithString() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $this->assertEquals("TestObject", $query->getClassName());
     }
 
     public function testEmptyQuery() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $out = $query->encode();
         $this->assertEmpty($out);
     }
 
     public function testCount() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $cnt   = $query->count();
         $this->assertGreaterThanOrEqual(0, $cnt);
 
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $id  = microtime();
         $obj->set("testid", $id);
         $obj->save();
@@ -44,12 +44,12 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetById() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $id  = microtime();
         $obj->set("testid", $id);
         $obj->save();
 
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $obj2  = $query->get($obj->getObjectId());
         $this->assertEquals($obj->get("testid"),
                             $obj2->get("testid"));
@@ -58,12 +58,12 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testFind() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $id  = microtime();
         $obj->set("testid", $id);
         $obj->save();
 
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->equalTo("testid", $id);
         $objects = $query->find();
         $this->assertEquals(1, count($objects));
@@ -73,7 +73,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testAddExtraOption() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->equalTo("testid", microtime());
         $query->addOption("redirectClassNameForKey", "relationKey");
         $out = $query->encode();
@@ -81,7 +81,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testAddExtraOptionCannotOverwitePreservedOption() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->skip(100);
         $query->addOption("skip", 50);
         $out = $query->encode();
@@ -89,7 +89,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEqualTo() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->equalTo("age", 24);
         $out = $query->encode();
         $this->assertEquals(json_encode(array("age" => 24)), $out["where"]);
@@ -100,7 +100,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testNotEqualTo() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->notEqualTo("age", 24);
         $out = $query->encode();
         $expect = json_encode(array("age" => array('$ne' => 24)));
@@ -110,7 +110,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     // Only the last will survive when repeatedly applying not-equal-to
     // on same field.
     public function testRepeatNotEqualTo() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->notEqualTo("age", 24);
         $query->notEqualTo("age", 20);
         $query->notEqualTo("age", 22);
@@ -121,7 +121,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testLessThan() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->lessThan("age", 24);
         $out = $query->encode();
         $expect = json_encode(array("age" => array('$lt' => 24)));
@@ -129,7 +129,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testLessThanOrEqualTo() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->lessThanOrEqualTo("age", 24);
         $out = $query->encode();
         $expect = json_encode(array("age" => array('$lte' => 24)));
@@ -137,7 +137,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGreaterThan() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->greaterThan("age", 24);
         $out = $query->encode();
         $expect = json_encode(array("age" => array('$gt' => 24)));
@@ -145,7 +145,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGreaterThanOrEqualTo() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->greaterThanOrEqualTo("age", 24);
         $out = $query->encode();
         $expect = json_encode(array("age" => array('$gte' => 24)));
@@ -153,7 +153,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testContainedIn() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->containedIn("category", array("foo", "bar"));
         $out = $query->encode();
         $expect = json_encode(array("category" =>
@@ -162,7 +162,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testNotContainedIn() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->notContainedIn("category", array("foo", "bar"));
         $out = $query->encode();
         $expect = json_encode(array("category" =>
@@ -171,7 +171,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testContainsAll() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->containsAll("tags", array("foo", "bar"));
         $out = $query->encode();
         $expect = json_encode(array("tags" =>
@@ -180,7 +180,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSizeEqualTo() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->sizeEqualTo("tags", 2);
         $out = $query->encode();
         $expect = json_encode(array("tags" => array('$size' => 2)));
@@ -188,7 +188,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testFieldExists() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->exists("tags");
         $out = $query->encode();
         $expect = json_encode(array("tags" => array('$exists' => true)));
@@ -196,7 +196,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testFieldNotExists() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->notExists("tags");
         $out = $query->encode();
         $expect = json_encode(array("tags" => array('$exists' => false)));
@@ -204,7 +204,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testFieldContains() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->contains("title", "clojure");
         $out = $query->encode();
         $expect = json_encode(array("title" =>
@@ -213,7 +213,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testStartsWith() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->startsWith("title", "clojure");
         $out = $query->encode();
         $expect = json_encode(array("title" =>
@@ -222,7 +222,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEndsWith() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->endsWith("title", "clojure");
         $out = $query->encode();
         $expect = json_encode(array("title" =>
@@ -231,7 +231,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRegexMatches() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->matches("title", '(cl.?jre)[0-9]', "im");
         $out = $query->encode();
         $expect = json_encode(array("title" =>
@@ -242,13 +242,13 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
 
 
     public function testMatchesInQuery() {
-        $q1 = new LeanQuery("Post");
+        $q1 = new Query("Post");
         $q1->exists("image");
         $out1 = $q1->encode();
         $where1 = array("image" => array('$exists' => true));
         $this->assertEquals(json_encode($where1), $out1["where"]);
 
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->matchesInQuery("post", $q1);
         $out = $query->encode();
         $where = array("post" => array('$inQuery' => array(
@@ -257,7 +257,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         )));
         $this->assertEquals(json_encode($where), $out["where"]);
 
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->notMatchInQuery("post", $q1);
         $out = $query->encode();
         $where = array("post" => array('$notInQuery' => array(
@@ -268,13 +268,13 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMatchesFieldInQuery() {
-        $q1 = new LeanQuery("Post");
+        $q1 = new Query("Post");
         $q1->contains("title", "clojure");
         $out1 = $q1->encode();
         $where1 = array("title" => array('$regex' => "clojure"));
         $this->assertEquals(json_encode($where1), $out1["where"]);
 
-        $query = new LeanQuery("Comment");
+        $query = new Query("Comment");
         $query->matchesFieldInQuery("author", "author", $q1);
         $out = $query->encode();
         $where = array("author" => array('$select' => array(
@@ -286,7 +286,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         )));
         $this->assertEquals(json_encode($where), $out["where"]);
 
-        $query = new LeanQuery("Comment");
+        $query = new Query("Comment");
         $query->notMatchFieldInQuery("author", "author", $q1);
         $out = $query->encode();
         $where = array("author" => array('$dontSelect' => array(
@@ -300,8 +300,8 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRelatedTo() {
-        $obj   = new LeanObject("TestObject", "id123");
-        $query = new LeanQuery("TestObject");
+        $obj   = new Object("TestObject", "id123");
+        $query = new Query("TestObject");
         $query->relatedTo("relField", $obj);
 
         $out = $query->encode();
@@ -312,7 +312,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testNearGeoPoint() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->near('location', new GeoPoint(39.9, 116.4));
         $out = $query->encode();
         $expect = json_encode(array(
@@ -328,7 +328,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testWithinRadians() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->withinRadians('location', new GeoPoint(39.9, 116.4), 0.5);
         $out = $query->encode();
         $expect = json_encode(array(
@@ -345,7 +345,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testWithinKilometers() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->withinKilometers('location', new GeoPoint(39.9, 116.4), 0.5);
         $out = $query->encode();
         $expect = json_encode(array(
@@ -362,7 +362,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testWithinMiles() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->withinMiles('location', new GeoPoint(39.9, 116.4), 0.5);
         $out = $query->encode();
         $expect = json_encode(array(
@@ -379,7 +379,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testWithinBox() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->withinBox('location',
                           new GeoPoint(39.9, 116.4),
                           new GeoPoint(40.0, 118.0));
@@ -406,13 +406,13 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSelectFields() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->select("name", "color", "foo", "bar");
         $out = $query->encode();
         $this->assertEquals("name,color,foo,bar", $out["keys"]);
 
         // it accepts variable number of keys
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->select("name");
         $query->select("color");
         $query->select("foo", "bar");
@@ -420,7 +420,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("name,color,foo,bar", $out["keys"]);
 
         // it also accepts an array of keys
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->select(array("name", "color", "foo", "bar"));
         $out = $query->encode();
         $this->assertEquals("name,color,foo,bar", $out["keys"]);
@@ -433,21 +433,21 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
 
     public function testIncludeNestObjects() {
         // it accepts nested objects
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->_include("creator");
         $query->_include("object.creator");
         $out = $query->encode();
         $this->assertEquals("creator,object.creator", $out["include"]);
 
         // it accepts variable number of keys
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->_include("creator");
         $query->_include("object.creator", "foo");
         $out = $query->encode();
         $this->assertEquals("creator,object.creator,foo", $out["include"]);
 
         // it accepts array of fields
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->_include("creator");
         $query->_include(array("object.creator", "foo"));
         $out = $query->encode();
@@ -455,7 +455,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSkipAndLimit() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->limit(100);
         $out = $query->encode();
         $this->assertEquals(100, $out["limit"]);
@@ -476,7 +476,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testOrdering() {
-        $query = new LeanQuery("TestObject");
+        $query = new Query("TestObject");
         $query->addAscend("number");
         $out = $query->encode();
         $this->assertEquals("number", $out["order"]);
@@ -495,16 +495,16 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testComposeSimpleAndQuery() {
-        $q1 = new LeanQuery("TestObject");
+        $q1 = new Query("TestObject");
         $q1->lessThan("number", 42);
 
-        $q2 = new LeanQuery("TestObject");
+        $q2 = new Query("TestObject");
         $q2->greaterThanOrEqualTo("number", 24);
 
-        $q3 = new LeanQuery("TestObject");
+        $q3 = new Query("TestObject");
         $q3->contains("title", "clojure");
 
-        $q = LeanQuery::andQuery($q1, $q2);
+        $q = Query::andQuery($q1, $q2);
         $out = $q->encode();
         $where = array(
             '$and' => array(
@@ -514,7 +514,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         );
         $this->assertEquals(json_encode($where), $out["where"]);
 
-        $q = LeanQuery::andQuery($q1, $q2, $q3);
+        $q = Query::andQuery($q1, $q2, $q3);
         $out = $q->encode();
         $where = array(
             '$and' => array(
@@ -528,16 +528,16 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testComposeSimpleOrQuery() {
-        $q1 = new LeanQuery("TestObject");
+        $q1 = new Query("TestObject");
         $q1->greaterThanOrEqualTo("number", 42);
 
-        $q2 = new LeanQuery("TestObject");
+        $q2 = new Query("TestObject");
         $q2->lessThan("number", 24);
 
-        $q3 = new LeanQuery("TestObject");
+        $q3 = new Query("TestObject");
         $q3->contains("title", "clojure");
 
-        $q = LeanQuery::orQuery($q1, $q2);
+        $q = Query::orQuery($q1, $q2);
         $out = $q->encode();
         $where = array(
             '$or' => array(
@@ -547,7 +547,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         );
         $this->assertEquals(json_encode($where), $out["where"]);
 
-        $q = LeanQuery::orQuery($q1, $q2, $q3);
+        $q = Query::orQuery($q1, $q2, $q3);
         $out = $q->encode();
         $where = array(
             '$or' => array(
@@ -560,16 +560,16 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testComposeCompexLogicalQuery() {
-        $q1 = new LeanQuery("TestObject");
+        $q1 = new Query("TestObject");
         $q1->greaterThanOrEqualTo("number", 42);
 
-        $q2 = new LeanQuery("TestObject");
+        $q2 = new Query("TestObject");
         $q2->lessThan("number", 24);
 
-        $q3 = new LeanQuery("TestObject");
+        $q3 = new Query("TestObject");
         $q3->contains("title", "clojure");
 
-        $q = LeanQuery::orQuery($q1, $q2);
+        $q = Query::orQuery($q1, $q2);
         $out = $q->encode();
         $where = array(
             '$or' => array(
@@ -579,7 +579,7 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
         );
         $this->assertEquals(json_encode($where), $out["where"]);
 
-        $q = LeanQuery::andQuery($q, $q3);
+        $q = Query::andQuery($q, $q3);
         $out = $q->encode();
         $where = array(
             '$and' => array(
@@ -598,20 +598,20 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testDoCloudQueryCount() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("name", "alice");
         $obj->save();
-        $resp = LeanQuery::doCloudQuery("SELECT count(*) FROM TestObject");
+        $resp = Query::doCloudQuery("SELECT count(*) FROM TestObject");
         $this->assertTrue(is_int($resp["count"]));
         $this->assertEquals("TestObject", $resp["className"]);
         $obj->destroy();
     }
 
     public function testDoCloudQueryWithPvalues() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("name", "alice");
         $obj->save();
-        $resp = LeanQuery::doCloudQuery("SELECT * FROM TestObject ".
+        $resp = Query::doCloudQuery("SELECT * FROM TestObject ".
                                         "WHERE name = ? LIMIT ?",
                                         array("alice", 1));
         $this->assertGreaterThan(0, count($resp["results"]));
@@ -620,11 +620,11 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
 
     /*
     public function testDoCloudQueryWithDate() {
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("name", "alice");
         $obj->save();
         $date = $obj->getCreatedAt();
-        $resp = LeanQuery::doCloudQuery("SELECT * FROM TestObject ".
+        $resp = Query::doCloudQuery("SELECT * FROM TestObject ".
                                         "WHERE createdAt = ?",
                                         array($date));
         $this->assertGreaterThan(0, count($resp["results"]));
@@ -633,11 +633,11 @@ class LeanQueryTest extends PHPUnit_Framework_TestCase {
 
     public function testDoCloudQueryGeoPoint() {
         $point = new GeoPoint(39.9, 116.4);
-        $obj = new LeanObject("TestObject");
+        $obj = new Object("TestObject");
         $obj->set("name", "alice");
         $obj->set("location", $point);
         $obj->save();
-        $resp = LeanQuery::doCloudQuery("SELECT * FROM TestObject " .
+        $resp = Query::doCloudQuery("SELECT * FROM TestObject " .
                                         "WHERE location NEAR ?",
                                         array($point));
         $this->assertEquals("TestObject", $resp["className"]);

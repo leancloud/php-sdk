@@ -1,12 +1,12 @@
 <?php
 namespace LeanCloud\Operation;
 
-use LeanCloud\LeanRelation;
+use LeanCloud\Relation;
 
 /**
  * Relation operation
  *
- * Operation that supports adding and removing objects from `LeanRelation`.
+ * Operation that supports adding and removing objects from `Relation`.
  */
 class RelationOperation implements IOperation {
     /**
@@ -155,17 +155,17 @@ class RelationOperation implements IOperation {
     /**
      * Apply the operation on previous relation
      *
-     * @param LeanRelation $relation Previous relation
-     * @param LeanObject   $object   Parent of relation
-     * @return LeanRelation
+     * @param Relation $relation Previous relation
+     * @param Object   $object   Parent of relation
+     * @return Relation
      * @throws RuntimeException
      */
     public function applyOn($relation, $object=null) {
         if (!$relation) {
-            return new LeanRelation($object, $this->getKey(),
+            return new Relation($object, $this->getKey(),
                                     $this->getTargetClassName());
         }
-        if (!($relation instanceof LeanRelation)) {
+        if (!($relation instanceof Relation)) {
             throw new \RuntimeException("Operation incompatible with " .
                                         "previous value.");
         }

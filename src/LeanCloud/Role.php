@@ -10,15 +10,15 @@ namespace LeanCloud;
  * write permission.
  *
  * All users of a role could be queried by `$role->getUsers()`, which
- * is an instance of LeanRelation, where users can be added or
+ * is an instance of Relation, where users can be added or
  * removed.
  *
  * Roles can belong to role as well, which can be got by
  * `$role->getRoles()`, where roles can be added or removed.
  *
- * @see LeanACL, LeanRelation
+ * @see ACL, Relation
  */
-class LeanRole extends LeanObject {
+class Role extends Object {
     /**
      * Table name on LeanCloud
      * @var string
@@ -31,7 +31,7 @@ class LeanRole extends LeanObject {
      * The name can contain only alphanumeric characters, _, -, and
      * space. It cannot be changed after being saved.
      *
-     * @return LeanRole
+     * @return Role
      */
     public function setName($name) {
         $this->set("name", $name);
@@ -50,7 +50,7 @@ class LeanRole extends LeanObject {
     /**
      * Get a relation of users that belongs to this role
      *
-     * @return LeanRelation
+     * @return Relation
      */
     public function getUsers() {
         return $this->getRelation("users");
@@ -59,7 +59,7 @@ class LeanRole extends LeanObject {
     /**
      * Get a relation of roles that belongs to this role
      *
-     * @return LeanRelation
+     * @return Relation
      */
     public function getRoles() {
         return $this->getRelation("roles");

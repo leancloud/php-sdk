@@ -55,7 +55,7 @@ mv php-sdk-X.X.X vendor/leancloud
 require_once("vendor/leancloud/src/autoload.php");
 
 // 参数依次为 app-id, app-key, master-key
-LeanCloud\LeanClient::initialize("app_id", "app_key", "master_key");
+LeanCloud\Client::initialize("app_id", "app_key", "master_key");
 ```
 
 使用示例
@@ -66,10 +66,10 @@ LeanCloud\LeanClient::initialize("app_id", "app_key", "master_key");
 注册一个用户:
 
 ```php
-use LeanCloud\LeanUser;
+use LeanCloud\User;
 use LeanCloud\CloudException;
 
-$user = new LeanUser();
+$user = new User();
 $user->setUsername("alice");
 $user->setEmail("alice@example.net");
 $user->setPassword("passpass");
@@ -82,32 +82,32 @@ try {
 
 // 注册成功后，用户被自动登录。可以通过以下方法拿到当前登录用户和
 // 授权码。
-LeanUser::getCurrentUser();
-LeanUser::getCurrentSessionToken();
+User::getCurrentUser();
+User::getCurrentSessionToken();
 ```
 
 登录一个用户:
 
 ```php
-LeanUser::logIn("alice", "passpass");
-$user = LeanUser::getCurrentUser();
-$token = LeanUser::getCurrentSessionToken();
+User::logIn("alice", "passpass");
+$user = User::getCurrentUser();
+$token = User::getCurrentSessionToken();
 
 // 给定一个 token 可以很容易的拿到用户
-LeanUser::become($token);
+User::become($token);
 
 // 我们还支持短信验证码，及第三方授权码登录
-LeanUser::logInWithSmsCode("phone number", "sms code");
-LeanUser::logInWith("weibo", array("openid" => "..."));
+User::logInWithSmsCode("phone number", "sms code");
+User::logInWith("weibo", array("openid" => "..."));
 ```
 
 #### 对象存储
 
 ```php
-use LeanCloud\LeanObject;
+use LeanCloud\Object;
 use LeanCloud\CloudException;
 
-$obj = new LeanObject("TestObject");
+$obj = new Object("TestObject");
 $obj->set("name", "alice");
 $obj->set("height", 60.0);
 $obj->set("weight", 4.5);
@@ -142,7 +142,7 @@ $obj->destroy();
 我们同样支持子类继承，子类中需要定义静态变量 `$className` ，并注册到存储类:
 
 ```php
-class TestObject extends LeanObject {
+class TestObject extends Object {
     protected static $className = "TestObject";
     public setName($name) {
         $this->set("name", $name);
@@ -163,16 +163,16 @@ $obj->set("eyeColor", "blue");
 给定一个 objectId，可以如下获取对象。
 
 ```php
-use LeanCloud\LeanQuery;
+use LeanCloud\Query;
 
-$query = new LeanQuery("TestObject");
+$query = new Query("TestObject");
 $obj = $query->get($objectId);
 ```
 
 更为复杂的条件查询：
 
 ```php
-$query = new LeanQuery("TestObject");
+$query = new Query("TestObject");
 $query->lessThan("height", 100.0);           // 小于
 $query->greaterThanOrEqualTo("weight", 5.0); // 大于等于
 $query->addAscend("birthdate");              // 递增排序
@@ -190,8 +190,8 @@ $objects = $query->find(); // 返回查询到的对象
 直接创建文件:
 
 ```php
-use LeanCloud\LeanFile;
-$file = LeanFile::createWithData("hello.txt", "Hello LeanCloud!");
+use LeanCloud\File;
+$file = File::createWithData("hello.txt", "Hello LeanCloud!");
 try {
     $file->save();
 } catch (CloudException $ex) {
@@ -206,7 +206,7 @@ $file->getUrl();
 由本地文件创建：
 
 ```php
-$file = LeanFile::createWithLocalFile("/tmp/myfile.png");
+$file = File::createWithLocalFile("/tmp/myfile.png");
 try {
     $file->save();
 } catch (CloudException $ex) {
@@ -220,7 +220,7 @@ $url = $file->getThumbUrl();
 由已知的 URL 创建文件:
 
 ```php
-$file = LeanFile::createWithUrl("image.png", "http://example.net/image.png");
+$file = File::createWithUrl("image.png", "http://example.net/image.png");
 try {
     $file->save();
 } catch (CloudException $ex) {
