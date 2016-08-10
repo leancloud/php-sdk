@@ -1,4 +1,19 @@
 
+0.4.0 发布日期：2016-08-10
+----
+
+**不兼容改动**
+
+为了与其它语言 SDK 类型名保持一致，将主要类型名称的 Lean 前缀去掉。如
+果升级，请注意同步修改代码。
+
+以下是去掉 `Lean` 前缀的类型列表：
+
+```
+LeanACL LeanBytes LeanClient LeanFile LeanObject LeanPush
+LeanQuery LeanRelation LeanRole LeanUser
+```
+
 0.3.0 发布日期：2016-06-30
 ----
 
