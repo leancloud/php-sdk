@@ -191,5 +191,17 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         $this->assertEmpty($resp);
     }
 
+    public function test_messageReceived() {
+        $resp = $this->request("/1.1/functions/_messageReceived", "POST", array(
+            "convId"   => '5789a33a1b8694ad267d8040',
+            "fromPeer" => "Tom",
+            "receipt"  => false,
+            "toPeers"  => array("Jerry"),
+            "content"  => '{"_lctext":"耗子，起床！","_lctype":-1}',
+            "__sign"   => $this->signHook("_messageReceived")
+        ));
+        $this->assertEquals(false, $resp["result"]["drop"]);
+    }
+
 }
 

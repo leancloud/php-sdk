@@ -425,10 +425,24 @@ class LeanEngine {
      * @param bool   $decodeObj
      */
     private function dispatchFunc($funcName, $body, $decodeObj=false) {
+        // verify hook sign for RTM hooks
+        if (in_array($funcName, array(
+            '_messageReceived', '_receiversOffline', '_messageSent',
+            '_conversationStart', '_conversationStarted',
+            '_conversationAdd', '_conversationRemove', '_conversationUpdate'
+        ))) {
+            if (!Client::verifyHookSign($funcName, $body["__sign"])) {
+                error_log("Invalid hook sign for message {$funcName}" .
+                          " from {$this->env['REMOTE_ADDR']}");
+                $this->renderError("Unauthorized.", 401, 401);
+            }
+        }
+
         $params = $body;
         if ($decodeObj) {
             $params = Client::decode($body, null);
         }
+
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
         try {
             $result = Cloud::run($funcName,
