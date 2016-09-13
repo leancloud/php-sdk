@@ -22,6 +22,14 @@ Cloud::define("sayHello", function($params, $user) {
     return "hello {$params['name']}";
 });
 
+Cloud::define("_messageReceived", function($params, $user){
+    if ($params["convId"]) {
+        return array("drop" => false);
+    } else {
+        return array("drop" => true);
+    }
+});
+
 Cloud::define("getMeta", function($params, $user, $meta) {
     return array("remoteAddress" => $meta["remoteAddress"]);
 });
