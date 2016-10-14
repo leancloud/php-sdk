@@ -578,12 +578,10 @@ class Client {
      * @return string
      */
     public static function formatDate($date) {
-        $utc = new \DateTime($date->format("c"));
+        $utc = clone $date;
         $utc->setTimezone(new \DateTimezone("UTC"));
         $iso = $utc->format("Y-m-d\TH:i:s.u");
-        // PHP does not support sub seconds well, it will always gives 6 zero
-        // digits as microseconds. We chop 3 zeros off:
-        //  `2015-09-18T08:06:20.000000Z` -> `2015-09-18T08:06:20.000Z`
+        // chops 3 zeros of microseconds to comply with cloud date format
         $iso = substr($iso, 0, 23) . "Z";
         return $iso;
     }
