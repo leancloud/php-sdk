@@ -30,6 +30,7 @@ class Push {
     public function __construct($data=array(), $options=array()) {
         $this->data = $data;
         $this->options = $options;
+        $this->options["prod"] = Client::$isProduction ? "prod": "dev";
     }
 
     /**

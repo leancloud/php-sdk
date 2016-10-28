@@ -90,11 +90,11 @@ class Client {
     private static $useMasterKey = false;
 
     /**
-     * Use production or not
+     * Is in production or not
      *
      * @var bool
      */
-    private static $useProduction = false;
+    public static $isProduction = false;
 
     /**
      * Default request headers
@@ -179,10 +179,10 @@ class Client {
     /**
      * Use production or not
      *
-     * @param bool $flag
+     * @param bool $flag Default `false`
      */
     public static function useProduction($flag) {
-        self::$useProduction = $flag ? true : false;
+        self::$isProduction = $flag ? true : false;
     }
 
     /**
@@ -219,7 +219,7 @@ class Client {
         }
         $h = self::$defaultHeaders;
 
-        $h['X-LC-Prod'] = self::$useProduction ? 1 : 0;
+        $h['X-LC-Prod'] = self::$isProduction ? 1 : 0;
 
         $timestamp = time();
         $key       = $useMasterKey ? self::$appMasterKey : self::$appKey;
