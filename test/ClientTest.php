@@ -346,6 +346,14 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(116.4, $val->getLongitude());
     }
 
+    public function testEncodeRelation() {
+        $a = new Object("TestObject", "id001");
+        $rel = $a->getRelation("likes");
+        $out = Client::encode($rel);
+        $this->assertEquals("Relation",
+                            $out["__type"]);
+    }
+
     public function testEncodeObjectToJSON() {
         $a = new Object("TestObject", "id001");
         $b = new Object("TestObject", "id002");

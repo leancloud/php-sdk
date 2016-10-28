@@ -555,8 +555,9 @@ class Client {
             }
         } else if ($value instanceof IOperation ||
                    $value instanceof GeoPoint   ||
-                   $value instanceof Bytes  ||
-                   $value instanceof ACL    ||
+                   $value instanceof Bytes      ||
+                   $value instanceof ACL        ||
+                   $value instanceof Relation   ||
                    $value instanceof File) {
             return $value->encode();
         } else if (is_array($value)) {
