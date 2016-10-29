@@ -42,6 +42,14 @@ class Object {
     private $_operationSet;
 
     /**
+     * Save option of object
+     *
+     * @var SaveOption
+     * @see SaveOption
+     */
+    private $_saveOption;
+
+    /**
      * Make a new *plain* Object.
      *
      * @param string $className
@@ -398,10 +406,14 @@ class Object {
     /**
      * Save object and its children objects and files
      *
+     * @param SaveOption $option
      * @throws CloudException
      */
-    public function save() {
+    public function save($option=null) {
         if (!$this->isDirty()) {return;}
+        if ($option) {
+            $this->_saveOption = $option;
+        }
         try {
             $result = self::saveAll(array($this));
         } catch (BatchRequestError $batchRequestError) {
@@ -699,6 +711,9 @@ class Object {
             } else {
                 $req["method"] = "POST";
                 $req["path"]   = "{$path}/{$obj->getClassName()}";
+            }
+            if ($obj->_saveOption) {
+                $req["params"] = $obj->_saveOption->encode();
             }
             $requests[] = $req;
             $objects[]  = $obj;

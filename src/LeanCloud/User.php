@@ -113,11 +113,12 @@ class User extends Object {
     /**
      * Save a signed-up user
      *
+     * @param SaveOption $option
      * @throws CloudException
      */
-    public function save() {
+    public function save($option=null) {
         if ($this->getObjectId()) {
-            parent::save();
+            parent::save($option);
         } else {
             throw new CloudException("Cannot save new user, please signUp ".
                                     "first.");

@@ -1,6 +1,8 @@
 <?php
 
 use LeanCloud\Object;
+use LeanCloud\Query;
+use LeanCloud\SaveOption;
 use LeanCloud\GeoPoint;
 use LeanCloud\Client;
 use LeanCloud\Relation;
@@ -120,6 +122,52 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($obj2->get("score"), 81);
 
         $obj->destroy();
+    }
+
+    public function testSaveOptionEncode() {
+        $option = new SaveOption();
+        $this->assertEquals(array(), $option->encode());
+        $option->fetchWhenSave = true;
+        $this->assertEquals(array("fetchWhenSave" => true), $option->encode());
+    }
+
+    public function testFetchWhenSave() {
+        $obj = new Object("TestObject");
+        $obj->set("score", 1);
+        $obj->save();
+        $this->assertNotEmpty($obj->getObjectId());
+        $obj2 = new Object("TestObject", $obj->getObjectId());
+        $obj2->increment("score");
+
+        $option = new SaveOption();
+        $option->fetchWhenSave = true;
+        $obj2->save($option);
+        $this->assertEquals(2, $obj2->get("score"));
+
+        $obj->set("name", "Alice in wonderland");
+        $obj->increment("score");
+        $obj->save($option);
+        $this->assertEquals(3, $obj->get("score"));
+    }
+
+    public function testSaveWhenWhere() {
+        $obj = new Object("TestObject");
+        $obj->set("score", 6);
+        $obj->save();
+        $this->assertNotEmpty($obj->getObjectId());
+        $obj->set("level", "good");
+        $query = new Query("TestObject");
+        $query->greaterThanOrEqualTo("score",8);
+        $option = new SaveOption();
+        $option->where = $query;
+        $this->setExpectedException("LeanCloud\CloudException");
+        $obj->save($option);
+
+        $query->greaterThanOrEqualTo("score",6);
+        $option->where = $query;
+        $obj->increment("score");
+        $obj->save($option);
+        $this->assertEquals(7, $obj->get("score"));
     }
 
     public function testGetCreatedAtAndUpdatedAt() {
