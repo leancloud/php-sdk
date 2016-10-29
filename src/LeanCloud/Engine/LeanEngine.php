@@ -617,7 +617,7 @@ class LeanEngine {
     private function httpsRedirect() {
         $reqProto = $this->getHeaderLine("HTTP_X_FORWARDED_PROTO");
         if ($reqProto === "http" &&
-            getenv("LC_APP_ENV") === "production") {
+            in_array(getenv("LC_APP_ENV"), array("production", "stg"))) {
             $url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
             $this->redirect($url);
         }
