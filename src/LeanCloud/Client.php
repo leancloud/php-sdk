@@ -97,6 +97,13 @@ class Client {
     public static $isProduction = false;
 
     /**
+     * Is in debug mode or not
+     *
+     * @var bool
+     */
+    private static $debugMode = false;
+
+    /**
      * Default request headers
      *
      * @var array
@@ -109,7 +116,6 @@ class Client {
      * @var IStorage
      */
     private static $storage;
-
 
     /**
      * Initialize application key and settings
@@ -179,10 +185,21 @@ class Client {
     /**
      * Use production or not
      *
-     * @param bool $flag Default `false`
+     * @param bool $flag Default false
      */
     public static function useProduction($flag) {
         self::$isProduction = $flag ? true : false;
+    }
+
+    /**
+     * Set debug mode
+     *
+     * Enable debug mode to log request params and response.
+     * 
+     * @param bool $flag Default false
+     */
+    public static function setDebug($flag) {
+        self::$debugMode = $flag ? true : false;
     }
 
     /**
@@ -364,8 +381,8 @@ class Client {
             case "GET":
                 if ($data) {
                     // append GET data as query string
-                    curl_setopt($req, CURLOPT_URL,
-                                $url ."?". http_build_query($data));
+                    $url .= "?" . http_build_query($data);
+                    curl_setopt($req, CURLOPT_URL, $url);
                 }
                 break;
             case "POST":
@@ -381,12 +398,20 @@ class Client {
             default:
                 break;
         }
+        $reqId = rand(100,999);
+        if (self::$debugMode) {
+            error_log("[DEBUG] REQUEST {$reqId}: {$method} {$url} {$json}");
+        }
         $resp     = curl_exec($req);
         $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         $respType = curl_getinfo($req, CURLINFO_CONTENT_TYPE);
         $error    = curl_error($req);
         $errno    = curl_errno($req);
         curl_close($req);
+
+        if (self::$debugMode) {
+            error_log("[DEBUG] RESPONSE {$reqId}: {$resp}");
+        }
 
         /** type of error:
           *  - curl connection error
