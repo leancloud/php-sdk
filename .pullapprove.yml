@@ -6,5 +6,7 @@ reviewers:
   required: 1
   members:
     - juvenn
+    - aisk
+    - jysperm
     - jwfing
   name: default
