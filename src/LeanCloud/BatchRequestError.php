@@ -32,14 +32,10 @@ class BatchRequestError extends CloudException {
      * @return BatchRequestError
      */
     public function add($request, $response) {
-        if (!isset($response["error"])) {
-            throw new \InvalidArgumentException("Invalid error response.");
-        }
-        if (!isset($response["code"])) {
-            $response["code"] = 1;
-        }
-        $response["request"] = $request;
-        $this->errors[] = $response;
+        $error["code"] = isset($response["code"]) ? $response["code"] : 1;
+        $error["error"] = "{$error['code']} {$response['error']}:"
+                        . json_encode($request);
+        $this->errors[] = $error;
         return $this;
     }
 
