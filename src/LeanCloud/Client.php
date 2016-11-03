@@ -90,11 +90,18 @@ class Client {
     private static $useMasterKey = false;
 
     /**
-     * Use production or not
+     * Is in production or not
      *
      * @var bool
      */
-    private static $useProduction = false;
+    public static $isProduction = false;
+
+    /**
+     * Is in debug mode or not
+     *
+     * @var bool
+     */
+    private static $debugMode = false;
 
     /**
      * Default request headers
@@ -109,7 +116,6 @@ class Client {
      * @var IStorage
      */
     private static $storage;
-
 
     /**
      * Initialize application key and settings
@@ -179,10 +185,21 @@ class Client {
     /**
      * Use production or not
      *
-     * @param bool $flag
+     * @param bool $flag Default false
      */
     public static function useProduction($flag) {
-        self::$useProduction = $flag ? true : false;
+        self::$isProduction = $flag ? true : false;
+    }
+
+    /**
+     * Set debug mode
+     *
+     * Enable debug mode to log request params and response.
+     * 
+     * @param bool $flag Default false
+     */
+    public static function setDebug($flag) {
+        self::$debugMode = $flag ? true : false;
     }
 
     /**
@@ -219,7 +236,7 @@ class Client {
         }
         $h = self::$defaultHeaders;
 
-        $h['X-LC-Prod'] = self::$useProduction ? 1 : 0;
+        $h['X-LC-Prod'] = self::$isProduction ? 1 : 0;
 
         $timestamp = time();
         $key       = $useMasterKey ? self::$appMasterKey : self::$appKey;
@@ -364,8 +381,8 @@ class Client {
             case "GET":
                 if ($data) {
                     // append GET data as query string
-                    curl_setopt($req, CURLOPT_URL,
-                                $url ."?". http_build_query($data));
+                    $url .= "?" . http_build_query($data);
+                    curl_setopt($req, CURLOPT_URL, $url);
                 }
                 break;
             case "POST":
@@ -381,12 +398,20 @@ class Client {
             default:
                 break;
         }
+        $reqId = rand(100,999);
+        if (self::$debugMode) {
+            error_log("[DEBUG] REQUEST {$reqId}: {$method} {$url} {$json}");
+        }
         $resp     = curl_exec($req);
         $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         $respType = curl_getinfo($req, CURLINFO_CONTENT_TYPE);
         $error    = curl_error($req);
         $errno    = curl_errno($req);
         curl_close($req);
+
+        if (self::$debugMode) {
+            error_log("[DEBUG] RESPONSE {$reqId}: {$resp}");
+        }
 
         /** type of error:
           *  - curl connection error
@@ -555,8 +580,9 @@ class Client {
             }
         } else if ($value instanceof IOperation ||
                    $value instanceof GeoPoint   ||
-                   $value instanceof Bytes  ||
-                   $value instanceof ACL    ||
+                   $value instanceof Bytes      ||
+                   $value instanceof ACL        ||
+                   $value instanceof Relation   ||
                    $value instanceof File) {
             return $value->encode();
         } else if (is_array($value)) {

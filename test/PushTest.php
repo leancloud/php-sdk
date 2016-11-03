@@ -53,6 +53,14 @@ class PushTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($data, $out["data"]);
     }
 
+    public function testDefaultProd() {
+        $push = new Push(array(
+            "alert" => "Hello world!"
+        ));
+        $out = $push->encode();
+        $this->assertEquals(Client::$isProduction, $out["prod"] == "prod");
+    }
+
     public function testSetProd() {
         $push = new Push(array(
             "alert" => "Hello world!"
