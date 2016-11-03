@@ -1,4 +1,13 @@
 
+0.4.2 发布日期：2016-11-03
+----
+
+* 修复毫秒丢失的问题 #114
+* 修复 Relation 不能编码的异常 #110
+* Push 设置默认的 prod 参数 #111
+* 增加 `Client::setDebug(true)` 支持调试模式 #108
+* 添加 OptionSave 类支持 fetchWhenSave 以及 where #49 #83
+
 0.4.1 发布日期：2016-09-13
 ----
 
