@@ -2,6 +2,8 @@
 
 use LeanCloud\Client;
 use LeanCloud\User;
+use LeanCloud\Role;
+use LeanCloud\ACL;
 use LeanCloud\File;
 use LeanCloud\Query;
 use LeanCloud\CloudException;
@@ -189,6 +191,31 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(!isset($authData["weixin"]));
 
         $user2->destroy();
+    }
+
+    public function testGetRoles() {
+        $user = new User();
+        $user->setUsername("alice3");
+        $user->setPassword("blabla");
+        $user->signUp();
+
+        $role = new Role();
+        $role->setName("test_role");
+        $acl = new ACL();
+        $acl->setPublicWriteAccess(true);
+        $acl->setPublicReadAccess(true);
+
+        $role->setACL($acl);
+        $rel = $role->getUsers();
+        $rel->add($user);
+        $role->save();
+        $this->assertNotEmpty($role->getObjectId());
+
+        $roles = $user->getRoles();
+        $this->assertEquals("test_role", $roles[0]->getName());
+
+        $user->destroy();
+        $role->destroy();
     }
 
     /*

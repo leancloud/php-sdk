@@ -233,6 +233,21 @@ class User extends Object {
     }
 
     /**
+     * Get roles the user belongs to
+     *
+     * @return array Array of Role
+     */
+    public function getRoles() {
+        if (!$this->getObjectId()) {
+            return array();
+        }
+        $query = new Query("_Role");
+        $query->equalTo("users", $this);
+        $roles = $query->find();
+        return $roles;
+    }
+
+    /**
      * Log-in user by session token
      *
      * And set current user.
