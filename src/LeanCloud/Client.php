@@ -400,6 +400,7 @@ class Client {
         }
         $reqId = rand(100,999);
         if (self::$debugMode) {
+            error_log("[DEBUG] HEADERS {$reqId}:" . json_encode($headersList));
             error_log("[DEBUG] REQUEST {$reqId}: {$method} {$url} {$json}");
         }
         $resp     = curl_exec($req);

@@ -233,6 +233,15 @@ class User extends Object {
     }
 
     /**
+     * Refresh session token
+     */
+    public function refreshSessionToken() {
+        $resp = Client::put("/users/{$this->getObjectId()}/refreshSessionToken",
+                            null);
+        $this->mergeAfterFetch($resp);
+    }
+
+    /**
      * Test if user logged in and session token is valid.
      *
      * @return bool
