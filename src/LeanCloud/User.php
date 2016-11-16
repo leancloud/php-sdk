@@ -239,6 +239,7 @@ class User extends Object {
         $resp = Client::put("/users/{$this->getObjectId()}/refreshSessionToken",
                             null);
         $this->mergeAfterFetch($resp);
+        static::saveCurrentUser($this);
     }
 
     /**

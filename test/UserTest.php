@@ -125,11 +125,16 @@ class UserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRefreshSessionToken() {
-        $user = User::logIn("alice", "blabla");
+        $user = new User();
+        $user->setUsername("alice4");
+        $user->setPassword("blabla");
+        $user->signUp();
+
         $token = $user->getSessionToken();
         $user->refreshSessionToken();
         $this->assertNotEmpty($user->getSessionToken());
         $this->assertNotEquals($token, $user->getSessionToken());
+        $user->destroy();
     }
 
     public function testLogOut() {
