@@ -218,6 +218,17 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $role->destroy();
     }
 
+    public function testIsAuthenticated() {
+        $user = User::logIn("alice", "blabla");
+        $this->assertTrue($user->isAuthenticated());
+
+        $user->mergeAfterFetch(array("sessionToken" => "invalid-token"));
+        $this->assertFalse($user->isAuthenticated());
+
+        $user = new User();
+        $this->assertFalse($user->isAuthenticated());
+    }
+
     /*
      * Get current user with file attribute shall not
      * circularly invoke getCurrentUser.

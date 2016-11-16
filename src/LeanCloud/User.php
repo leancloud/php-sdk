@@ -233,6 +233,27 @@ class User extends Object {
     }
 
     /**
+     * Test if user logged in and session token is valid.
+     *
+     * @return bool
+     */
+    public function isAuthenticated() {
+        $token = $this->getSessionToken();
+        if (!$token) {
+            return false;
+        }
+        try {
+            static::become($token);
+        } catch(CloudException $ex) {
+            if ($ex->getCode() === 211) {
+                return false;
+            }
+            throw ex;
+        }
+        return true;
+    }
+
+    /**
      * Get roles the user belongs to
      *
      * @return array Array of Role
