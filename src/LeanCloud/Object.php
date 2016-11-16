@@ -250,6 +250,10 @@ class Object {
      * @throws RuntimeException
      */
     public function set($key, $val) {
+        if ($key === "ACL") {
+            throw new \RuntimeException("`ACL` is preserved,".
+                                        " please use setACL instead.");
+        }
         if (in_array($key, self::PRESERVED_KEYS)) {
             throw new \RuntimeException("Preserved field could not be set.");
         }
