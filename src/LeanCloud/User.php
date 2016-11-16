@@ -253,7 +253,8 @@ class User extends Object {
             return false;
         }
         try {
-            static::become($token);
+            $resp = Client::get("/users/me",
+                                array("session_token" => $token));
         } catch(CloudException $ex) {
             if ($ex->getCode() === 211) {
                 return false;
