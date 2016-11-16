@@ -13,6 +13,9 @@ use LeanCloud\Operation\IncrementOperation;
  *
  */
 class Object {
+
+    const PRESERVED_KEYS = array("objectId", "ACL",
+                                 "updatedAt", "createdAt");
     /**
      * Map of registered className to class.
      *
@@ -141,15 +144,15 @@ class Object {
     }
 
     public function disableBeforeHook() {
-        $this->set("__before",
-                   Client::signHook("__before_for_{$this->getClassName()}",
-                                        round(microtime(true) * 1000)));
+        $this->_set("__before",
+                    Client::signHook("__before_for_{$this->getClassName()}",
+                                     round(microtime(true) * 1000)));
     }
 
     public function disableAfterHook() {
-        $this->set("__after",
-                   Client::signHook("__after_for_{$this->getClassName()}",
-                                        round(microtime(true) * 1000)));
+        $this->_set("__after",
+                    Client::signHook("__after_for_{$this->getClassName()}",
+                                     round(microtime(true) * 1000)));
     }
 
     /**
@@ -230,6 +233,14 @@ class Object {
         return $this->get("updatedAt");
     }
 
+    private function _set($key, $val) {
+        if (!($val instanceof IOperation)) {
+            $val = new SetOperation($key, $val);
+        }
+        $this->_applyOperation($val);
+        return $this;
+    }
+
     /**
      * Set field value by key
      *
@@ -239,14 +250,10 @@ class Object {
      * @throws RuntimeException
      */
     public function set($key, $val) {
-        if (in_array($key, array("objectId", "createdAt", "updatedAt"))) {
+        if (in_array($key, self::PRESERVED_KEYS)) {
             throw new \RuntimeException("Preserved field could not be set.");
         }
-        if (!($val instanceof IOperation)) {
-            $val = new SetOperation($key, $val);
-        }
-        $this->_applyOperation($val);
-        return $this;
+        return $this->_set($key, $val);
     }
 
     /**
@@ -256,7 +263,7 @@ class Object {
      * @return self
      */
     public function setACL(ACL $acl) {
-        return $this->set("ACL", $acl);
+        return $this->_set("ACL", $acl);
     }
 
     /**
