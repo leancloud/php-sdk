@@ -14,8 +14,7 @@ use LeanCloud\Operation\IncrementOperation;
  */
 class Object {
 
-    const PRESERVED_KEYS = array("objectId", "ACL",
-                                 "updatedAt", "createdAt");
+    const PRESERVED_KEYS = array("objectId", "updatedAt", "createdAt");
     /**
      * Map of registered className to class.
      *
@@ -234,6 +233,10 @@ class Object {
     }
 
     private function _set($key, $val) {
+        if ($key === "ACL" &&
+            !($val instanceof ACL)) {
+            throw new RuntimeException("Invalid ACL.");
+        }
         if (!($val instanceof IOperation)) {
             $val = new SetOperation($key, $val);
         }
@@ -250,10 +253,6 @@ class Object {
      * @throws RuntimeException
      */
     public function set($key, $val) {
-        if ($key === "ACL") {
-            throw new \RuntimeException("`ACL` is preserved,".
-                                        " please use setACL instead.");
-        }
         if (in_array($key, self::PRESERVED_KEYS)) {
             throw new \RuntimeException("Preserved field could not be set.");
         }
