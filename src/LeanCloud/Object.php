@@ -14,7 +14,13 @@ use LeanCloud\Operation\IncrementOperation;
  */
 class Object {
 
+    /**
+     * Preserved keys
+     *
+     * @var array
+     */
     const PRESERVED_KEYS = array("objectId", "updatedAt", "createdAt");
+
     /**
      * Map of registered className to class.
      *
