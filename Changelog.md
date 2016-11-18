@@ -1,4 +1,11 @@
 
+0.5.0 发布日期：2016-11-18
+----
+
+* 添加 User#getRoles 方法获取角色
+* 添加 User#isAuthenticated 方法检测用户是否登录
+* 添加 User#refreshSessionToken 方法重置 token
+
 0.4.2 发布日期：2016-11-03
 ----
 
