@@ -233,6 +233,53 @@ class User extends Object {
     }
 
     /**
+     * Refresh session token
+     */
+    public function refreshSessionToken() {
+        $resp = Client::put("/users/{$this->getObjectId()}/refreshSessionToken",
+                            null);
+        $this->mergeAfterFetch($resp);
+        static::saveCurrentUser($this);
+    }
+
+    /**
+     * Test if user logged in and session token is valid.
+     *
+     * @return bool
+     */
+    public function isAuthenticated() {
+        $token = $this->getSessionToken();
+        if (!$token) {
+            return false;
+        }
+        try {
+            $resp = Client::get("/users/me",
+                                array("session_token" => $token));
+        } catch(CloudException $ex) {
+            if ($ex->getCode() === 211) {
+                return false;
+            }
+            throw ex;
+        }
+        return true;
+    }
+
+    /**
+     * Get roles the user belongs to
+     *
+     * @return array Array of Role
+     */
+    public function getRoles() {
+        if (!$this->getObjectId()) {
+            return array();
+        }
+        $query = new Query("_Role");
+        $query->equalTo("users", $this);
+        $roles = $query->find();
+        return $roles;
+    }
+
+    /**
      * Log-in user by session token
      *
      * And set current user.

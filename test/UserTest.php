@@ -2,6 +2,8 @@
 
 use LeanCloud\Client;
 use LeanCloud\User;
+use LeanCloud\Role;
+use LeanCloud\ACL;
 use LeanCloud\File;
 use LeanCloud\Query;
 use LeanCloud\CloudException;
@@ -122,6 +124,19 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($user2, User::getCurrentUser());
     }
 
+    public function testRefreshSessionToken() {
+        $user = new User();
+        $user->setUsername("alice4");
+        $user->setPassword("blabla");
+        $user->signUp();
+
+        $token = $user->getSessionToken();
+        $user->refreshSessionToken();
+        $this->assertNotEmpty($user->getSessionToken());
+        $this->assertNotEquals($token, $user->getSessionToken());
+        $user->destroy();
+    }
+
     public function testLogOut() {
         $user = User::logIn("alice", "blabla");
         $this->assertEquals($user, User::getCurrentUser());
@@ -189,6 +204,42 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(!isset($authData["weixin"]));
 
         $user2->destroy();
+    }
+
+    public function testGetRoles() {
+        $user = new User();
+        $user->setUsername("alice3");
+        $user->setPassword("blabla");
+        $user->signUp();
+
+        $role = new Role();
+        $role->setName("test_role");
+        $acl = new ACL();
+        $acl->setPublicWriteAccess(true);
+        $acl->setPublicReadAccess(true);
+
+        $role->setACL($acl);
+        $rel = $role->getUsers();
+        $rel->add($user);
+        $role->save();
+        $this->assertNotEmpty($role->getObjectId());
+
+        $roles = $user->getRoles();
+        $this->assertEquals("test_role", $roles[0]->getName());
+
+        $user->destroy();
+        $role->destroy();
+    }
+
+    public function testIsAuthenticated() {
+        $user = User::logIn("alice", "blabla");
+        $this->assertTrue($user->isAuthenticated());
+
+        $user->mergeAfterFetch(array("sessionToken" => "invalid-token"));
+        $this->assertFalse($user->isAuthenticated());
+
+        $user = new User();
+        $this->assertFalse($user->isAuthenticated());
     }
 
     /*
