@@ -7,11 +7,8 @@ php:
 
 env:
   - LC_API_REGION=US
-  - LC_APP_HOST=127.0.0.1
-  - LC_APP_PORT=8081
 
 script:
-  - make test_engine
   - phpunit --coverage-clover=coverage.xml test
 
 after_success:
@@ -19,3 +16,4 @@ after_success:
 
 notifications:
   webhooks: https://hook.bearychat.com/=bw52Y/travis/6e26f4422b2871c20a5b2d40e1d49f73
+
