@@ -19,7 +19,7 @@ class Object {
      *
      * @var array
      */
-    const PRESERVED_KEYS = array("objectId", "updatedAt", "createdAt");
+    public static $PRESERVED_KEYS = array("objectId", "updatedAt", "createdAt");
 
     /**
      * Map of registered className to class.
@@ -259,7 +259,7 @@ class Object {
      * @throws RuntimeException
      */
     public function set($key, $val) {
-        if (in_array($key, self::PRESERVED_KEYS)) {
+        if (in_array($key, self::$PRESERVED_KEYS)) {
             throw new \RuntimeException("Preserved field could not be set.");
         }
         return $this->_set($key, $val);
