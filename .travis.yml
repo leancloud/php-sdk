@@ -6,9 +6,7 @@ php:
   - 7.0
 
 env:
-  - LC_API_REGION=US
-  - LC_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4
-  - LC_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy
+  - LC_API_REGION=US LC_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LC_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy
 
 script:
   - phpunit --coverage-clover=coverage.xml test
