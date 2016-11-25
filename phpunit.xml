@@ -4,7 +4,7 @@
          forceCoversAnnotation="false">
   <testsuites>
     <testsuite name="unit">
-      <directory suffix="Test.php">tests</directory>
+      <directory suffix="Test.php">test</directory>
       <exclude>tests/engine</exclude>
     </testsuite>
   </testsuites>

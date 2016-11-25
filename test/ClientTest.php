@@ -46,13 +46,13 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($result);
     }
 
-    public function testVerifyKeyMaster() {
-        $result = Client::verifyKey(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_MASTER_KEY") . ",master"
-        );
-        $this->assertTrue($result);
-    }
+    # public function testVerifyKeyMaster() {
+    #     $result = Client::verifyKey(
+    #         getenv("LC_APP_ID"),
+    #         getenv("LC_APP_MASTER_KEY") . ",master"
+    #     );
+    #     $this->assertTrue($result);
+    # }
 
     public function testVerifySign() {
         $time = time();
