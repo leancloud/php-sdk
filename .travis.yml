@@ -9,7 +9,8 @@ env:
   - LC_API_REGION=US
 
 script:
-  - phpunit --coverage-clover=coverage.xml
+  - make test_engine
+  - phpunit --coverage-clover=coverage.xml test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
