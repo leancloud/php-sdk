@@ -16,6 +16,7 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
             getenv("LC_APP_ID"),
             getenv("LC_APP_KEY"),
             getenv("LC_APP_MASTER_KEY"));
+        Client::useRegion(getenv("LC_API_REGION"));
     }
 
     private function request($url, $method, $data=null) {
