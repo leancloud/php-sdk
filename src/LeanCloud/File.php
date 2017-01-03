@@ -99,16 +99,20 @@ class File {
      * Create file from disk
      *
      * @param string $filepath Absolute file path
-     * @param string $mimeType
+     * @param string $mimeType E.g. "image/png"
+     * @param string $name Name of file
      * @return File
      * @throws RuntimeException
      */
-    public static function createWithLocalFile($filepath, $mimeType=null) {
+    public static function createWithLocalFile($filepath, $mimeType=null, $name=null) {
         $content = file_get_contents($filepath);
         if ($content === false) {
             throw new \RuntimeException("Read file error at $filepath");
         }
-        return static::createWithData(basename($filepath), $content, $mimeType);
+        if (!$name) {
+            $name = basename($filepath);
+        }
+        return static::createWithData($name, $content, $mimeType);
     }
 
     /**

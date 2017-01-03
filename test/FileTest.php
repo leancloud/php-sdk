@@ -33,6 +33,11 @@ class FileTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("image/png",   $file->getMimeType());
     }
 
+    public function testCreateWithLocalFile() {
+        $file = File::createWithLocalFile(__FILE__);
+        $this->assertEquals("FileTest.php", $file->getName());
+    }
+
     public function testSaveTextFile() {
         $file = File::createWithData("test.txt", "Hello World!");
         $file->save();
