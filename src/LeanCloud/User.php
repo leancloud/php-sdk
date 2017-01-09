@@ -227,7 +227,7 @@ class User extends Object {
     /**
      * Clear logged-in user and session token.
      */
-    private static function clearCurrentUser() {
+    public static function clearCurrentUser() {
         self::$currentUser = null;
         self::setCurrentSessionToken(null);
     }
