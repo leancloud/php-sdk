@@ -207,5 +207,22 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
                                 array("session_token" => "non-existent-token"));
     }
 
+    public function testGzipCompatibility() {
+        // Test that enable server-side gzip shall not break client decoding.
+        // minimum "Content-Length: 512" to trigger server gzip
+        $obj = array(
+            "name" => "alice131",
+            "text" => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        );
+        $resp = Client::post("/classes/TestObject", $obj);
+        $this->assertNotEmpty($resp["objectId"]);
+
+        $resp2 = Client::get("/classes/TestObject", array("where" => json_encode(array("name" => "alice131"))));
+        $this->assertNotEmpty($resp2["results"]);
+        $this->assertEquals($resp2["results"][0]["objectId"], $resp["objectId"]);
+
+        Client::delete("/classes/TestObject/{$resp['objectId']}");
+    }
+
 }
 

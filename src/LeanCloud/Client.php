@@ -132,6 +132,7 @@ class Client {
         self::$defaultHeaders = array(
             'X-LC-Id' => self::$appId,
             'Content-Type' => 'application/json;charset=utf-8',
+            'Accept-Encoding' => 'gzip, deflate',
             'User-Agent'   => self::getVersionString()
         );
 
@@ -377,6 +378,8 @@ class Client {
         curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($req, CURLOPT_TIMEOUT, self::$apiTimeout);
         // curl_setopt($req, CURLINFO_HEADER_OUT, true);
+        // curl_setopt($req, CURLOPT_HEADER, true);
+        curl_setopt($req, CURLOPT_ENCODING, '');
         switch($method) {
             case "GET":
                 if ($data) {
@@ -403,6 +406,7 @@ class Client {
             error_log("[DEBUG] HEADERS {$reqId}:" . json_encode($headersList));
             error_log("[DEBUG] REQUEST {$reqId}: {$method} {$url} {$json}");
         }
+        // list($headers, $resp) = explode("\r\n\r\n", curl_exec($req), 2);
         $resp     = curl_exec($req);
         $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         $respType = curl_getinfo($req, CURLINFO_CONTENT_TYPE);
