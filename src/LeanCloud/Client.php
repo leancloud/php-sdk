@@ -654,8 +654,8 @@ class Client {
             return $file;
         }
         if ($type === "Pointer" || $type === "Object") {
-            $obj = Object::create($value["className"], $value["objectId"]);
-            unset($value["__type"]);
+            $id  = isset($value["objectId"]) ? $value["objectId"] : null;
+            $obj = Object::create($value["className"], $id);
             unset($value["className"]);
             if (!empty($value)) {
                 $obj->mergeAfterFetch($value);

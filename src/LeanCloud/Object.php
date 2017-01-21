@@ -208,7 +208,7 @@ class Object {
         forEach($this->_data as $key => $val) {
             $out[$key] = Client::encode($val, "toFullJSON", $seen);
         }
-        $out["__type"]    = "Object";
+        if (!isset($out["__type"])) $out["__type"] = "Object";
         $out["className"] = $this->getClassName();
         return $out;
     }
