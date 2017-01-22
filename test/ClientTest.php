@@ -411,6 +411,29 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Object",  $jsonC["__type"]);
         $this->assertEquals("Pointer", $jsonC["likes"][0]["__type"]);
     }
+
+    public function testEncodePointerObject() {
+        $json = array(
+            "__type" => "Object",
+            "objectId" => "id001",
+            "className" => "TestObject",
+            "name" => "A",
+            "likes" => array(
+                "__type" => "Pointer",
+                "objectId" => "id002",
+                "className" => "TestObject"
+            )
+        );
+        $a = Client::decode($json, null);
+        $this->assertTrue($a instanceof Object);
+        $this->assertTrue($a->get("likes") instanceof Object);
+
+        $out = $a->toFullJSON();
+        $this->assertEquals("A", $out["name"]);
+        $this->assertEquals("Pointer", $out["likes"]["__type"]);
+        $this->assertEquals("TestObject", $out["likes"]["className"]);
+    }
+
 }
 
 

@@ -432,5 +432,17 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         $location->destroy();
     }
 
+    public function testPointerObjectHasNoData() {
+        $json = array(
+            "__type" => "Pointer",
+            "className" => "TestObject",
+            "objectId" => "id001"
+        );
+        $obj = Client::decode($json, null);
+        $this->assertTrue($obj instanceof Object);
+        $this->assertEquals("id001", $obj->getObjectId());
+
+        $this->assertFalse($obj->hasData());
+    }
 }
 

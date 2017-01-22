@@ -208,7 +208,7 @@ class Object {
         forEach($this->_data as $key => $val) {
             $out[$key] = Client::encode($val, "toFullJSON", $seen);
         }
-        $out["__type"]    = "Object";
+        $out["__type"] = "Object";
         $out["className"] = $this->getClassName();
         return $out;
     }
@@ -398,6 +398,16 @@ class Object {
     public function removeIn($key, $val) {
         $this->_applyOperation(new ArrayOperation($key, array($val), "Remove"));
         return $this;
+    }
+
+    /**
+     * If object has data attributes.
+     *
+     * @return bool
+     */
+    public function hasData() {
+        $keys = array_keys($this->_data);
+        return $keys !== array("objectId");
     }
 
     /**

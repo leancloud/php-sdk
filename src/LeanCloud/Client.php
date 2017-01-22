@@ -577,7 +577,7 @@ class Client {
             return array("__type" => "Date",
                          "iso"    => self::formatDate($value));
         } else if ($value instanceof Object) {
-            if ($encoder && !in_array($value, $seen)) {
+            if ($encoder && $value->hasData() && !in_array($value, $seen)) {
                 $seen[] = $value;
                 return call_user_func(array($value, $encoder), $seen);
             } else {
@@ -658,7 +658,8 @@ class Client {
             return $file;
         }
         if ($type === "Pointer" || $type === "Object") {
-            $obj = Object::create($value["className"], $value["objectId"]);
+            $id  = isset($value["objectId"]) ? $value["objectId"] : null;
+            $obj = Object::create($value["className"], $id);
             unset($value["__type"]);
             unset($value["className"]);
             if (!empty($value)) {
