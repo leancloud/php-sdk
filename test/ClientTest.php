@@ -433,6 +433,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Pointer", $out["likes"]["__type"]);
         $this->assertEquals("TestObject", $out["likes"]["className"]);
     }
+
 }
 
 
