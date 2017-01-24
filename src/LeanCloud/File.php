@@ -380,14 +380,23 @@ class File {
                 $resp["token"] = null;
             }
 
+            $callbackParams = array("token" => $resp["token"]);
             try {
                 $uploader = SimpleUploader::createUploader($resp["provider"]);
                 $uploader->initialize($resp["upload_url"], $resp["token"]);
                 $uploader->upload($this->_source, $this->getMimeType(), $key);
+                $callbackParams["result"] = false;
             } catch (\Exception $ex) {
-                $this->destroy();
+                $callbackParams["result"] = false;
                 throw $ex;
+            } finally {
+                try {
+                    Client::post("/fileCallback", $callbackParams);
+                } catch (\Exception $ex) {
+                    error_log("Request /fileCallback failed.");
+                }
             }
+
             forEach(array("upload_url", "token") as $k) {
                 if (isset($resp[$k])) {
                     unset($resp[$k]);
