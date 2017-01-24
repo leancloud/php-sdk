@@ -409,9 +409,15 @@ class LeanEngine {
                         $this->dispatchHook($funcParams[0], $funcParams[1], $json);
                     }
                 }
+            } catch (FunctionError $ex) {
+                // intended error in user defined function
+                error_log($ex->getTraceAsString());
+                $this->renderError($ex->getMessage(), $ex->getCode());
             } catch (CloudException $ex) {
+                error_log($ex->getTraceAsString());
                 $this->renderError($ex->getMessage(), $ex->getCode());
             } catch (\Exception $ex) {
+                error_log($ex->getTraceAsString());
                 $this->renderError("Cloud script error: {$ex->getMessage()}", 141);
             }
         }
@@ -444,14 +450,10 @@ class LeanEngine {
         }
 
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            $result = Cloud::run($funcName,
-                                 $params,
-                                 User::getCurrentUser(),
-                                 $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        $result = Cloud::run($funcName,
+                             $params,
+                             User::getCurrentUser(),
+                             $meta);
         if ($decodeObj) {
             // Encode object to full, type-annotated JSON
             $out = Client::encode($result, "toFullJSON");
@@ -513,15 +515,11 @@ class LeanEngine {
         }
 
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            $result = Cloud::runHook($className,
-                                     $hookName,
-                                     $obj,
-                                     User::getCurrentUser(),
-                                     $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        $result = Cloud::runHook($className,
+                                 $hookName,
+                                 $obj,
+                                 User::getCurrentUser(),
+                                 $meta);
         if ($hookName == "beforeDelete") {
             $this->renderJSON(array());
         } else if (strpos($hookName, "after") === 0) {
@@ -550,11 +548,7 @@ class LeanEngine {
         $userObj = Client::decode($body["object"], null);
         User::saveCurrentUser($userObj);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            Cloud::runOnVerified($type, $userObj, $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        Cloud::runOnVerified($type, $userObj, $meta);
         $this->renderJSON(array("result" => "ok"));
     }
 
@@ -573,11 +567,7 @@ class LeanEngine {
 
         $userObj = Client::decode($body["object"], null);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            Cloud::runOnLogin($userObj, $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        Cloud::runOnLogin($userObj, $meta);
         $this->renderJSON(array("result" => "ok"));
     }
 
@@ -595,11 +585,7 @@ class LeanEngine {
         }
 
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            Cloud::runOnInsight($body, $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        Cloud::runOnInsight($body, $meta);
         $this->renderJSON(array("result" => "ok"));
     }
 
