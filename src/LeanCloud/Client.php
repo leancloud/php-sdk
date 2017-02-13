@@ -172,11 +172,12 @@ class Client {
     /**
      * Set API region
      *
-     * Available regions are "CN" and "US".
+     * Available regions are "CN", "US", "E1".
      *
      * @param string $region
      */
     public static function useRegion($region) {
+        $region = strtoupper($region);
         if (!isset(self::$api[$region])) {
             throw new \RuntimeException("Invalid API region: {$region}.");
         }
