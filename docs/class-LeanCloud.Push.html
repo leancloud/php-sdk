@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class LeanCloud\Push</title>
+
+	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.html">
+						LeanCloud<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-LeanCloud.Engine.html">
+						Engine					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Operation.html">
+						Operation					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Storage.html">
+						Storage					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Uploader.html">
+						Uploader					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-LeanCloud.ACL.html">ACL</a></li>
+				<li><a href="class-LeanCloud.Bytes.html">Bytes</a></li>
+				<li><a href="class-LeanCloud.Client.html">Client</a></li>
+				<li><a href="class-LeanCloud.File.html">File</a></li>
+				<li><a href="class-LeanCloud.GeoPoint.html">GeoPoint</a></li>
+				<li><a href="class-LeanCloud.MIMEType.html">MIMEType</a></li>
+				<li><a href="class-LeanCloud.Object.html">Object</a></li>
+				<li class="active"><a href="class-LeanCloud.Push.html">Push</a></li>
+				<li><a href="class-LeanCloud.Query.html">Query</a></li>
+				<li><a href="class-LeanCloud.Relation.html">Relation</a></li>
+				<li><a href="class-LeanCloud.Role.html">Role</a></li>
+				<li><a href="class-LeanCloud.SaveOption.html">SaveOption</a></li>
+				<li><a href="class-LeanCloud.SMS.html">SMS</a></li>
+				<li><a href="class-LeanCloud.User.html">User</a></li>
+			</ul>
+
+
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-LeanCloud.BatchRequestError.html">BatchRequestError</a></li>
+				<li><a href="class-LeanCloud.CloudException.html">CloudException</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-LeanCloud.html" title="Summary of LeanCloud"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Push</h1>
+
+
+	<div class="description">
+	<p>Send Push notification to mobile devices</p>
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-LeanCloud.Push.html#5-166" title="Go to source code">LeanCloud/Push.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#23-34" title="Go to source code">__construct</a>( <span>array <var>$data</var> = <span class="php-keyword1">array</span>()</span>, <span>array <var>$options</var> = <span class="php-keyword1">array</span>()</span> )</code>
+
+		<div class="description short">
+			<p>Initialize a Push notification</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Initialize a Push notification</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$data</var></dt>
+					<dd>Notification data</dd>
+					<dt><var>$options</var></dt>
+					<dd>Notification options</dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Push.html#_setData">LeanCloud\Push::setData()</a></code>, <code><a href="class-LeanCloud.Push.html#_setOption">LeanCloud\Push::setOption()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setData" id="_setData">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setData">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#36-48" title="Go to source code">setData</a>( <span>string <var>$key</var></span>, <span>mixed <var>$val</var></span> )</code>
+
+		<div class="description short">
+			<p>Set notification data attributes</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set notification data attributes</p>
+
+<p>Available attributes please see
+https://leancloud.cn/docs/push_guide.html#%E6%8E%A8%E9%80%81%E6%B6%88%E6%81%AF</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$key</var></dt>
+					<dd>Attribute key</dd>
+					<dt><var>$val</var></dt>
+					<dd>Attribute value</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setOption" id="_setOption">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setOption">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#50-72" title="Go to source code">setOption</a>( <span>string <var>$key</var></span>, <span>mixed <var>$val</var></span> )</code>
+
+		<div class="description short">
+			<p>Set general option for notificiation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set general option for notificiation</p>
+
+<p>Available options please see
+https://leancloud.cn/docs/push_guide.html#%E6%8E%A8%E9%80%81%E6%B6%88%E6%81%AF</p>
+
+<p>There are helper methods for setting most of options, use those
+if possible. Use this when no helper present, e.g. to enable
+"dev" environment in iOS:</p>
+
+<pre><span class="php-var">$push</span>-&gt;setOption(<span class="php-quote">&quot;prod&quot;</span>, <span class="php-quote">&quot;dev&quot;</span>);</pre>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$key</var></dt>
+					<dd>Option key</dd>
+					<dt><var>$val</var></dt>
+					<dd>Option value</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Push.html#_setWhere">LeanCloud\Push::setWhere()</a></code>, <code><a href="class-LeanCloud.Push.html#_setChannels">LeanCloud\Push::setChannels()</a></code>, self::setPushTime ...<br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setChannels" id="_setChannels">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setChannels">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#74-83" title="Go to source code">setChannels</a>( <span>array <var>$channels</var></span> )</code>
+
+		<div class="description short">
+			<p>Set target channels</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set target channels</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$channels</var></dt>
+					<dd>List of channel names</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Push.html#_setOption">LeanCloud\Push::setOption()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setWhere" id="_setWhere">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setWhere">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#85-100" title="Go to source code">setWhere</a>( <span><code><a href="class-LeanCloud.Query.html">LeanCloud\Query</a></code> <var>$query</var></span> )</code>
+
+		<div class="description short">
+			<p>Filter target devices by query</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Filter target devices by query</p>
+
+<p>The query must be over _Installation table.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$query</var></dt>
+					<dd>A query over _Installation</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Push.html#_setOption">LeanCloud\Push::setOption()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setPushTime" id="_setPushTime">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setPushTime">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#102-111" title="Go to source code">setPushTime</a>( <span>DateTime <var>$time</var></span> )</code>
+
+		<div class="description short">
+			<p>Schedule a time to send message</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Schedule a time to send message</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$time</var></dt>
+					<dd>Time to send message to clients</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Push.html#_setOption">LeanCloud\Push::setOption()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setExpirationInterval" id="_setExpirationInterval">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setExpirationInterval">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#113-125" title="Go to source code">setExpirationInterval</a>( <span>integer <var>$interval</var></span> )</code>
+
+		<div class="description short">
+			<p>Set expiration interval for message</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set expiration interval for message</p>
+
+<p>When client received message after the interval, it will not be
+displayed to user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$interval</var></dt>
+					<dd>Number of seconds (from now) to expire message</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Push.html#_setOption">LeanCloud\Push::setOption()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setExpirationTime" id="_setExpirationTime">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setExpirationTime">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#127-139" title="Go to source code">setExpirationTime</a>( <span>DateTime <var>$time</var></span> )</code>
+
+		<div class="description short">
+			<p>Set expiration time for message</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set expiration time for message</p>
+
+<p>When client received message after the specified time, it will
+not be displayed to user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$time</var></dt>
+					<dd>Time to expire message</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Push.html">LeanCloud\Push</a></code>
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Push.html#_setOption">LeanCloud\Push::setOption()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="encode" id="_encode">
+
+		<td class="attributes"><code>
+			 public 
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_encode">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#141-154" title="Go to source code">encode</a>( )</code>
+
+		<div class="description short">
+			<p>Encode to JSON representation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Encode to JSON representation</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					array
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="send" id="_send">
+
+		<td class="attributes"><code>
+			 public 
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_send">#</a>
+		<code><a href="source-class-LeanCloud.Push.html#156-165" title="Go to source code">send</a>( )</code>
+
+		<div class="description short">
+			<p>Send notification to LeanCloud</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Send notification to LeanCloud</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					array
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

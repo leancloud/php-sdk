@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class LeanCloud\Engine\SlimEngine</title>
+
+	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.html">
+						LeanCloud<span></span>
+					</a>
+
+						<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.Engine.html">
+						Engine					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Operation.html">
+						Operation					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Storage.html">
+						Storage					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Uploader.html">
+						Uploader					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-LeanCloud.Engine.Cloud.html">Cloud</a></li>
+				<li><a href="class-LeanCloud.Engine.LaravelEngine.html">LaravelEngine</a></li>
+				<li><a href="class-LeanCloud.Engine.LeanEngine.html">LeanEngine</a></li>
+				<li class="active"><a href="class-LeanCloud.Engine.SlimEngine.html">SlimEngine</a></li>
+			</ul>
+
+
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-LeanCloud.Engine.FunctionError.html">FunctionError</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-LeanCloud.Engine.html" title="Summary of LeanCloud\Engine"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class SlimEngine</h1>
+
+
+	<div class="description">
+	<p>LeanEngine as Slim middleware</p>
+
+<p>Add it in a Slim application:</p>
+
+<pre><span class="php-var">$app</span> = <span class="php-keyword1">new</span> \Slim\App();
+<span class="php-var">$app</span>-&gt;add(<span class="php-keyword1">new</span> SlimEngine());</pre>
+	</div>
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+			<a href="class-LeanCloud.Engine.LeanEngine.html"><span>LeanCloud\Engine\LeanEngine</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by">
+<b><span>LeanCloud\Engine\SlimEngine</span></b>			
+			
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a>\<a href="namespace-LeanCloud.Engine.html">Engine</a><br>
+		
+
+				<b>Link:</b>
+				<a href="http://www.slimframework.com/docs/concepts/middleware.html">http://www.slimframework.com/docs/concepts/middleware.html</a><br>
+			<b>Located at</b> <a href="source-class-LeanCloud.Engine.SlimEngine.html#5-65" title="Go to source code">LeanCloud/Engine/SlimEngine.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="getHeaderLine" id="_getHeaderLine">
+
+		<td class="attributes"><code>
+			 protected 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getHeaderLine">#</a>
+		<code><a href="source-class-LeanCloud.Engine.SlimEngine.html#19-27" title="Go to source code">getHeaderLine</a>( <span>string <var>$key</var></span> )</code>
+
+		<div class="description short">
+			<p>Get request header value</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get request header value</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$key</var></dt>
+					<dd>Header key</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+				<h4>Overrides</h4>
+				<div class="list"><code><a href="class-LeanCloud.Engine.LeanEngine.html#_getHeaderLine">LeanCloud\Engine\LeanEngine::getHeaderLine()</a></code></div>
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getBody" id="_getBody">
+
+		<td class="attributes"><code>
+			 protected 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getBody">#</a>
+		<code><a href="source-class-LeanCloud.Engine.SlimEngine.html#29-36" title="Go to source code">getBody</a>( )</code>
+
+		<div class="description short">
+			<p>Get request body string</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get request body string</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+				<h4>Overrides</h4>
+				<div class="list"><code><a href="class-LeanCloud.Engine.LeanEngine.html#_getBody">LeanCloud\Engine\LeanEngine::getBody()</a></code></div>
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="__invoke" id="___invoke">
+
+		<td class="attributes"><code>
+			 public 
+
+			Psr\Http\Message\ResponseInterface
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___invoke">#</a>
+		<code><a href="source-class-LeanCloud.Engine.SlimEngine.html#50-64" title="Go to source code">__invoke</a>( <span>Psr\Http\Message\ServerRequestInterface <var>$request</var></span>, <span>Psr\Http\Message\ResponseInterface <var>$response</var></span>, <span>callable <var>$next</var></span> )</code>
+
+		<div class="description short">
+			<p>Slim middleware entry point</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Slim middleware entry point</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$request</var></dt>
+					<dd>PSR7 request</dd>
+					<dt><var>$response</var></dt>
+					<dd>PSR7 response</dd>
+					<dt><var>$next</var></dt>
+					<dd>Next middleware</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					Psr\Http\Message\ResponseInterface
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-LeanCloud.Engine.LeanEngine.html#methods">LeanCloud\Engine\LeanEngine</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-LeanCloud.Engine.LeanEngine.html#_dispatch">dispatch()</a>, 
+			<a href="class-LeanCloud.Engine.LeanEngine.html#_enableHttpsRedirect">enableHttpsRedirect()</a>, 
+			<a href="class-LeanCloud.Engine.LeanEngine.html#_redirect">redirect()</a>, 
+			<a href="class-LeanCloud.Engine.LeanEngine.html#_send">send()</a>, 
+			<a href="class-LeanCloud.Engine.LeanEngine.html#_start">start()</a>, 
+			<a href="class-LeanCloud.Engine.LeanEngine.html#_withHeader">withHeader()</a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-LeanCloud.Engine.LeanEngine.html#properties">LeanCloud\Engine\LeanEngine</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-LeanCloud.Engine.LeanEngine.html#$env"><var>$env</var></a>, 
+			<a href="class-LeanCloud.Engine.LeanEngine.html#$useHttpsRedirect"><var>$useHttpsRedirect</var></a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

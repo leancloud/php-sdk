@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class LeanCloud\User</title>
+
+	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.html">
+						LeanCloud<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-LeanCloud.Engine.html">
+						Engine					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Operation.html">
+						Operation					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Storage.html">
+						Storage					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Uploader.html">
+						Uploader					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-LeanCloud.ACL.html">ACL</a></li>
+				<li><a href="class-LeanCloud.Bytes.html">Bytes</a></li>
+				<li><a href="class-LeanCloud.Client.html">Client</a></li>
+				<li><a href="class-LeanCloud.File.html">File</a></li>
+				<li><a href="class-LeanCloud.GeoPoint.html">GeoPoint</a></li>
+				<li><a href="class-LeanCloud.MIMEType.html">MIMEType</a></li>
+				<li><a href="class-LeanCloud.Object.html">Object</a></li>
+				<li><a href="class-LeanCloud.Push.html">Push</a></li>
+				<li><a href="class-LeanCloud.Query.html">Query</a></li>
+				<li><a href="class-LeanCloud.Relation.html">Relation</a></li>
+				<li><a href="class-LeanCloud.Role.html">Role</a></li>
+				<li><a href="class-LeanCloud.SaveOption.html">SaveOption</a></li>
+				<li><a href="class-LeanCloud.SMS.html">SMS</a></li>
+				<li class="active"><a href="class-LeanCloud.User.html">User</a></li>
+			</ul>
+
+
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-LeanCloud.BatchRequestError.html">BatchRequestError</a></li>
+				<li><a href="class-LeanCloud.CloudException.html">CloudException</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-LeanCloud.html" title="Summary of LeanCloud"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class User</h1>
+
+
+	<div class="description">
+	<p>User representation for LeanCloud User</p>
+
+<p>LeanCloud provides a default user model to facilitate user
+management at application level. Users can be managed by email,
+mobile phone number, or simply a username.</p>
+
+<p>Upon sign-up a session token is issued to user, which shall be used
+to authenticate the user in subsequent requests. The session token
+of logged-in user is available at</p>
+
+<pre><code>User::getCurrentSessionToken()
+</code></pre>
+
+<p>and current user at</p>
+
+<pre><code>User::getCurrentUser()
+</code></pre>
+
+<p>Providing a token, the user can be conveniently authenticated and
+fetched by</p>
+
+<pre><code>User::become($token)
+</code></pre>
+	</div>
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+			<a href="class-LeanCloud.Object.html"><span>LeanCloud\Object</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by">
+<b><span>LeanCloud\User</span></b>			
+			
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-LeanCloud.User.html#9-532" title="Go to source code">LeanCloud/User.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="setUsername" id="_setUsername">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setUsername">#</a>
+		<code><a href="source-class-LeanCloud.User.html#54-63" title="Go to source code">setUsername</a>( <span>string <var>$username</var></span> )</code>
+
+		<div class="description short">
+			<p>Set username</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set username</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$username</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setEmail" id="_setEmail">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setEmail">#</a>
+		<code><a href="source-class-LeanCloud.User.html#65-74" title="Go to source code">setEmail</a>( <span>string <var>$email</var></span> )</code>
+
+		<div class="description short">
+			<p>Set email</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set email</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$email</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setPassword" id="_setPassword">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setPassword">#</a>
+		<code><a href="source-class-LeanCloud.User.html#76-85" title="Go to source code">setPassword</a>( <span>string <var>$password</var></span> )</code>
+
+		<div class="description short">
+			<p>Set password</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set password</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$password</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setMobilePhoneNumber" id="_setMobilePhoneNumber">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setMobilePhoneNumber">#</a>
+		<code><a href="source-class-LeanCloud.User.html#87-96" title="Go to source code">setMobilePhoneNumber</a>( <span>string <var>$number</var></span> )</code>
+
+		<div class="description short">
+			<p>Set mobile phone number</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set mobile phone number</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$number</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="signUp" id="_signUp">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_signUp">#</a>
+		<code><a href="source-class-LeanCloud.User.html#98-111" title="Go to source code">signUp</a>( )</code>
+
+		<div class="description short">
+			<p>Sign-up user</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sign-up user</p>
+
+<p>It will also auto-login and set current user.</p>
+
+
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.CloudException.html">LeanCloud\CloudException</a></code>
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="save" id="_save">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_save">#</a>
+		<code><a href="source-class-LeanCloud.User.html#113-126" title="Go to source code">save</a>( <span><code><a href="class-LeanCloud.SaveOption.html">LeanCloud\SaveOption</a></code> <var>$option</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Save a signed-up user</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Save a signed-up user</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$option</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.CloudException.html">LeanCloud\CloudException</a></code>
+				</div>
+
+
+				<h4>Overrides</h4>
+				<div class="list"><code><a href="class-LeanCloud.Object.html#_save">LeanCloud\Object::save()</a></code></div>
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="updatePassword" id="_updatePassword">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_updatePassword">#</a>
+		<code><a href="source-class-LeanCloud.User.html#128-146" title="Go to source code">updatePassword</a>( <span>string <var>$old</var></span>, <span>string <var>$new</var></span> )</code>
+
+		<div class="description short">
+			<p>Update password with old password</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Update password with old password</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$old</var></dt>
+					<dd>Old password</dd>
+					<dt><var>$new</var></dt>
+					<dd>New password</dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.CloudException.html">LeanCloud\CloudException</a></code>
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getUsername" id="_getUsername">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getUsername">#</a>
+		<code><a href="source-class-LeanCloud.User.html#148-153" title="Go to source code">getUsername</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getEmail" id="_getEmail">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getEmail">#</a>
+		<code><a href="source-class-LeanCloud.User.html#155-160" title="Go to source code">getEmail</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getMobilePhoneNumber" id="_getMobilePhoneNumber">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getMobilePhoneNumber">#</a>
+		<code><a href="source-class-LeanCloud.User.html#162-167" title="Go to source code">getMobilePhoneNumber</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getSessionToken" id="_getSessionToken">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getSessionToken">#</a>
+		<code><a href="source-class-LeanCloud.User.html#169-176" title="Go to source code">getSessionToken</a>( )</code>
+
+		<div class="description short">
+			<p>Get session token of user</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get session token of user</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setCurrentSessionToken" id="_setCurrentSessionToken">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setCurrentSessionToken">#</a>
+		<code><a href="source-class-LeanCloud.User.html#181-191" title="Go to source code">setCurrentSessionToken</a>( <span>string <var>$token</var></span> )</code>
+
+		<div class="description short">
+			<p>Set session token as of logged-in user</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set session token as of logged-in user</p>
+
+<p>Save session token after a user logs in. It will clear session token
+if given token is null.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$token</var></dt>
+					<dd>Session token of logged-in user</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getCurrentSessionToken" id="_getCurrentSessionToken">
+
+		<td class="attributes"><code>
+			 public static
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getCurrentSessionToken">#</a>
+		<code><a href="source-class-LeanCloud.User.html#193-200" title="Go to source code">getCurrentSessionToken</a>( )</code>
+
+		<div class="description short">
+			<p>Get (persisted) session token</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get (persisted) session token</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getCurrentUser" id="_getCurrentUser">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getCurrentUser">#</a>
+		<code><a href="source-class-LeanCloud.User.html#202-215" title="Go to source code">getCurrentUser</a>( )</code>
+
+		<div class="description short">
+			<p>Get currently logged-in user</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get currently logged-in user</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="saveCurrentUser" id="_saveCurrentUser">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_saveCurrentUser">#</a>
+		<code><a href="source-class-LeanCloud.User.html#217-225" title="Go to source code">saveCurrentUser</a>( <span><code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code> <var>$user</var></span> )</code>
+
+		<div class="description short">
+			<p>Save logged-in user and session token</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Save logged-in user and session token</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$user</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="refreshSessionToken" id="_refreshSessionToken">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_refreshSessionToken">#</a>
+		<code><a href="source-class-LeanCloud.User.html#235-243" title="Go to source code">refreshSessionToken</a>( )</code>
+
+		<div class="description short">
+			<p>Refresh session token</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Refresh session token</p>
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="isAuthenticated" id="_isAuthenticated">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isAuthenticated">#</a>
+		<code><a href="source-class-LeanCloud.User.html#245-265" title="Go to source code">isAuthenticated</a>( )</code>
+
+		<div class="description short">
+			<p>Test if user logged in and session token is valid.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Test if user logged in and session token is valid.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getRoles" id="_getRoles">
+
+		<td class="attributes"><code>
+			 public 
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getRoles">#</a>
+		<code><a href="source-class-LeanCloud.User.html#267-280" title="Go to source code">getRoles</a>( )</code>
+
+		<div class="description short">
+			<p>Get roles the user belongs to</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get roles the user belongs to</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>Array of Role
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="become" id="_become">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_become">#</a>
+		<code><a href="source-class-LeanCloud.User.html#282-299" title="Go to source code">become</a>( <span>string <var>$token</var></span> )</code>
+
+		<div class="description short">
+			<p>Log-in user by session token</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Log-in user by session token</p>
+
+<p>And set current user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$token</var></dt>
+					<dd>Session token</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.CloudException.html">LeanCloud\CloudException</a></code>
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="logIn" id="_logIn">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_logIn">#</a>
+		<code><a href="source-class-LeanCloud.User.html#301-318" title="Go to source code">logIn</a>( <span>string <var>$username</var></span>, <span>string <var>$password</var></span> )</code>
+
+		<div class="description short">
+			<p>Log-in user by username and password</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Log-in user by username and password</p>
+
+<p>And set current user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$username</var></dt>
+					<dd></dd>
+					<dt><var>$password</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.CloudException.html">LeanCloud\CloudException</a></code>
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="logOut" id="_logOut">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_logOut">#</a>
+		<code><a href="source-class-LeanCloud.User.html#320-333" title="Go to source code">logOut</a>( )</code>
+
+		<div class="description short">
+			<p>Log-out current user</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Log-out current user</p>
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="logInWithMobilePhoneNumber" id="_logInWithMobilePhoneNumber">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_logInWithMobilePhoneNumber">#</a>
+		<code><a href="source-class-LeanCloud.User.html#335-350" title="Go to source code">logInWithMobilePhoneNumber</a>( <span>string <var>$phoneNumber</var></span>, <span>string <var>$password</var></span> )</code>
+
+		<div class="description short">
+			<p>Log-in user by mobile phone and password</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Log-in user by mobile phone and password</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$phoneNumber</var></dt>
+					<dd></dd>
+					<dt><var>$password</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="logInWithSmsCode" id="_logInWithSmsCode">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_logInWithSmsCode">#</a>
+		<code><a href="source-class-LeanCloud.User.html#352-370" title="Go to source code">logInWithSmsCode</a>( <span>string <var>$phoneNumber</var></span>, <span>string <var>$smsCode</var></span> )</code>
+
+		<div class="description short">
+			<p>Log-in user by mobile phone and SMS code.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Log-in user by mobile phone and SMS code.</p>
+
+<p>Log-in user with SMS code, which can be requested by
+<code>requestLoginSmsCode</code>. It will set current user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$phoneNumber</var></dt>
+					<dd>Registered mobile phone number</dd>
+					<dt><var>$smsCode</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="requestLoginSmsCode" id="_requestLoginSmsCode">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_requestLoginSmsCode">#</a>
+		<code><a href="source-class-LeanCloud.User.html#372-383" title="Go to source code">requestLoginSmsCode</a>( <span>string <var>$phoneNumber</var></span> )</code>
+
+		<div class="description short">
+			<p>Request login SMS code</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Request login SMS code</p>
+
+<p>Send user mobile phone a message with SMS code, which can be used
+for login then.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$phoneNumber</var></dt>
+					<dd>Register mobile phone number</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="requestEmailVerify" id="_requestEmailVerify">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_requestEmailVerify">#</a>
+		<code><a href="source-class-LeanCloud.User.html#385-394" title="Go to source code">requestEmailVerify</a>( <span>string <var>$email</var></span> )</code>
+
+		<div class="description short">
+			<p>Request email verify</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Request email verify</p>
+
+<p>Send user an email to verify email.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$email</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="requestPasswordReset" id="_requestPasswordReset">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_requestPasswordReset">#</a>
+		<code><a href="source-class-LeanCloud.User.html#396-403" title="Go to source code">requestPasswordReset</a>( <span>string <var>$email</var></span> )</code>
+
+		<div class="description short">
+			<p>Request password reset by email</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Request password reset by email</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$email</var></dt>
+					<dd>Registered email</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="requestPasswordResetBySmsCode" id="_requestPasswordResetBySmsCode">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_requestPasswordResetBySmsCode">#</a>
+		<code><a href="source-class-LeanCloud.User.html#405-415" title="Go to source code">requestPasswordResetBySmsCode</a>( <span>string <var>$phoneNumber</var></span> )</code>
+
+		<div class="description short">
+			<p>Request password reset by SMS</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Request password reset by SMS</p>
+
+<p>Send user mobile phone a message with SMS code.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$phoneNumber</var></dt>
+					<dd>Registered mobile phone number</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="resetPasswordBySmsCode" id="_resetPasswordBySmsCode">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_resetPasswordBySmsCode">#</a>
+		<code><a href="source-class-LeanCloud.User.html#417-426" title="Go to source code">resetPasswordBySmsCode</a>( <span>string <var>$smsCode</var></span>, <span>string <var>$newPassword</var></span> )</code>
+
+		<div class="description short">
+			<p>Reset password by SMS code.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Reset password by SMS code.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$smsCode</var></dt>
+					<dd></dd>
+					<dt><var>$newPassword</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="requestMobilePhoneVerify" id="_requestMobilePhoneVerify">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_requestMobilePhoneVerify">#</a>
+		<code><a href="source-class-LeanCloud.User.html#428-438" title="Go to source code">requestMobilePhoneVerify</a>( <span>string <var>$phoneNumber</var></span> )</code>
+
+		<div class="description short">
+			<p>Request mobile phone verify.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Request mobile phone verify.</p>
+
+<p>Send user mobile phone a message with SMS code.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$phoneNumber</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="verifyMobilePhone" id="_verifyMobilePhone">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_verifyMobilePhone">#</a>
+		<code><a href="source-class-LeanCloud.User.html#440-447" title="Go to source code">verifyMobilePhone</a>( <span>string <var>$smsCode</var></span> )</code>
+
+		<div class="description short">
+			<p>Verify mobile phone by SMS code</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Verify mobile phone by SMS code</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$smsCode</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="logInWith" id="_logInWith">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_logInWith">#</a>
+		<code><a href="source-class-LeanCloud.User.html#466-483" title="Go to source code">logInWith</a>( <span>string <var>$provider</var></span>, <span>array <var>$authToken</var></span> )</code>
+
+		<div class="description short">
+			<p>Log-in with 3rd party auth data</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Log-in with 3rd party auth data</p>
+
+<p>Log-in with 3rd party provider auth data. If the auth data has been
+linked previously with user, it will login <em>as</em> that user. Else a
+new user will be created with generated username. It will set
+current user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$provider</var></dt>
+					<dd>Provider name</dd>
+					<dt><var>$authToken</var></dt>
+					<dd>Auth token</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="linkWith" id="_linkWith">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_linkWith">#</a>
+		<code><a href="source-class-LeanCloud.User.html#485-506" title="Go to source code">linkWith</a>( <span>string <var>$provider</var></span>, <span>array <var>$authToken</var></span> )</code>
+
+		<div class="description short">
+			<p>Link user with 3rd party provider</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Link user with 3rd party provider</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$provider</var></dt>
+					<dd>Provider name e.g. "weibo", "weixin"</dd>
+					<dt><var>$authToken</var></dt>
+					<dd>Array of id, token, and expiration info</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="unlinkWith" id="_unlinkWith">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_unlinkWith">#</a>
+		<code><a href="source-class-LeanCloud.User.html#508-530" title="Go to source code">unlinkWith</a>( <span>string <var>$provider</var></span> )</code>
+
+		<div class="description short">
+			<p>Unlink user with a provider</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Unlink user with a provider</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$provider</var></dt>
+					<dd>Provider name</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-LeanCloud.Object.html#methods">LeanCloud\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-LeanCloud.Object.html#___construct">__construct()</a>, 
+			<a href="class-LeanCloud.Object.html#_addIn">addIn()</a>, 
+			<a href="class-LeanCloud.Object.html#_addUniqueIn">addUniqueIn()</a>, 
+			<a href="class-LeanCloud.Object.html#_create">create()</a>, 
+			<a href="class-LeanCloud.Object.html#_delete">delete()</a>, 
+			<a href="class-LeanCloud.Object.html#_destroy">destroy()</a>, 
+			<a href="class-LeanCloud.Object.html#_destroyAll">destroyAll()</a>, 
+			<a href="class-LeanCloud.Object.html#_disableAfterHook">disableAfterHook()</a>, 
+			<a href="class-LeanCloud.Object.html#_disableBeforeHook">disableBeforeHook()</a>, 
+			<a href="class-LeanCloud.Object.html#_fetch">fetch()</a>, 
+			<a href="class-LeanCloud.Object.html#_fetchAll">fetchAll()</a>, 
+			<a href="class-LeanCloud.Object.html#_findUnsavedChildren">findUnsavedChildren()</a>, 
+			<a href="class-LeanCloud.Object.html#_get">get()</a>, 
+			<a href="class-LeanCloud.Object.html#_getACL">getACL()</a>, 
+			<a href="class-LeanCloud.Object.html#_getClassName">getClassName()</a>, 
+			<a href="class-LeanCloud.Object.html#_getCreatedAt">getCreatedAt()</a>, 
+			<a href="class-LeanCloud.Object.html#_getObjectId">getObjectId()</a>, 
+			<a href="class-LeanCloud.Object.html#_getPointer">getPointer()</a>, 
+			<a href="class-LeanCloud.Object.html#_getQuery">getQuery()</a>, 
+			<a href="class-LeanCloud.Object.html#_getRelation">getRelation()</a>, 
+			<a href="class-LeanCloud.Object.html#_getUpdatedAt">getUpdatedAt()</a>, 
+			<a href="class-LeanCloud.Object.html#_increment">increment()</a>, 
+			<a href="class-LeanCloud.Object.html#_isDirty">isDirty()</a>, 
+			<a href="class-LeanCloud.Object.html#_mergeAfterFetch">mergeAfterFetch()</a>, 
+			<a href="class-LeanCloud.Object.html#_mergeAfterSave">mergeAfterSave()</a>, 
+			<a href="class-LeanCloud.Object.html#_registerClass">registerClass()</a>, 
+			<a href="class-LeanCloud.Object.html#_removeIn">removeIn()</a>, 
+			<a href="class-LeanCloud.Object.html#_saveAll">saveAll()</a>, 
+			<a href="class-LeanCloud.Object.html#_set">set()</a>, 
+			<a href="class-LeanCloud.Object.html#_setACL">setACL()</a>, 
+			<a href="class-LeanCloud.Object.html#_toFullJSON">toFullJSON()</a>, 
+			<a href="class-LeanCloud.Object.html#_toJSON">toJSON()</a>, 
+			<a href="class-LeanCloud.Object.html#_traverse">traverse()</a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+	<table class="summary inherited">
+	<caption>Constants inherited from <a href="class-LeanCloud.Object.html#constants">LeanCloud\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-LeanCloud.Object.html#PRESERVED_KEYS"><b>PRESERVED_KEYS</b></a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+	<table class="summary properties" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="className" id="$className">
+		<td class="attributes"><code>
+			protected static 
+			string
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-LeanCloud.User.html#40-45" title="Go to source code"><var>$className</var></a>
+
+			<div class="description short">
+				<p>className on LeanCloud</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>className on LeanCloud</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$className" class="anchor">#</a>
+				<code><span class="php-quote">&quot;_User&quot;</span></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="currentUser" id="$currentUser">
+		<td class="attributes"><code>
+			public static 
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-LeanCloud.User.html#47-52" title="Go to source code"><var>$currentUser</var></a>
+
+			<div class="description short">
+				<p>Current logged-in user</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Current logged-in user</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$currentUser" class="anchor">#</a>
+				<code><span class="php-keyword1">null</span></code>
+			</div>
+		</td>
+	</tr>
+	</table>
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class LeanCloud\Uploader\SimpleUploader</title>
+
+	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.html">
+						LeanCloud<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-LeanCloud.Engine.html">
+						Engine					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Operation.html">
+						Operation					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Storage.html">
+						Storage					</a>
+
+						</li>
+				<li class="active">
+					<a href="namespace-LeanCloud.Uploader.html">
+						Uploader					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-LeanCloud.Uploader.QCloudUploader.html">QCloudUploader</a></li>
+				<li><a href="class-LeanCloud.Uploader.QiniuUploader.html">QiniuUploader</a></li>
+				<li><a href="class-LeanCloud.Uploader.S3Uploader.html">S3Uploader</a></li>
+				<li class="active"><a href="class-LeanCloud.Uploader.SimpleUploader.html">SimpleUploader</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-LeanCloud.Uploader.html" title="Summary of LeanCloud\Uploader"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class SimpleUploader</h1>
+
+
+
+
+
+	<div>
+		<h4>Direct known subclasses</h4>
+			<a href="class-LeanCloud.Uploader.QCloudUploader.html">LeanCloud\Uploader\QCloudUploader</a>, 
+			<a href="class-LeanCloud.Uploader.QiniuUploader.html">LeanCloud\Uploader\QiniuUploader</a>, 
+			<a href="class-LeanCloud.Uploader.S3Uploader.html">LeanCloud\Uploader\S3Uploader</a>
+	</div>
+
+
+
+
+
+
+	<div class="info">
+		<b>Abstract</b><br>
+		
+		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a>\<a href="namespace-LeanCloud.Uploader.html">Uploader</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-LeanCloud.Uploader.SimpleUploader.html#5-94" title="Go to source code">LeanCloud/Uploader/SimpleUploader.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="createUploader" id="_createUploader">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.Uploader.SimpleUploader.html">LeanCloud\Uploader\SimpleUploader</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_createUploader">#</a>
+		<code><a href="source-class-LeanCloud.Uploader.SimpleUploader.html#9-24" title="Go to source code">createUploader</a>( <span>string <var>$provider</var></span> )</code>
+
+		<div class="description short">
+			<p>Create uploader by provider</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Create uploader by provider</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$provider</var></dt>
+					<dd>File provider: qiniu, s3, etc</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Uploader.SimpleUploader.html">LeanCloud\Uploader\SimpleUploader</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getFileFieldName" id="_getFileFieldName">
+
+		<td class="attributes"><code>
+			 protected static
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getFileFieldName">#</a>
+		<code><a href="source-class-LeanCloud.Uploader.SimpleUploader.html#26-33" title="Go to source code">getFileFieldName</a>( )</code>
+
+		<div class="description short">
+			<p>The form field name of file content in multipart encoded data</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>The form field name of file content in multipart encoded data</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="multipartEncode" id="_multipartEncode">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_multipartEncode">#</a>
+		<code><a href="source-class-LeanCloud.Uploader.SimpleUploader.html#35-72" title="Go to source code">multipartEncode</a>( <span>array <var>$file</var></span>, <span>array <var>$params</var></span>, <span>string <var>$boundary</var></span> )</code>
+
+		<div class="description short">
+			<p>Encode file with params in multipart format</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Encode file with params in multipart format</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$file</var></dt>
+					<dd>File content, name, and mimeType</dd>
+					<dt><var>$params</var></dt>
+					<dd>Additional form params for provider</dd>
+					<dt><var>$boundary</var></dt>
+					<dd>Boundary string used for frontier</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					string<br>Multipart encoded string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="initialize" id="_initialize">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_initialize">#</a>
+		<code><a href="source-class-LeanCloud.Uploader.SimpleUploader.html#74-83" title="Go to source code">initialize</a>( <span>string <var>$uploadUrl</var></span>, <span>string <var>$authToken</var></span> )</code>
+
+		<div class="description short">
+			<p>Initialize uploader with url and auth token</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Initialize uploader with url and auth token</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$uploadUrl</var></dt>
+					<dd>File provider url</dd>
+					<dt><var>$authToken</var></dt>
+					<dd>Auth token for file provider</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getUploadUrl" id="_getUploadUrl">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getUploadUrl">#</a>
+		<code><a href="source-class-LeanCloud.Uploader.SimpleUploader.html#85-87" title="Go to source code">getUploadUrl</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getAuthToken" id="_getAuthToken">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getAuthToken">#</a>
+		<code><a href="source-class-LeanCloud.Uploader.SimpleUploader.html#89-91" title="Go to source code">getAuthToken</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="upload" id="_upload">
+
+		<td class="attributes"><code>
+			abstract public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_upload">#</a>
+		<code><a href="source-class-LeanCloud.Uploader.SimpleUploader.html#93" title="Go to source code">upload</a>( <span> <var>$content</var></span>, <span> <var>$mimeType</var></span>, <span> <var>$key</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary properties" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="uploadUrl" id="$uploadUrl">
+		<td class="attributes"><code>
+			protected  
+			
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-LeanCloud.Uploader.SimpleUploader.html#6" title="Go to source code"><var>$uploadUrl</var></a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$uploadUrl" class="anchor">#</a>
+				<code></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="authToken" id="$authToken">
+		<td class="attributes"><code>
+			protected  
+			
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-LeanCloud.Uploader.SimpleUploader.html#7" title="Go to source code"><var>$authToken</var></a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$authToken" class="anchor">#</a>
+				<code></code>
+			</div>
+		</td>
+	</tr>
+	</table>
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

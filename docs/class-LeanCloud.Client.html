@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class LeanCloud\Client</title>
+
+	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.html">
+						LeanCloud<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-LeanCloud.Engine.html">
+						Engine					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Operation.html">
+						Operation					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Storage.html">
+						Storage					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Uploader.html">
+						Uploader					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-LeanCloud.ACL.html">ACL</a></li>
+				<li><a href="class-LeanCloud.Bytes.html">Bytes</a></li>
+				<li class="active"><a href="class-LeanCloud.Client.html">Client</a></li>
+				<li><a href="class-LeanCloud.File.html">File</a></li>
+				<li><a href="class-LeanCloud.GeoPoint.html">GeoPoint</a></li>
+				<li><a href="class-LeanCloud.MIMEType.html">MIMEType</a></li>
+				<li><a href="class-LeanCloud.Object.html">Object</a></li>
+				<li><a href="class-LeanCloud.Push.html">Push</a></li>
+				<li><a href="class-LeanCloud.Query.html">Query</a></li>
+				<li><a href="class-LeanCloud.Relation.html">Relation</a></li>
+				<li><a href="class-LeanCloud.Role.html">Role</a></li>
+				<li><a href="class-LeanCloud.SaveOption.html">SaveOption</a></li>
+				<li><a href="class-LeanCloud.SMS.html">SMS</a></li>
+				<li><a href="class-LeanCloud.User.html">User</a></li>
+			</ul>
+
+
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-LeanCloud.BatchRequestError.html">BatchRequestError</a></li>
+				<li><a href="class-LeanCloud.CloudException.html">CloudException</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-LeanCloud.html" title="Summary of LeanCloud"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Client</h1>
+
+
+	<div class="description">
+	<p>Client interfacing with LeanCloud REST API</p>
+
+<p>The client is responsible for sending request to API, and parsing
+the response into objects in PHP. There are also utility functions
+such as <code>::randomFloat</code> to generate a random float number.</p>
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-LeanCloud.Client.html#14-702" title="Go to source code">LeanCloud/Client.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="initialize" id="_initialize">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_initialize">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#120-145" title="Go to source code">initialize</a>( <span>string <var>$appId</var></span>, <span>string <var>$appKey</var></span>, <span>string <var>$appMasterKey</var></span> )</code>
+
+		<div class="description short">
+			<p>Initialize application key and settings</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Initialize application key and settings</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$appId</var></dt>
+					<dd>Application ID</dd>
+					<dt><var>$appKey</var></dt>
+					<dd>Application key</dd>
+					<dt><var>$appMasterKey</var></dt>
+					<dd>Application master key</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getVersionString" id="_getVersionString">
+
+		<td class="attributes"><code>
+			 public static
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getVersionString">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#162-169" title="Go to source code">getVersionString</a>( )</code>
+
+		<div class="description short">
+			<p>Get version string used as user agent</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get version string used as user agent</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="useRegion" id="_useRegion">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_useRegion">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#171-183" title="Go to source code">useRegion</a>( <span>string <var>$region</var></span> )</code>
+
+		<div class="description short">
+			<p>Set API region</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set API region</p>
+
+<p>Available regions are "CN" and "US".</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$region</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="useProduction" id="_useProduction">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_useProduction">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#185-192" title="Go to source code">useProduction</a>( <span>boolean <var>$flag</var></span> )</code>
+
+		<div class="description short">
+			<p>Use production or not</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Use production or not</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$flag</var></dt>
+					<dd>Default false</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setDebug" id="_setDebug">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setDebug">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#194-203" title="Go to source code">setDebug</a>( <span>boolean <var>$flag</var></span> )</code>
+
+		<div class="description short">
+			<p>Set debug mode</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set debug mode</p>
+
+<p>Enable debug mode to log request params and response.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$flag</var></dt>
+					<dd>Default false</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="useMasterKey" id="_useMasterKey">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_useMasterKey">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#205-212" title="Go to source code">useMasterKey</a>( <span>boolean <var>$flag</var></span> )</code>
+
+		<div class="description short">
+			<p>Use master key or not</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Use master key or not</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$flag</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getAPIEndPoint" id="_getAPIEndPoint">
+
+		<td class="attributes"><code>
+			 public static
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getAPIEndPoint">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#214-224" title="Go to source code">getAPIEndPoint</a>( )</code>
+
+		<div class="description short">
+			<p>Get API Endpoint</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get API Endpoint</p>
+
+<p>Build the API endpoint, the returned endpoint will include
+version string. For example: https://api.leancloud.cn/1.1 .</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="buildHeaders" id="_buildHeaders">
+
+		<td class="attributes"><code>
+			 public static
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_buildHeaders">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#226-259" title="Go to source code">buildHeaders</a>( <span>string <var>$sessionToken</var></span>, <span>boolean <var>$useMasterKey</var></span> )</code>
+
+		<div class="description short">
+			<p>Build authentication headers</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Build authentication headers</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$sessionToken</var></dt>
+					<dd>Session token of a User</dd>
+					<dt><var>$useMasterKey</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					array
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="verifySign" id="_verifySign">
+
+		<td class="attributes"><code>
+			 public static
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_verifySign">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#261-281" title="Go to source code">verifySign</a>( <span>string <var>$appId</var></span>, <span>string <var>$sign</var></span> )</code>
+
+		<div class="description short">
+			<p>Verify app ID and sign</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Verify app ID and sign</p>
+
+<p>The sign must be in the format of "{md5sum},{timestamp}[,master]",
+which follows the format as in header "X-LC-Sign".</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$appId</var></dt>
+					<dd>App Id</dd>
+					<dt><var>$sign</var></dt>
+					<dd>Request sign</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="verifyKey" id="_verifyKey">
+
+		<td class="attributes"><code>
+			 public static
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_verifyKey">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#283-302" title="Go to source code">verifyKey</a>( <span>string <var>$appId</var></span>, <span>string <var>$key</var></span> )</code>
+
+		<div class="description short">
+			<p>Verify app ID and key</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Verify app ID and key</p>
+
+<p>The key shall be in format of "{key}[,master]", it will be verified
+as master key if master suffix present.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$appId</var></dt>
+					<dd>App Id</dd>
+					<dt><var>$key</var></dt>
+					<dd>App key or master key</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="signHook" id="_signHook">
+
+		<td class="attributes"><code>
+			 public static
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_signHook">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#304-314" title="Go to source code">signHook</a>( <span>string <var>$hookName</var></span>, <span>integer <var>$msec</var></span> )</code>
+
+		<div class="description short">
+			<p>Generate a sign used to auth hook invocation on LeanEngine</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Generate a sign used to auth hook invocation on LeanEngine</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$hookName</var></dt>
+					<dd>E.g. "__before_for_Object"</dd>
+					<dt><var>$msec</var></dt>
+					<dd>Timestamap in microseconds</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="verifyHookSign" id="_verifyHookSign">
+
+		<td class="attributes"><code>
+			 public static
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_verifyHookSign">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#316-330" title="Go to source code">verifyHookSign</a>( <span>string <var>$hookName</var></span>, <span>string <var>$sign</var></span> )</code>
+
+		<div class="description short">
+			<p>Verify a signed hook</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Verify a signed hook</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$hookName</var></dt>
+					<dd></dd>
+					<dt><var>$sign</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="request" id="_request">
+
+		<td class="attributes"><code>
+			 public static
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_request">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#332-437" title="Go to source code">request</a>( <span>string <var>$method</var></span>, <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Issue request to LeanCloud</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Issue request to LeanCloud</p>
+
+<p>The data is passing in as an associative array, which will be encoded
+into JSON if the content-type header is "application/json", or
+be appended to url as query string if it's GET request.</p>
+
+<p>The optional headers do have higher precedence, if provided it
+will overwrite the items in default headers.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$method</var></dt>
+					<dd>GET, POST, PUT, DELETE</dd>
+					<dt><var>$path</var></dt>
+					<dd>Request path (without version string)</dd>
+					<dt><var>$data</var></dt>
+					<dd>Payload data</dd>
+					<dt><var>$sessionToken</var></dt>
+					<dd>Session token of a User</dd>
+					<dt><var>$headers</var></dt>
+					<dd>Optional headers</dd>
+					<dt><var>$useMasterKey</var></dt>
+					<dd>Use master key or not</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>JSON decoded associative array
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					RuntimeException,<br>CloudException
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="get" id="_get">
+
+		<td class="attributes"><code>
+			 public static
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_get">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#439-454" title="Go to source code">get</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var> = <span class="php-keyword1">null</span></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Issue GET request to LeanCloud</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Issue GET request to LeanCloud</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$path</var></dt>
+					<dd>Request path (without version string)</dd>
+					<dt><var>$data</var></dt>
+					<dd>Payload data</dd>
+					<dt><var>$sessionToken</var></dt>
+					<dd>Session token of a User</dd>
+					<dt><var>$headers</var></dt>
+					<dd>Optional headers</dd>
+					<dt><var>$useMasterKey</var></dt>
+					<dd>Use master key or not</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>JSON decoded associated array
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Client.html#_request">LeanCloud\Client::request()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="post" id="_post">
+
+		<td class="attributes"><code>
+			 public static
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_post">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#456-471" title="Go to source code">post</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Issue POST request to LeanCloud</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Issue POST request to LeanCloud</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$path</var></dt>
+					<dd>Request path (without version string)</dd>
+					<dt><var>$data</var></dt>
+					<dd>Payload data</dd>
+					<dt><var>$sessionToken</var></dt>
+					<dd>Session token of a User</dd>
+					<dt><var>$headers</var></dt>
+					<dd>Optional headers</dd>
+					<dt><var>$useMasterKey</var></dt>
+					<dd>Use master key or not, optional</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>JSON decoded associated array
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Client.html#_request">LeanCloud\Client::request()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="put" id="_put">
+
+		<td class="attributes"><code>
+			 public static
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_put">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#473-488" title="Go to source code">put</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Issue PUT request to LeanCloud</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Issue PUT request to LeanCloud</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$path</var></dt>
+					<dd>Request path (without version string)</dd>
+					<dt><var>$data</var></dt>
+					<dd>Payload data</dd>
+					<dt><var>$sessionToken</var></dt>
+					<dd>Session token of a User</dd>
+					<dt><var>$headers</var></dt>
+					<dd>Optional headers</dd>
+					<dt><var>$useMasterKey</var></dt>
+					<dd>Use master key or not, optional</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>JSON decoded associated array
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Client.html#_request">LeanCloud\Client::request()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="delete" id="_delete">
+
+		<td class="attributes"><code>
+			 public static
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_delete">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#490-504" title="Go to source code">delete</a>( <span>string <var>$path</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Issue DELETE request to LeanCloud</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Issue DELETE request to LeanCloud</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$path</var></dt>
+					<dd>Request path (without version string)</dd>
+					<dt><var>$sessionToken</var></dt>
+					<dd>Session token of a User</dd>
+					<dt><var>$headers</var></dt>
+					<dd>Optional headers</dd>
+					<dt><var>$useMasterKey</var></dt>
+					<dd>Use master key or not, optional</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>JSON decoded associated array
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Client.html#_request">LeanCloud\Client::request()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="batch" id="_batch">
+
+		<td class="attributes"><code>
+			 public static
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_batch">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#506-536" title="Go to source code">batch</a>( <span>array <var>$requests</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Issue a batch request</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Issue a batch request</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$requests</var></dt>
+					<dd>Array of requests in batch op</dd>
+					<dt><var>$sessionToken</var></dt>
+					<dd>Session token of a User</dd>
+					<dt><var>$headers</var></dt>
+					<dd>Optional headers</dd>
+					<dt><var>$useMasterKey</var></dt>
+					<dd>Use master key or not, optional</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>JSON decoded associated array
+				</div>
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Client.html#_request">LeanCloud\Client::request()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="encode" id="_encode">
+
+		<td class="attributes"><code>
+			 public static
+
+			mixed
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_encode">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#538-599" title="Go to source code">encode</a>( <span>mixed <var>$value</var></span>, <span>string <var>$encoder</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$seen</var> = <span class="php-keyword1">array</span>()</span> )</code>
+
+		<div class="description short">
+			<p>Recursively encode value as JSON representation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Recursively encode value as JSON representation</p>
+
+<p>By default Object will be encoded as pointer, though
+<code>$encoder</code> could be provided to encode to customized type, such
+as full <code>__type</code> annotated json object. The $encoder must be
+name of instance method of Object.</p>
+
+<p>To vaoid infinite loop in the case of circular Object
+references, previously seen objects (<code>$seen</code>) are encoded
+in pointer, even a customized encoder was provided.</p>
+
+<pre><span class="php-var">$obj</span> = <span class="php-keyword1">new</span> TestObject();
+<span class="php-var">$obj</span>-&gt;set(<span class="php-quote">&quot;owner&quot;</span>, <span class="php-var">$user</span>);
+
+<span class="php-comment">// encode object to full JSON, with `__type` and `className`</span>
+Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;toFullJSON&quot;</span>);
+
+<span class="php-comment">// encode object to literal JSON, without `__type` and `className`</span>
+Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;toJSON&quot;</span>);</pre>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$value</var></dt>
+					<dd></dd>
+					<dt><var>$encoder</var></dt>
+					<dd>Object encoder name, e.g.: getPointer, toJSON</dd>
+					<dt><var>$seen</var></dt>
+					<dd>Array of Object that has been traversed</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					mixed
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="formatDate" id="_formatDate">
+
+		<td class="attributes"><code>
+			 public static
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_formatDate">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#601-614" title="Go to source code">formatDate</a>( <span>DateTime <var>$date</var></span> )</code>
+
+		<div class="description short">
+			<p>Format date according to LeanCloud spec.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Format date according to LeanCloud spec.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$date</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="decode" id="_decode">
+
+		<td class="attributes"><code>
+			 public static
+
+			mixed
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_decode">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#616-668" title="Go to source code">decode</a>( <span>mixed <var>$value</var></span>, <span>string <var>$key</var></span> )</code>
+
+		<div class="description short">
+			<p>Decode value from LeanCloud response.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Decode value from LeanCloud response.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$value</var></dt>
+					<dd>Value to decode</dd>
+					<dt><var>$key</var></dt>
+					<dd>Field key for the value</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					mixed
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getStorage" id="_getStorage">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.Storage.IStorage.html">LeanCloud\Storage\IStorage</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getStorage">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#670-677" title="Go to source code">getStorage</a>( )</code>
+
+		<div class="description short">
+			<p>Get storage</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get storage</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Storage.IStorage.html">LeanCloud\Storage\IStorage</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setStorage" id="_setStorage">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setStorage">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#679-688" title="Go to source code">setStorage</a>( <span><code><a href="class-LeanCloud.Storage.IStorage.html">LeanCloud\Storage\IStorage</a></code> <var>$storage</var></span> )</code>
+
+		<div class="description short">
+			<p>Set storage</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set storage</p>
+
+<p>It unset the storage if $storage is null.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$storage</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="randomFloat" id="_randomFloat">
+
+		<td class="attributes"><code>
+			 public static
+
+			float
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_randomFloat">#</a>
+		<code><a href="source-class-LeanCloud.Client.html#690-700" title="Go to source code">randomFloat</a>( <span>float <var>$min</var> = <span class="php-num">0</span></span>, <span>float <var>$max</var> = <span class="php-num">1</span></span> )</code>
+
+		<div class="description short">
+			<p>Generate a random float between [$min, $max)</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Generate a random float between [$min, $max)</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$min</var></dt>
+					<dd></dd>
+					<dt><var>$max</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					float
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+	<table class="summary constants" id="constants">
+	<caption>Constants summary</caption>
+	<tr data-order="VERSION" id="VERSION">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name">
+			<code>
+				<a href="source-class-LeanCloud.Client.html#23-26" title="Go to source code"><b>VERSION</b></a>
+			</code>
+
+			<div class="description short">
+				<p>Client version</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Client version</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#VERSION" class="anchor">#</a>
+				<code><span class="php-quote">'0.5.0'</span></code>
+			</div>
+		</td>
+	</tr>
+	</table>
+
+
+
+
+	<table class="summary properties" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="isProduction" id="$isProduction">
+		<td class="attributes"><code>
+			public static 
+			boolean
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-LeanCloud.Client.html#92-97" title="Go to source code"><var>$isProduction</var></a>
+
+			<div class="description short">
+				<p>Is in production or not</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Is in production or not</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$isProduction" class="anchor">#</a>
+				<code><span class="php-keyword1">false</span></code>
+			</div>
+		</td>
+	</tr>
+	</table>
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>
