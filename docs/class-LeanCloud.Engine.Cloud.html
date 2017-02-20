@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class LeanCloud\Engine\Cloud</title>
+
+	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.html">
+						LeanCloud<span></span>
+					</a>
+
+						<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.Engine.html">
+						Engine					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Operation.html">
+						Operation					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Storage.html">
+						Storage					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Uploader.html">
+						Uploader					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-LeanCloud.Engine.Cloud.html">Cloud</a></li>
+				<li><a href="class-LeanCloud.Engine.LaravelEngine.html">LaravelEngine</a></li>
+				<li><a href="class-LeanCloud.Engine.LeanEngine.html">LeanEngine</a></li>
+				<li><a href="class-LeanCloud.Engine.SlimEngine.html">SlimEngine</a></li>
+			</ul>
+
+
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-LeanCloud.Engine.FunctionError.html">FunctionError</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-LeanCloud.Engine.html" title="Summary of LeanCloud\Engine"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Cloud</h1>
+
+
+	<div class="description">
+	<p>Cloud functions and hooks repository</p>
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a>\<a href="namespace-LeanCloud.Engine.html">Engine</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-LeanCloud.Engine.Cloud.html#5-342" title="Go to source code">LeanCloud/Engine/Cloud.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="getKeys" id="_getKeys">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getKeys">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#33-35" title="Go to source code">getKeys</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="define" id="_define">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_define">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#58-76" title="Go to source code">define</a>( <span>string <var>$funcName</var></span>, <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define a cloud function</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define a cloud function</p>
+
+<p>The function shall take two arguments: the first is an array of
+parameters, the second is user in the session. Example:</p>
+
+<pre>Cloud::<span class="php-keyword2">define</span>(<span class="php-quote">&quot;sayHello&quot;</span>, <span class="php-keyword1">function</span>(<span class="php-var">$params</span>, <span class="php-var">$user</span>) { <span class="php-keyword1">return</span> <span class="php-quote">&quot;Hello </span><span class="php-var">{$params['name']}</span><span class="php-quote">!&quot;</span>;
+});</pre>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$funcName</var></dt>
+					<dd></dd>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.Cloud.html#_run">LeanCloud\Engine\Cloud::run()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="beforeSave" id="_beforeSave">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_beforeSave">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#78-103" title="Go to source code">beforeSave</a>( <span>string <var>$className</var></span>, <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define before save hook for a class</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define before save hook for a class</p>
+
+<p>The function shall take two arguments: the first one is class
+object, the second is user if available in session. If your $func
+throws <code>FunctionError</code>, the save will be rejected. Example:</p>
+
+<pre>Cloud::beforeSave(<span class="php-quote">&quot;TestObject&quot;</span>, <span class="php-keyword1">function</span>(<span class="php-var">$object</span>, <span class="php-var">$user</span>) { <span class="php-var">$title</span> = <span class="php-var">$object</span>-&gt;get(<span class="php-quote">&quot;title&quot;</span>); <span class="php-keyword1">if</span> (<span class="php-keyword2">strlen</span>(<span class="php-var">$title</span>) &gt; <span class="php-num">140</span>) { <span class="php-comment">// Throw error and reject the save operation. throw new FunctionError(&quot;Title is too long&quot;, 1); } // else object will be saved.</span>
+});</pre>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$className</var></dt>
+					<dd></dd>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="afterSave" id="_afterSave">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_afterSave">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#105-119" title="Go to source code">afterSave</a>( <span>string <var>$className</var></span>, <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define after save hook for a class</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define after save hook for a class</p>
+
+<p>The function shall take two arguments: the first one is class
+object, the second is user if available in session. Any error
+in after hook will be ignored.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$className</var></dt>
+					<dd></dd>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="beforeUpdate" id="_beforeUpdate">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_beforeUpdate">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#121-135" title="Go to source code">beforeUpdate</a>( <span>string <var>$className</var></span>, <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define before update hook for a class</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define before update hook for a class</p>
+
+<p>The function shall take two arguments: the first one is class
+object, the second is user if available in session. If your $func
+throws <code>FunctionError</code>, the update will be rejected.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$className</var></dt>
+					<dd></dd>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="afterUpdate" id="_afterUpdate">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_afterUpdate">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#137-151" title="Go to source code">afterUpdate</a>( <span>string <var>$className</var></span>, <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define after update hook for a class</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define after update hook for a class</p>
+
+<p>The function shall take two arguments: the first one is class
+object, the second is user if available in session. Any error
+in $func will be ignored.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$className</var></dt>
+					<dd></dd>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="beforeDelete" id="_beforeDelete">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_beforeDelete">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#153-167" title="Go to source code">beforeDelete</a>( <span>string <var>$className</var></span>, <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define before delete hook for a class</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define before delete hook for a class</p>
+
+<p>The function shall take two arguments: the first one is class
+object, the second is user if available in session. If your $func
+throws <code>FunctionError</code>, the delete will be rejected.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$className</var></dt>
+					<dd></dd>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="afterDelete" id="_afterDelete">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_afterDelete">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#169-183" title="Go to source code">afterDelete</a>( <span>string <var>$className</var></span>, <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define after delete hook for a class</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define after delete hook for a class</p>
+
+<p>The function shall take two arguments: the first one is class
+object, the second is user if available in session. Any error
+in $func will be ignored.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$className</var></dt>
+					<dd></dd>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="onLogin" id="_onLogin">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_onLogin">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#185-196" title="Go to source code">onLogin</a>( <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define hook for when user tries to login</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define hook for when user tries to login</p>
+
+<p>The function takes one argument, the login user. A <code>FunctionError</code>
+could be thrown in the $func, which will reject the user for login.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.Cloud.html#_runOnLogin">LeanCloud\Engine\Cloud::runOnLogin()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="onVerified" id="_onVerified">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_onVerified">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#199-210" title="Go to source code">onVerified</a>( <span>string <var>$type</var></span>, <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define hook for when user verified sms or email</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define hook for when user verified sms or email</p>
+
+<p>The function takes one argument, the verified user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$type</var></dt>
+					<dd>Either "sms" or "email"</dd>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.Cloud.html#_runOnVerified">LeanCloud\Engine\Cloud::runOnVerified()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="onInsight" id="_onInsight">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_onInsight">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#212-230" title="Go to source code">onInsight</a>( <span>callable <var>$func</var></span> )</code>
+
+		<div class="description short">
+			<p>Define on complete hook for big query</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Define on complete hook for big query</p>
+
+<p>The function takes one argument, the big query job info as array:</p>
+
+<pre><span class="php-keyword1">array</span>( <span class="php-quote">&quot;id&quot;</span> =&gt; <span class="php-quote">&quot;job id&quot;</span>, <span class="php-quote">&quot;status&quot;</span> =&gt; <span class="php-quote">&quot;OK/ERROR&quot;</span>, <span class="php-quote">&quot;message&quot;</span> =&gt; <span class="php-quote">&quot;...&quot;</span>
+);</pre>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$func</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.Cloud.html#_runOnInsight">LeanCloud\Engine\Cloud::runOnInsight()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="run" id="_run">
+
+		<td class="attributes"><code>
+			 public static
+
+			mixed
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_run">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#232-257" title="Go to source code">run</a>( <span>string <var>$funcName</var></span>, <span>array <var>$params</var></span>, <span>User <var>$user</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$meta</var> = <span class="php-keyword1">array</span>()</span> )</code>
+
+		<div class="description short">
+			<p>Run cloud function</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Run cloud function</p>
+
+<p>Example:</p>
+
+<pre>LeanEngine::run(<span class="php-quote">&quot;sayHello&quot;</span>, <span class="php-keyword1">array</span>(<span class="php-quote">&quot;name&quot;</span> =&gt; <span class="php-quote">&quot;alice&quot;</span>), <span class="php-var">$user</span>);
+<span class="php-comment">// sayHello(array(&quot;name&quot; =&gt; &quot;alice&quot;), $user);</span></pre>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$funcName</var></dt>
+					<dd>Name of defined function</dd>
+					<dt><var>$params</var></dt>
+					<dd>$data     Array of parameters passed to function</dd>
+					<dt><var>$user</var></dt>
+					<dd>Request user</dd>
+					<dt><var>$meta</var></dt>
+					<dd><p>Optional parameters that will be passed to
+                          user function</p></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					mixed
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code>
+				</div>
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.Cloud.html#_define">LeanCloud\Engine\Cloud::define()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="runHook" id="_runHook">
+
+		<td class="attributes"><code>
+			 public static
+
+			mixed
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_runHook">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#259-288" title="Go to source code">runHook</a>( <span>string <var>$className</var></span>, <span>string <var>$hookName</var></span>, <span>Object <var>$object</var></span>, <span>User <var>$user</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$meta</var> = <span class="php-keyword1">array</span>()</span> )</code>
+
+		<div class="description short">
+			<p>Run cloud hook</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Run cloud hook</p>
+
+<p>Example:</p>
+
+<pre>LeanEngine::runHook(<span class="php-quote">&quot;TestObject&quot;</span>, <span class="php-quote">&quot;beforeUpdate&quot;</span>, <span class="php-var">$object</span>, <span class="php-var">$user</span>);
+<span class="php-comment">// hook($object, $user);</span></pre>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$className</var></dt>
+					<dd>Classname</dd>
+					<dt><var>$hookName</var></dt>
+					<dd>Hook name, e.g. beforeUpdate</dd>
+					<dt><var>$object</var></dt>
+					<dd>The object of attached hook</dd>
+					<dt><var>$user</var></dt>
+					<dd>Request user</dd>
+					<dt><var>$meta</var></dt>
+					<dd><p>Optional parameters that will be passed to
+                          user function</p></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					mixed
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code>
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="runOnLogin" id="_runOnLogin">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_runOnLogin">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#290-301" title="Go to source code">runOnLogin</a>( <span>User <var>$user</var></span>, <span>array <var>$meta</var> = <span class="php-keyword1">array</span>()</span> )</code>
+
+		<div class="description short">
+			<p>Run hook when a user logs in</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Run hook when a user logs in</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$user</var></dt>
+					<dd>The user object that tries to login</dd>
+					<dt><var>$meta</var></dt>
+					<dd><p>Optional parameters that will be passed to
+                      user function</p></dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code>
+				</div>
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.Cloud.html#_onLogin">LeanCloud\Engine\Cloud::onLogin()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="runOnVerified" id="_runOnVerified">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_runOnVerified">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#303-321" title="Go to source code">runOnVerified</a>( <span>string <var>$type</var></span>, <span>User <var>$user</var></span>, <span>array <var>$meta</var> = <span class="php-keyword1">array</span>()</span> )</code>
+
+		<div class="description short">
+			<p>Run hook when user verified by Email or SMS</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Run hook when user verified by Email or SMS</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$type</var></dt>
+					<dd>Either "sms" or "email", case-sensitive</dd>
+					<dt><var>$user</var></dt>
+					<dd>The verifying user</dd>
+					<dt><var>$meta</var></dt>
+					<dd><p>Optional parameters that will be passed to
+                      user function</p></dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code>
+				</div>
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.Cloud.html#_onVerified">LeanCloud\Engine\Cloud::onVerified()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="runOnInsight" id="_runOnInsight">
+
+		<td class="attributes"><code>
+			 public static
+
+			mixed
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_runOnInsight">#</a>
+		<code><a href="source-class-LeanCloud.Engine.Cloud.html#323-341" title="Go to source code">runOnInsight</a>( <span>array <var>$params</var></span>, <span>array <var>$meta</var> = <span class="php-keyword1">array</span>()</span> )</code>
+
+		<div class="description short">
+			<p>Run hook on big query complete</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Run hook on big query complete</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$params</var></dt>
+					<dd>Big query job info</dd>
+					<dt><var>$meta</var></dt>
+					<dd><p>Optional parameters that will be passed to
+                     user function</p></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					mixed
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Engine.FunctionError.html">LeanCloud\Engine\FunctionError</a></code>
+				</div>
+
+				<h4>See</h4>
+				<div class="list">
+						<code><a href="class-LeanCloud.Engine.Cloud.html#_onInsight">LeanCloud\Engine\Cloud::onInsight()</a></code><br>
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>
