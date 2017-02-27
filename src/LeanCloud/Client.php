@@ -23,7 +23,7 @@ class Client {
     /**
      * Client version
      */
-    const VERSION = '0.5.3';
+    const VERSION = '0.5.4';
 
     /**
      * API Endpoints for Regions
