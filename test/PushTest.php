@@ -5,6 +5,16 @@ use LeanCloud\Query;
 use LeanCloud\Push;
 
 class PushTest extends PHPUnit_Framework_TestCase {
+
+    public function setUp() {
+        Client::initialize(
+            getenv("LC_APP_ID"),
+            getenv("LC_APP_KEY"),
+            getenv("LC_APP_MASTER_KEY"));
+        Client::useRegion(getenv("LC_API_REGION"));
+        Client::useMasterKey(false);
+    }
+
     public function testMessageEncode() {
         $data = array(
             "alert" => "Hello world!",
@@ -87,7 +97,7 @@ class PushTest extends PHPUnit_Framework_TestCase {
         $time = new DateTime();
         $push->setPushTime($time);
         $out = $push->encode();
-        $this->assertEquals($time, $out["push_time"]);
+        $this->assertEquals($time, new DateTime($out["push_time"]));
     }
 
     public function testSetExpirationInterval() {
@@ -106,7 +116,7 @@ class PushTest extends PHPUnit_Framework_TestCase {
         $date = new DateTime();
         $push->setExpirationTime($date);
         $out = $push->encode();
-        $this->assertEquals($date, $out["expiration_time"]);
+        $this->assertEquals($date, new DateTime($out["expiration_time"]));
     }
 
     public function testSetWhere() {
@@ -123,5 +133,20 @@ class PushTest extends PHPUnit_Framework_TestCase {
                 '$lt' => Client::encode($date)
             )
         ), $out["where"]);
+    }
+
+    public function testSendPush() {
+        $push = new Push(array(
+            "alert" => "Hello world!"
+        ));
+        $query = new Query("_Installation");
+        $query->equalTo("deviceType", "Android");
+        $push->setWhere($query);
+
+        $at = new DateTime();
+        $at->add(new DateInterval("P1D"));
+        $push->setPushTime($at);
+
+        // $push->send();
     }
 }
