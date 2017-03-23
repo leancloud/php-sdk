@@ -444,5 +444,6 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 
         $this->assertFalse($obj->hasData());
     }
+
 }
 
