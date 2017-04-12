@@ -10,7 +10,7 @@ env:
 
 script:
   - "make test_engine &"
-  - phpunit --coverage-clover=coverage.xml test
+  - ./vendor/bin/phpunit --coverage-clover=coverage.xml test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
