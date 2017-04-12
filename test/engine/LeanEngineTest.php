@@ -154,18 +154,21 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
 
     public function testBeforeSave() {
         $obj = array(
-            "__type"    => "Object",
-            "className" => "TestObject",
-            "objectId"  => "id002",
             "name"      => "alice",
+            "likes"     => array(
+                "__type"    => "Pointer",
+                "className" => "TestObject",
+                "objectId"  => "id002"
+            ),
             "__before"  => $this->signHook("__before_for_TestObject")
         );
         $resp = $this->request("/1/functions/TestObject/beforeSave", "POST",
                                array("object" => $obj));
         $obj2 = $resp;
-        $this->assertEquals($obj["objectId"], $obj2["objectId"]);
         $this->assertEquals($obj["name"],     $obj2["name"]);
         $this->assertEquals(42,               $obj2["__testKey"]);
+        $this->assertEquals("Pointer",        $obj2["likes"]["__type"]);
+        $this->assertEquals("id002",          $obj2["likes"]["objectId"]);
     }
 
     public function testAfterSave() {
