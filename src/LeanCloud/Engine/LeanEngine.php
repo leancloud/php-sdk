@@ -131,7 +131,7 @@ class LeanEngine {
             "code"  => $code,
             "error" => $message
         ));
-        $this->withHeader("Content-Type", "application/json; charset=utf-8;")
+        $this->withHeader("Content-Type", "application; charset=utf-8;")
             ->send($data, $status);
     }
 
@@ -139,7 +139,7 @@ class LeanEngine {
      * Retrieve header value with multiple version of keys
      *
      * @param array $keys Keys in order
-     * @retrun mixed
+     * @return mixed
      */
     private function retrieveHeader($keys) {
         $val = null;
@@ -301,7 +301,8 @@ class LeanEngine {
 
     private function verifyHookSign($hookName, $sign){
         if (Client::verifyHookSign($hookName, $sign)) return true;
-        throw new \RuntimeException("Invalid hook sign for {$hookName}", 401);
+        error_log("Invalid hook sign for {$hookName}");
+        $this->renderError("Unauthorized", 142, 401);
     }
 
     /**
@@ -415,15 +416,15 @@ class LeanEngine {
                     }
                 }
             } catch (FunctionError $ex) {
-                // intended error in user defined function
                 error_log($ex->getTraceAsString());
-                $this->renderError($ex->getMessage(), $ex->getCode());
+                $this->renderError("Cloud function error: {$ex->getMessage()}", $ex->getCode());
             } catch (CloudException $ex) {
                 error_log($ex->getTraceAsString());
-                $this->renderError($ex->getMessage(), $ex->getCode());
+                $this->renderError("Request to API failed: {$ex->getMessage()}", $ex->getCode());
             } catch (\Exception $ex) {
                 error_log($ex->getTraceAsString());
-                $this->renderError("Cloud script error: {$ex->getMessage()}", 141);
+                $this->renderError($ex->getMessage(),
+                                   $ex->getCode() ? $ex->getCode() : 1);
             }
         }
     }
