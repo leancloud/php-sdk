@@ -299,6 +299,11 @@ class LeanEngine {
         $this->renderError("Unauthorized", 401, 401);
     }
 
+    private function verifyHookSign($hookName, $sign){
+        if (Client::verifyHookSign($hookName, $sign)) return true;
+        throw new \RuntimeException("Invalid hook sign for {$hookName}", 401);
+    }
+
     /**
      * Set user session if sessionToken present
      */
@@ -437,11 +442,7 @@ class LeanEngine {
             '_conversationStart', '_conversationStarted',
             '_conversationAdd', '_conversationRemove', '_conversationUpdate'
         ))) {
-            if (!Client::verifyHookSign($funcName, $body["__sign"])) {
-                error_log("Invalid hook sign for message {$funcName}" .
-                          " from {$this->env['REMOTE_ADDR']}");
-                $this->renderError("Unauthorized.", 401, 401);
-            }
+            static::verifyHookSign($funcName, $body["__sign"]);
         }
 
         $params = $body;
@@ -474,16 +475,11 @@ class LeanEngine {
     private function dispatchHook($className, $hookName, $body) {
         $verified = false;
         if (strpos($hookName, "before") === 0) {
-            $verified = Client::verifyHookSign("__before_for_{$className}",
-                                                   $body["object"]["__before"]);
+            $this->verifyHookSign("__before_for_{$className}",
+                                   $body["object"]["__before"]);
         } else {
-            $verified = Client::verifyHookSign("__after_for_{$className}",
-                                                   $body["object"]["__after"]);
-        }
-        if (!$verified) {
-            error_log("Invalid hook sign for {$hookName} {$className}" .
-            " from {$this->env['REMOTE_ADDR']}");
-            $this->renderError("Unauthorized.", 401, 401);
+            $this->verifyHookSign("__after_for_{$className}",
+                                   $body["object"]["__after"]);
         }
 
         $json              = $body["object"];
@@ -538,12 +534,8 @@ class LeanEngine {
      * @param array  $body JSON decoded body params
      */
     private function dispatchOnVerified($type, $body) {
-        if (!Client::verifyHookSign("__on_verified_{$type}",
-                                        $body["object"]["__sign"])) {
-            error_log("Invalid hook sign for onVerified {$type}" .
-            " from {$this->env['REMOTE_ADDR']}");
-            $this->renderError("Unauthorized.", 401, 401);
-        }
+        $this->verifyHookSign("__on_verified_{$type}",
+                               $body["object"]["__sign"]);
 
         $userObj = Client::decode($body["object"], null);
         User::saveCurrentUser($userObj);
@@ -558,12 +550,8 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private function dispatchOnLogin($body) {
-        if (!Client::verifyHookSign("__on_login__User",
-                                        $body["object"]["__sign"])) {
-            error_log("Invalid hook sign for onLogin User" .
-            " from {$this->env['REMOTE_ADDR']}");
-            $this->renderError("Unauthorized.", 401, 401);
-        }
+        $this->verifyHookSign("__on_login__User",
+                               $body["object"]["__sign"]);
 
         $userObj = Client::decode($body["object"], null);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
@@ -577,12 +565,8 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private function dispatchOnInsight($body) {
-        if (!Client::verifyHookSign("__on_complete_bigquery_job",
-                                        $body["__sign"])) {
-            error_log("Invalid hook sign for onComplete Insight" .
-            " from {$this->env['REMOTE_ADDR']}");
-            $this->renderError("Unauthorized.", 401, 401);
-        }
+        $this->verifyHookSign("__on_complete_bigquery_job",
+                               $body["__sign"]);
 
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
         Cloud::runOnInsight($body, $meta);
