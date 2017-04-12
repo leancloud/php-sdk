@@ -361,7 +361,7 @@
 </span><span id="227" class="l">    <span class="php-comment">/**
 </span></span><span id="228" class="l"><span class="php-comment">     * Clear logged-in user and session token.
 </span></span><span id="229" class="l"><span class="php-comment">     */</span>
-</span><span id="230" class="l">    <span class="php-keyword1">private</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> clearCurrentUser() {
+</span><span id="230" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> clearCurrentUser() {
 </span><span id="231" class="l">        self::<span class="php-var">$currentUser</span> = <span class="php-keyword1">null</span>;
 </span><span id="232" class="l">        self::setCurrentSessionToken(<span class="php-keyword1">null</span>);
 </span><span id="233" class="l">    }

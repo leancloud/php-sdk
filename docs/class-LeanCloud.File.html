@@ -132,7 +132,7 @@
 		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
 		
 
-			<b>Located at</b> <a href="source-class-LeanCloud.File.html#10-439" title="Go to source code">LeanCloud/File.php</a>
+			<b>Located at</b> <a href="source-class-LeanCloud.File.html#10-443" title="Go to source code">LeanCloud/File.php</a>
 		<br>
 	</div>
 
@@ -277,7 +277,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_createWithLocalFile">#</a>
-		<code><a href="source-class-LeanCloud.File.html#98-112" title="Go to source code">createWithLocalFile</a>( <span>string <var>$filepath</var></span>, <span>string <var>$mimeType</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-LeanCloud.File.html#98-116" title="Go to source code">createWithLocalFile</a>( <span>string <var>$filepath</var></span>, <span>string <var>$mimeType</var> = <span class="php-keyword1">null</span></span>, <span>string <var>$name</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Create file from disk</p>
@@ -292,7 +292,9 @@
 					<dt><var>$filepath</var></dt>
 					<dd>Absolute file path</dd>
 					<dt><var>$mimeType</var></dt>
-					<dd></dd>
+					<dd>E.g. "image/png"</dd>
+					<dt><var>$name</var></dt>
+					<dd>Name of file</dd>
 				</dl></div>
 
 				<h4>Returns</h4>
@@ -322,7 +324,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_get">#</a>
-		<code><a href="source-class-LeanCloud.File.html#114-125" title="Go to source code">get</a>( <span>string <var>$key</var></span> )</code>
+		<code><a href="source-class-LeanCloud.File.html#118-129" title="Go to source code">get</a>( <span>string <var>$key</var></span> )</code>
 
 		<div class="description short">
 			<p>Get file attribute</p>
@@ -361,7 +363,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getName">#</a>
-		<code><a href="source-class-LeanCloud.File.html#127-134" title="Go to source code">getName</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#131-138" title="Go to source code">getName</a>( )</code>
 
 		<div class="description short">
 			<p>Get name of file</p>
@@ -395,7 +397,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getObjectId">#</a>
-		<code><a href="source-class-LeanCloud.File.html#136-143" title="Go to source code">getObjectId</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#140-147" title="Go to source code">getObjectId</a>( )</code>
 
 		<div class="description short">
 			<p>Get objectId of file</p>
@@ -429,7 +431,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getCreatedAt">#</a>
-		<code><a href="source-class-LeanCloud.File.html#145-150" title="Go to source code">getCreatedAt</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#149-154" title="Go to source code">getCreatedAt</a>( )</code>
 
 		<div class="description short">
 			
@@ -463,7 +465,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getUpdatedAt">#</a>
-		<code><a href="source-class-LeanCloud.File.html#152-157" title="Go to source code">getUpdatedAt</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#156-161" title="Go to source code">getUpdatedAt</a>( )</code>
 
 		<div class="description short">
 			
@@ -497,7 +499,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getMimeType">#</a>
-		<code><a href="source-class-LeanCloud.File.html#159-166" title="Go to source code">getMimeType</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#163-170" title="Go to source code">getMimeType</a>( )</code>
 
 		<div class="description short">
 			<p>Get file MIME type</p>
@@ -531,7 +533,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getUrl">#</a>
-		<code><a href="source-class-LeanCloud.File.html#168-175" title="Go to source code">getUrl</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#172-179" title="Go to source code">getUrl</a>( )</code>
 
 		<div class="description short">
 			<p>Get file url</p>
@@ -565,7 +567,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getThumbUrl">#</a>
-		<code><a href="source-class-LeanCloud.File.html#177-207" title="Go to source code">getThumbUrl</a>( <span>float|integer <var>$width</var></span>, <span>float|integer <var>$height</var></span>, <span>float|integer <var>$quality</var> = <span class="php-num">100</span></span>, <span>boolean <var>$scaleToFit</var> = <span class="php-keyword1">true</span></span>, <span>string <var>$format</var> = <span class="php-quote">&quot;png&quot;</span></span> )</code>
+		<code><a href="source-class-LeanCloud.File.html#181-211" title="Go to source code">getThumbUrl</a>( <span>float|integer <var>$width</var></span>, <span>float|integer <var>$height</var></span>, <span>float|integer <var>$quality</var> = <span class="php-num">100</span></span>, <span>boolean <var>$scaleToFit</var> = <span class="php-keyword1">true</span></span>, <span>string <var>$format</var> = <span class="php-quote">&quot;png&quot;</span></span> )</code>
 
 		<div class="description short">
 			<p>Get thumbnail URL</p>
@@ -616,7 +618,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getSize">#</a>
-		<code><a href="source-class-LeanCloud.File.html#209-216" title="Go to source code">getSize</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#213-220" title="Go to source code">getSize</a>( )</code>
 
 		<div class="description short">
 			<p>Get file size</p>
@@ -650,7 +652,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getOwnerId">#</a>
-		<code><a href="source-class-LeanCloud.File.html#218-225" title="Go to source code">getOwnerId</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#222-229" title="Go to source code">getOwnerId</a>( )</code>
 
 		<div class="description short">
 			<p>Get id of uploaded user</p>
@@ -684,7 +686,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setMeta">#</a>
-		<code><a href="source-class-LeanCloud.File.html#227-237" title="Go to source code">setMeta</a>( <span>string <var>$key</var></span>, <span>miexed <var>$val</var></span> )</code>
+		<code><a href="source-class-LeanCloud.File.html#231-241" title="Go to source code">setMeta</a>( <span>string <var>$key</var></span>, <span>miexed <var>$val</var></span> )</code>
 
 		<div class="description short">
 			<p>Set meta data</p>
@@ -725,7 +727,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getMeta">#</a>
-		<code><a href="source-class-LeanCloud.File.html#239-256" title="Go to source code">getMeta</a>( <span>string <var>$key</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-LeanCloud.File.html#243-260" title="Go to source code">getMeta</a>( <span>string <var>$key</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Get meta data</p>
@@ -766,7 +768,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_mergeAfterSave">#</a>
-		<code><a href="source-class-LeanCloud.File.html#305-321" title="Go to source code">mergeAfterSave</a>( <span>array <var>$data</var></span> )</code>
+		<code><a href="source-class-LeanCloud.File.html#309-325" title="Go to source code">mergeAfterSave</a>( <span>array <var>$data</var></span> )</code>
 
 		<div class="description short">
 			<p>Merge server response after save</p>
@@ -801,7 +803,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_mergeAfterFetch">#</a>
-		<code><a href="source-class-LeanCloud.File.html#323-335" title="Go to source code">mergeAfterFetch</a>( <span>array <var>$data</var></span> )</code>
+		<code><a href="source-class-LeanCloud.File.html#327-339" title="Go to source code">mergeAfterFetch</a>( <span>array <var>$data</var></span> )</code>
 
 		<div class="description short">
 			<p>Merge server response after fetch</p>
@@ -836,7 +838,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isDirty">#</a>
-		<code><a href="source-class-LeanCloud.File.html#337-345" title="Go to source code">isDirty</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#341-349" title="Go to source code">isDirty</a>( )</code>
 
 		<div class="description short">
 			<p>If there are unsaved changes.</p>
@@ -870,7 +872,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save">#</a>
-		<code><a href="source-class-LeanCloud.File.html#347-394" title="Go to source code">save</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#351-398" title="Go to source code">save</a>( )</code>
 
 		<div class="description short">
 			<p>Save file on the cloud</p>
@@ -904,7 +906,7 @@ arrives.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_fetch">#</a>
-		<code><a href="source-class-LeanCloud.File.html#396-409" title="Go to source code">fetch</a>( <span> <var>$objectId</var></span> )</code>
+		<code><a href="source-class-LeanCloud.File.html#400-413" title="Go to source code">fetch</a>( <span> <var>$objectId</var></span> )</code>
 
 		<div class="description short">
 			<p>Fetch file object by id</p>
@@ -941,7 +943,7 @@ The content should be fetched from file URL.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_destroy">#</a>
-		<code><a href="source-class-LeanCloud.File.html#411-421" title="Go to source code">destroy</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#415-425" title="Go to source code">destroy</a>( )</code>
 
 		<div class="description short">
 			<p>Delete file on cloud</p>
@@ -975,7 +977,7 @@ The content should be fetched from file URL.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_encode">#</a>
-		<code><a href="source-class-LeanCloud.File.html#423-438" title="Go to source code">encode</a>( )</code>
+		<code><a href="source-class-LeanCloud.File.html#427-442" title="Go to source code">encode</a>( )</code>
 
 		<div class="description short">
 			<p>Encode to JSON representation</p>

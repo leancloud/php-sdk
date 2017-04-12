@@ -161,7 +161,7 @@
 </span><span id="27" class="l">        <span class="php-var">$resp</span>     = <span class="php-keyword2">curl_exec</span>(<span class="php-var">$ch</span>);
 </span><span id="28" class="l">        <span class="php-var">$respCode</span> = <span class="php-keyword2">curl_getinfo</span>(<span class="php-var">$ch</span>, CURLINFO_HTTP_CODE);
 </span><span id="29" class="l">        <span class="php-var">$respType</span> = <span class="php-keyword2">curl_getinfo</span>(<span class="php-var">$ch</span>, CURLINFO_CONTENT_TYPE);
-</span><span id="30" class="l">        <span class="php-var">$error</span>    = <span class="php-keyword2">curl_errno</span>(<span class="php-var">$ch</span>);
+</span><span id="30" class="l">        <span class="php-var">$error</span>    = <span class="php-keyword2">curl_error</span>(<span class="php-var">$ch</span>);
 </span><span id="31" class="l">        <span class="php-var">$errno</span>    = <span class="php-keyword2">curl_errno</span>(<span class="php-var">$ch</span>);
 </span><span id="32" class="l">        <span class="php-keyword2">curl_close</span>(<span class="php-var">$ch</span>);
 </span><span id="33" class="l">
