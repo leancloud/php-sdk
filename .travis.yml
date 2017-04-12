@@ -8,6 +8,9 @@ php:
 env:
   - LC_API_REGION=US LC_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LC_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LC_APP_HOST=127.0.0.1 LC_APP_PORT=8081
 
+install:
+    - composer install
+
 script:
   - "make test_engine &"
   - ./vendor/bin/phpunit --coverage-clover=coverage.xml test
