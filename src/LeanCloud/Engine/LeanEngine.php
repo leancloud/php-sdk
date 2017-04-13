@@ -522,9 +522,8 @@ class LeanEngine {
         } else if (strpos($hookName, "after") === 0) {
             $this->renderJSON(array("result" => "ok"));
         } else {
-            $outObj = $result;
             // Encode result object to type-less literal JSON
-            $this->renderJSON($outObj->toJSON());
+            $this->renderJSON($obj->toJSON());
         }
     }
 

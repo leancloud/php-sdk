@@ -58,7 +58,6 @@ Cloud::onVerified("sms", function($user){
 
 Cloud::beforeSave("TestObject", function($obj, $user) {
     $obj->set("__testKey", 42);
-    return $obj;
 });
 
 Cloud::afterSave("TestObject", function($obj, $user) {
