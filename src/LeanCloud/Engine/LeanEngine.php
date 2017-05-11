@@ -416,12 +416,15 @@ class LeanEngine {
                     }
                 }
             } catch (FunctionError $ex) {
+                error_log($ex->getMessage());
                 error_log($ex->getTraceAsString());
                 $this->renderError("Cloud function error: {$ex->getMessage()}", $ex->getCode());
             } catch (CloudException $ex) {
+                error_log($ex->getMessage());
                 error_log($ex->getTraceAsString());
                 $this->renderError("Request to API failed: {$ex->getMessage()}", $ex->getCode());
             } catch (\Exception $ex) {
+                error_log($ex->getMessage());
                 error_log($ex->getTraceAsString());
                 $this->renderError($ex->getMessage(),
                                    $ex->getCode() ? $ex->getCode() : 1);
