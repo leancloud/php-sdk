@@ -5,23 +5,18 @@ php:
     - 7.0
 
 env:
-    global:
-        - LEANCLOUD_API_SERVER="https://us-api.leancloud.cn"
-        - LEANCLOUD_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4
-        - LEANCLOUD_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy
-        - LEANCLOUD_APP_HOST="127.0.0.1"
-        - LEANCLOUD_APP_PORT=8081
+    - LEANCLOUD_API_SERVER="https://us-api.leancloud.cn" LEANCLOUD_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LEANCLOUD_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LEANCLOUD_APP_HOST="127.0.0.1" LEANCLOUD_APP_PORT=8081
 
-    install:
-        - composer install
+install:
+    - composer install
 
-    script:
-        - "make test_engine &"
-        - ./vendor/bin/phpunit --coverage-clover=coverage.xml test
+script:
+    - "make test_engine &"
+    - ./vendor/bin/phpunit --coverage-clover=coverage.xml test
 
-    after_success:
-        - bash <(curl -s https://codecov.io/bash)
+after_success:
+    - bash <(curl -s https://codecov.io/bash)
 
-    notifications:
-        webhooks: https://hook.bearychat.com/=bw52Y/travis/6e26f4422b2871c20a5b2d40e1d49f73
+notifications:
+    webhooks: https://hook.bearychat.com/=bw52Y/travis/6e26f4422b2871c20a5b2d40e1d49f73
 
