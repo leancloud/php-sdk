@@ -13,7 +13,7 @@ Client::initialize(
     getenv("LEANCLOUD_APP_MASTER_KEY")
 );
 Client::setStorage(new CookieStorage());
-Client::useRegion(getenv("LEANCLOUD_REGION"));
+
 
 // define a function
 Cloud::define("hello", function() {

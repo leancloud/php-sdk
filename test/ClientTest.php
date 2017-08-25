@@ -17,25 +17,8 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             getenv("LEANCLOUD_APP_ID"),
             getenv("LEANCLOUD_APP_KEY"),
             getenv("LEANCLOUD_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LEANCLOUD_REGION"));
+
         Client::useMasterKey(false);
-    }
-
-    public function testGetAPIEndpoint() {
-        Client::useRegion("CN");
-        $this->assertEquals(Client::getAPIEndpoint(),
-                            "https://api.leancloud.cn/1.1");
-    }
-
-    public function testUseInvalidRegion() {
-        $this->setExpectedException("RuntimeException", "Invalid API region");
-        Client::useRegion("cn-bla");
-    }
-
-    public function testUseRegion() {
-        Client::useRegion("US");
-        $this->assertEquals(Client::getAPIEndpoint(),
-                            "https://us-api.leancloud.cn/1.1");
     }
 
     public function testVerifyKey() {

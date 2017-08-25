@@ -10,7 +10,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
             getenv("LEANCLOUD_APP_ID"),
             getenv("LEANCLOUD_APP_KEY"),
             getenv("LEANCLOUD_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LEANCLOUD_REGION"));
+
     }
 
     public function testInitializeEmptyFileName() {

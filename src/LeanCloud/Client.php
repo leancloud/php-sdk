@@ -26,26 +26,6 @@ class Client {
     const VERSION = '0.5.6';
 
     /**
-     * API Endpoints for Regions
-     *
-     * @var array
-     */
-    private static $api = array(
-        "CN" => "https://api.leancloud.cn",
-        "US" => "https://us-api.leancloud.cn",
-        "E1" => "https://e1-api.leancloud.cn",
-    );
-
-    /**
-     * API Region
-     *
-     * Default to CN
-     *
-     * @var string
-     */
-    private static $apiRegion = "CN";
-
-    /**
      * API Version string
      *
      * @var string
@@ -173,16 +153,16 @@ class Client {
     /**
      * Set API region
      *
+     * Deprecated and takes no effect any more.
      * Available regions are "CN", "US", "E1".
      *
      * @param string $region
      */
     public static function useRegion($region) {
-        $region = strtoupper($region);
-        if (!isset(self::$api[$region])) {
-            throw new \RuntimeException("Invalid API region: {$region}.");
-        }
-        self::$apiRegion = $region;
+        error_log("Warning: `Client::useRegion` is deprecated and takes no" .
+                  " effect anymore. When requiring sdk manually, please set" .
+                  " environment variable, e.g.".
+                  " export LEANCLOUD_API_SERVER=https://api.leancloud.cn");
     }
 
     /**
@@ -217,13 +197,13 @@ class Client {
     /**
      * Get API Endpoint
      *
-     * Build the API endpoint, the returned endpoint will include
-     * version string. For example: https://api.leancloud.cn/1.1 .
+     * The returned endpoint will include version string.
+     * For example: https://api.leancloud.cn/1.1 .
      *
      * @return string
      */
     public static function getAPIEndPoint() {
-        return self::$api[self::$apiRegion] . "/"  . self::$apiVersion;
+        return getenv("LEANCLOUD_API_SERVER") . "/" . self::$apiVersion;
     }
 
     /**
