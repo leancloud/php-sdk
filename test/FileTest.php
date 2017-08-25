@@ -7,10 +7,10 @@ use LeanCloud\File;
 class FileTest extends PHPUnit_Framework_TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY"),
-            getenv("LC_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LC_API_REGION"));
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+        Client::useRegion(getenv("LEANCLOUD_REGION"));
     }
 
     public function testInitializeEmptyFileName() {

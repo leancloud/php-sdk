@@ -14,10 +14,10 @@ use LeanCloud\Storage\SessionStorage;
 class ClientTest extends PHPUnit_Framework_TestCase {
     public function setUp() {
         Client::initialize(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY"),
-            getenv("LC_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LC_API_REGION"));
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+        Client::useRegion(getenv("LEANCLOUD_REGION"));
         Client::useMasterKey(false);
     }
 
@@ -40,31 +40,31 @@ class ClientTest extends PHPUnit_Framework_TestCase {
 
     public function testVerifyKey() {
         $result = Client::verifyKey(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY")
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY")
         );
         $this->assertTrue($result);
     }
 
     # public function testVerifyKeyMaster() {
     #     $result = Client::verifyKey(
-    #         getenv("LC_APP_ID"),
-    #         getenv("LC_APP_MASTER_KEY") . ",master"
+    #         getenv("LEANCLOUD_APP_ID"),
+    #         getenv("LEANCLOUD_APP_MASTER_KEY") . ",master"
     #     );
     #     $this->assertTrue($result);
     # }
 
     public function testVerifySign() {
         $time = time();
-        $sign = md5($time . getenv("LC_APP_KEY")) . ",{$time}";
-        $result = Client::verifySign(getenv("LC_APP_ID"), $sign);
+        $sign = md5($time . getenv("LEANCLOUD_APP_KEY")) . ",{$time}";
+        $result = Client::verifySign(getenv("LEANCLOUD_APP_ID"), $sign);
         $this->assertTrue($result);
     }
 
     public function testVerifySignMaster() {
         $time = time();
-        $sign = md5($time . getenv("LC_APP_MASTER_KEY")) . ",{$time},master";
-        $result = Client::verifySign(getenv("LC_APP_ID"), $sign);
+        $sign = md5($time . getenv("LEANCLOUD_APP_MASTER_KEY")) . ",{$time},master";
+        $result = Client::verifySign(getenv("LEANCLOUD_APP_ID"), $sign);
         $this->assertTrue($result);
     }
 
@@ -98,7 +98,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRequestUnauthorized() {
-        Client::initialize(getenv("LC_APP_ID"),
+        Client::initialize(getenv("LEANCLOUD_APP_ID"),
                                "invalid key",
                                "invalid master key");
         $this->setExpectedException("LeanCloud\CloudException", "Unauthorized");
