@@ -1,12 +1,15 @@
 language: php
 
 php:
-  - 5.4
-  - 5.5
+  - 5.6
   - 7.0
 
 env:
-  - LC_API_REGION=US LC_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LC_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LC_APP_HOST=127.0.0.1 LC_APP_PORT=8081
+  - LEANCLOUD_API_SERVER=https://us-api.leancloud.cn
+  - LEANCLOUD_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4
+  - LEANCLOUD_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy
+  - LEANCLOUD_APP_HOST=127.0.0.1
+  - LEANCLOUD_APP_PORT=8081
 
 install:
     - composer install
