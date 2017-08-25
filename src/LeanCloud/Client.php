@@ -141,6 +141,7 @@ class Client {
             self::$storage = new SessionStorage();
         }
 
+        self::useProduction(getenv("LEANCLOUD_APP_ENV") == "production");
         User::registerClass();
         Role::registerClass();
     }
