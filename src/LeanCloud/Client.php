@@ -23,7 +23,7 @@ class Client {
     /**
      * Client version
      */
-    const VERSION = '0.5.6';
+    const VERSION = '0.6.0';
 
     /**
      * API Version string
