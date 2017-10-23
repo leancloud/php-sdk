@@ -10,6 +10,13 @@ use LeanCloud\Storage\SessionStorage;
 
 class Movie extends Object {
     protected static $className = "Movie";
+    public function setTitle($title) {
+        $this->set("title", $title);
+    }
+
+    public function getTitle() {
+        return $this->get("title");
+    }
 }
 Movie::registerClass();
 
@@ -64,6 +71,13 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
             }
             $this->fail("Set on preserved key {$key} should throw exception.");
         }
+    }
+
+    public function testCreateSubObject() {
+        $movie = Object::create("Movie", "objid");
+        $this->assertTrue($movie instanceof Movie);
+        $movie->setTitle("Alice in wonderland");
+        $this->assertEquals("Alice in wonderland", $movie->getTitle());
     }
 
     public function testIncrement() {
