@@ -87,6 +87,22 @@ class Query {
     public function getClassName() {
         return $this->className;
     }
+    
+    /**
+     * Reset a condition
+     *
+     * Modify a condition when reuse the query
+     *
+     * @param $key
+     * @param null $op
+     */
+    public function resetCondition($key,$op = null){
+        if($op === null){
+            unset($this->where[$key]);
+            return;
+        }
+        unset($this->where[$key][$op]);
+    }
 
     /**
      * Add condition on field
