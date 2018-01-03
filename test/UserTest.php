@@ -1,6 +1,7 @@
 <?php
 
 use LeanCloud\Client;
+use LeanCloud\Object;
 use LeanCloud\User;
 use LeanCloud\Role;
 use LeanCloud\ACL;
@@ -276,5 +277,28 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $query->first();
     }
 
+    public function testUserAccessControl() {
+        $user = User::logIn("alice", "blabla");
+        $obj = new Object("TestObject");
+        $obj->set("foo", "bar");
+        $acl = new ACL();
+        $acl->setPublicReadAccess(true);
+        $acl->setWriteAccess($user, true);
+        $obj->setACL($acl);
+        $obj->save();
+        $this->assertNotEmpty($obj->getCreatedAt());
+        $this->assertTrue($acl->getPublicReadAccess());
+        $this->assertFalse($acl->getPublicWriteAccess());
+        $this->assertTrue($acl->getWriteAccess($user));
+
+        $obj1 = new Object("TestObject", $obj->getObjectId());
+        $obj1->fetch();
+
+        // try to update with current user
+        $obj1->set("foo", "bar1");
+        $obj1->save();
+
+        $obj1->destroy();
+    }
 }
 
