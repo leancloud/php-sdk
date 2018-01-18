@@ -165,6 +165,9 @@ class Client {
                   " export LEANCLOUD_API_SERVER=https://api.leancloud.cn");
     }
 
+    public static function getRegion() {
+    }
+
     /**
      * Use production or not
      *
@@ -203,7 +206,11 @@ class Client {
      * @return string
      */
     public static function getAPIEndPoint() {
-        return getenv("LEANCLOUD_API_SERVER") . "/" . self::$apiVersion;
+        if ($url = getenv("LEANCLOUD_API_SERVER")) {
+            return "{$url}/" . self::$apiVersion;
+        }
+        // return AppRouter::getInstance().getUrl();
+        return "https://9nrnhoos.api.lncld.net/" . self::$apiVersion;
     }
 
     /**
