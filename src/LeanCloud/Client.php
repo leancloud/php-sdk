@@ -10,6 +10,7 @@ use LeanCloud\User;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Storage\IStorage;
 use LeanCloud\Storage\SessionStorage;
+use LeanCloud\AppRouter;
 
 /**
  * Client interfacing with LeanCloud REST API
@@ -165,9 +166,6 @@ class Client {
                   " export LEANCLOUD_API_SERVER=https://api.leancloud.cn");
     }
 
-    public static function getRegion() {
-    }
-
     /**
      * Use production or not
      *
@@ -209,8 +207,8 @@ class Client {
         if ($url = getenv("LEANCLOUD_API_SERVER")) {
             return "{$url}/" . self::$apiVersion;
         }
-        // return AppRouter::getInstance().getUrl();
-        return "https://9nrnhoos.api.lncld.net/" . self::$apiVersion;
+        $host = AppRouter::getInstance($this->appId)->getRoute(AppRouter::API_SERVER_KEY);
+        return "https://{$host}/" . self::$apiVersion;
     }
 
     /**
