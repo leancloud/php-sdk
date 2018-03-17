@@ -620,7 +620,8 @@ class Client {
         $utc = clone $date;
         $utc->setTimezone(new \DateTimezone("UTC"));
         $iso = $utc->format("Y-m-d\TH:i:s.u");
-        // chops 3 zeros of microseconds to comply with cloud date format
+        // Milliseconds precision is required for server to correctly parse time,
+        // thus we have to chop off last 3 microseconds to milliseconds.
         $iso = substr($iso, 0, 23) . "Z";
         return $iso;
     }
@@ -652,7 +653,9 @@ class Client {
 
         if ($type === "Date") {
             // return time in default time zone
-            return new \DateTime($value["iso"]);
+            $date = new \DateTime($value["iso"]);
+            $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+            return $date;
         }
         if ($type === "Bytes") {
             return Bytes::createFromBase64Data($value["base64"]);

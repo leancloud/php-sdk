@@ -225,7 +225,8 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
         $obj2 = new Object("TestObject", $obj->getObjectId());
         $obj2->fetch();
         $this->assertTrue($obj2->get("release") instanceof DateTime);
-        $this->assertEquals($obj->get("release"), $obj2->get("release"));
+        $this->assertEquals($obj->get("release")->getTimestamp(),
+                            $obj2->get("release")->getTimestamp());
 
         $obj2->destroy();
     }

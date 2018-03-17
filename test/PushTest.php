@@ -97,7 +97,8 @@ class PushTest extends PHPUnit_Framework_TestCase {
         $time = new DateTime();
         $push->setPushTime($time);
         $out = $push->encode();
-        $this->assertEquals($time, new DateTime($out["push_time"]));
+        $time2 = new DateTime($out["push_time"]);
+        $this->assertEquals($time->getTimestamp(), $time2->getTimestamp());
     }
 
     public function testSetExpirationInterval() {
@@ -116,7 +117,8 @@ class PushTest extends PHPUnit_Framework_TestCase {
         $date = new DateTime();
         $push->setExpirationTime($date);
         $out = $push->encode();
-        $this->assertEquals($date, new DateTime($out["expiration_time"]));
+        $date2 = new DateTime($out["expiration_time"]);
+        $this->assertEquals($date->getTimestamp(), $date2->getTimestamp());
     }
 
     public function testSetWhere() {

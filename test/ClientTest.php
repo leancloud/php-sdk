@@ -175,7 +175,9 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         $date = new DateTime();
         $type = array("__type" => "Date",
                       "iso" => Client::formatDate($date));
-        $this->assertEquals($date, Client::decode($type, null));
+        $date2 = Client::decode($type, null);
+        $this->assertEquals($date->getTimestamp(),
+                            $date2->getTimestamp());
     }
 
     public function testDecodeDateWithTimeZone() {
@@ -185,7 +187,9 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             $date = new DateTime("now", new DateTimeZone($zone));
             $type = array("__type" => "Date",
                           "iso" => Client::formatDate($date));
-            $this->assertEquals($date, Client::decode($type, null));
+            $date2 = Client::decode($type, null);
+            $this->assertEquals($date->getTimestamp(),
+                                $date2->getTimestamp());
         }
     }
 
