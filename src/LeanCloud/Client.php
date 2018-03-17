@@ -154,10 +154,9 @@ class Client {
     /**
      * Set API region
      *
-     * Deprecated and takes no effect any more.
-     * Available regions are "CN", "US", "E1".
+     * See `LeanCloud\Region` for available regions.
      *
-     * @param string $region
+     * @param mixed $region
      */
     public static function useRegion($region) {
         self::assertInitialized();

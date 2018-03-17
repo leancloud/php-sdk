@@ -30,9 +30,11 @@ class AppRouter {
 
     private function __construct($appId) {
         $this->appId = $appId;
-        if ($region = getenv("LEANCLOUD_REGION")) {
-            $this->setRegion($region);
+        $region = getenv("LEANCLOUD_REGION");
+        if (!$region) {
+            $region = Region::CN;
         }
+        $this->setRegion($region);
         $this->routeCache = RouteCache::create($appId);
     }
 
@@ -57,6 +59,13 @@ class AppRouter {
         return $this->getDefaultRoutes()[$server_key];
     }
 
+    /**
+     * Set region
+     *
+     * See `LeanCloud\Region` for available regions.
+     *
+     * @param mixed $region
+     */
     public function setRegion($region) {
         if (is_numeric($region)) {
             $this->region = $region;
