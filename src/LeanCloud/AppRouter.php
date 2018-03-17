@@ -30,7 +30,9 @@ class AppRouter {
 
     private function __construct($appId) {
         $this->appId = $appId;
-        $this->setRegion();
+        if ($region = getenv("LEANCLOUD_REGION")) {
+            $this->setRegion($region);
+        }
         $this->routeCache = RouteCache::create($appId);
     }
 
@@ -53,6 +55,14 @@ class AppRouter {
     public function getRegionDefaultRoute($server_key) {
         $this->validate_server_key($server_key);
         return $this->getDefaultRoutes()[$server_key];
+    }
+
+    public function setRegion($region) {
+        if (is_numeric($region)) {
+            $this->region = $region;
+        } else {
+            $this->region = Region::fromName($region);
+        }
     }
 
     /**
@@ -88,20 +98,19 @@ class AppRouter {
     }
 
     /**
-     * Set region according app-id
+     * Detect region by app-id
      */
-    private function setRegion() {
+    private function detectRegion() {
         if (!$this->appId) {
-            $this->region = Region::CN_N1;
-            return true;
+            return Region::CN_N1;
         }
         $parts = explode("-", $this->appId);
         if (count($parts) <= 1) {
-            $this->region = Region::CN_N1;
+            return Region::CN_N1;
         } else if ($parts[1] === "MdYXbMMI") {
-            $this->region = Region::US;
+            return Region::US;
         } else if ($parts[1] === "9Nh9j0Va") {
-            $this->region = Region::CN_E1;
+            return Region::CN_E1;
         } else {
             $this->region = Region::CN_N1;
         }

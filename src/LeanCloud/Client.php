@@ -160,10 +160,8 @@ class Client {
      * @param string $region
      */
     public static function useRegion($region) {
-        error_log("Warning: `Client::useRegion` is deprecated and takes no" .
-                  " effect anymore. When requiring sdk manually, please set" .
-                  " environment variable, e.g.".
-                  " export LEANCLOUD_API_SERVER=https://api.leancloud.cn");
+        self::assertInitialized();
+        AppRouter::getInstance($this->appId)->setRegion($region);
     }
 
     /**

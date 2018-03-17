@@ -1,6 +1,7 @@
 <?php
 
 use LeanCloud\AppRouter;
+use LeanCloud\Region;
 
 class AppRouterTest extends PHPUnit_Framework_TestCase {
 
@@ -10,6 +11,15 @@ class AppRouterTest extends PHPUnit_Framework_TestCase {
 
     private function genId($length) {
         return substr(str_shuffle(MD5(rand())), 0, $length);
+    }
+
+    public function testSetRegion() {
+        $appid = getenv("LEANCLOUD_APP_ID");
+        $router = AppRouter::getInstance($this->genId(12));
+        $router->setRegion("CN_E1");
+        $router->setRegion("US");
+        $router->setRegion(Region::CN_E1);
+        $router->setRegion(Region::US);
     }
 
     public function testGetRoute() {
