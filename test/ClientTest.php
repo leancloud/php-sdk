@@ -21,6 +21,17 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         Client::useMasterKey(false);
     }
 
+    public function testAPIEndPoint() {
+        $url = getenv("LEANCLOUD_API_SERVER");
+        $this->assertEquals("{$url}/1.1", Client::getAPIEndPoint());
+
+        Client::setServerURL("https://hello.api.lncld.net");
+        $this->assertEquals("https://hello.api.lncld.net/1.1", Client::getAPIEndPoint());
+        Client::setServerURL(null);
+
+        $this->assertEquals("{$url}/1.1", Client::getAPIEndPoint());
+    }
+
     public function testVerifyKey() {
         $result = Client::verifyKey(
             getenv("LEANCLOUD_APP_ID"),
