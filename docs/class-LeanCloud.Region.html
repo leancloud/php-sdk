@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>Class LeanCloud\SMS</title>
+	<title>Class LeanCloud\Region</title>
 
 	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
 
@@ -64,12 +64,12 @@
 				<li><a href="class-LeanCloud.Object.html">Object</a></li>
 				<li><a href="class-LeanCloud.Push.html">Push</a></li>
 				<li><a href="class-LeanCloud.Query.html">Query</a></li>
-				<li><a href="class-LeanCloud.Region.html">Region</a></li>
+				<li class="active"><a href="class-LeanCloud.Region.html">Region</a></li>
 				<li><a href="class-LeanCloud.Relation.html">Relation</a></li>
 				<li><a href="class-LeanCloud.Role.html">Role</a></li>
 				<li><a href="class-LeanCloud.RouteCache.html">RouteCache</a></li>
 				<li><a href="class-LeanCloud.SaveOption.html">SaveOption</a></li>
-				<li class="active"><a href="class-LeanCloud.SMS.html">SMS</a></li>
+				<li><a href="class-LeanCloud.SMS.html">SMS</a></li>
 				<li><a href="class-LeanCloud.User.html">User</a></li>
 			</ul>
 
@@ -114,12 +114,9 @@
 	</div>
 
 <div id="content" class="class">
-	<h1>Class SMS</h1>
+	<h1>Class Region</h1>
 
 
-	<div class="description">
-	<p>SMS</p>
-	</div>
 
 
 
@@ -130,12 +127,12 @@
 
 
 	<div class="info">
-		
+		<b>Abstract</b><br>
 		
 		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
 		
 
-			<b>Located at</b> <a href="source-class-LeanCloud.SMS.html#5-53" title="Go to source code">LeanCloud/SMS.php</a>
+			<b>Located at</b> <a href="source-class-LeanCloud.Region.html#5-23" title="Go to source code">LeanCloud/Region.php</a>
 		<br>
 	</div>
 
@@ -143,7 +140,7 @@
 
 	<table class="summary methods" id="methods">
 	<caption>Methods summary</caption>
-	<tr data-order="requestSmsCode" id="_requestSmsCode">
+	<tr data-order="fromName" id="_fromName">
 
 		<td class="attributes"><code>
 			 public static
@@ -154,77 +151,20 @@
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_requestSmsCode">#</a>
-		<code><a href="source-class-LeanCloud.SMS.html#10-40" title="Go to source code">requestSmsCode</a>( <span>string <var>$phoneNumber</var></span>, <span>array <var>$options</var> = <span class="php-keyword1">array</span>()</span> )</code>
+		<a class="anchor" href="#_fromName">#</a>
+		<code><a href="source-class-LeanCloud.Region.html#15-22" title="Go to source code">fromName</a>( <span>string <var>$name</var></span> )</code>
 
 		<div class="description short">
-			<p>Request SMS code</p>
+			<p>Create region from name, such as <code>CN</code>, <code>CN_N1</code>.</p>
 		</div>
 
 		<div class="description detailed hidden">
-			<p>Request SMS code</p>
-
-<p>Besides sending default message with sms code, you can also
-send with a customized template, which though must be submitted
-and approved before sending.</p>
-
-<p>The available of options are:</p>
-
-<ul>
-<li><code>$smsType</code> (string): "sms" or "voice"</li>
-<li><code>$template</code> (string): Template name that has been approved</li>
-<li><code>$name</code> (string): App name</li>
-<li><code>$ttl</code> (int): Number of minutes before sms code expires</li>
-<li><code>$op</code> (string): Operation name for the sms code</li>
-</ul>
+			<p>Create region from name, such as <code>CN</code>, <code>CN_N1</code>.</p>
 
 
 				<h4>Parameters</h4>
 				<div class="list"><dl>
-					<dt><var>$phoneNumber</var></dt>
-					<dd></dd>
-					<dt><var>$options</var></dt>
-					<dd></dd>
-				</dl></div>
-
-
-
-				<h4>Link</h4>
-				<div class="list">
-						<a href="https://leancloud.cn/docs/rest_sms_api.html">https://leancloud.cn/docs/rest_sms_api.html</a><br>
-				</div>
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="verifySmsCode" id="_verifySmsCode">
-
-		<td class="attributes"><code>
-			 public static
-
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_verifySmsCode">#</a>
-		<code><a href="source-class-LeanCloud.SMS.html#42-51" title="Go to source code">verifySmsCode</a>( <span>string <var>$phoneNumber</var></span>, <span>string <var>$smsCode</var></span> )</code>
-
-		<div class="description short">
-			<p>Verify SMS code</p>
-		</div>
-
-		<div class="description detailed hidden">
-			<p>Verify SMS code</p>
-
-
-				<h4>Parameters</h4>
-				<div class="list"><dl>
-					<dt><var>$phoneNumber</var></dt>
-					<dd></dd>
-					<dt><var>$smsCode</var></dt>
+					<dt><var>$name</var></dt>
 					<dd></dd>
 				</dl></div>
 
@@ -244,6 +184,105 @@ and approved before sending.</p>
 
 
 
+	<table class="summary constants" id="constants">
+	<caption>Constants summary</caption>
+	<tr data-order="CN_N1" id="CN_N1">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name">
+			<code>
+				<a href="source-class-LeanCloud.Region.html#6" title="Go to source code"><b>CN_N1</b></a>
+			</code>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#CN_N1" class="anchor">#</a>
+				<code><span class="php-num">0</span></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="US" id="US">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name">
+			<code>
+				<a href="source-class-LeanCloud.Region.html#7" title="Go to source code"><b>US</b></a>
+			</code>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#US" class="anchor">#</a>
+				<code><span class="php-num">1</span></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="CN_E1" id="CN_E1">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name">
+			<code>
+				<a href="source-class-LeanCloud.Region.html#8" title="Go to source code"><b>CN_E1</b></a>
+			</code>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#CN_E1" class="anchor">#</a>
+				<code><span class="php-num">2</span></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="CN" id="CN">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name">
+			<code>
+				<a href="source-class-LeanCloud.Region.html#10-13" title="Go to source code"><b>CN</b></a>
+			</code>
+
+			<div class="description short">
+				<p>Alias of CN_N1</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Alias of CN_N1</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#CN" class="anchor">#</a>
+				<code><code><a href="class-LeanCloud.Region.html#CN_N1">LeanCloud\Region::<b>CN_N1</b></a></code></code>
+			</div>
+		</td>
+	</tr>
+	</table>
 
 
 

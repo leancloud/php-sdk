@@ -55,6 +55,7 @@
 			<h3>Classes</h3>
 			<ul>
 				<li><a href="class-LeanCloud.ACL.html">ACL</a></li>
+				<li><a href="class-LeanCloud.AppRouter.html">AppRouter</a></li>
 				<li><a href="class-LeanCloud.Bytes.html">Bytes</a></li>
 				<li class="active"><a href="class-LeanCloud.Client.html">Client</a></li>
 				<li><a href="class-LeanCloud.File.html">File</a></li>
@@ -63,8 +64,10 @@
 				<li><a href="class-LeanCloud.Object.html">Object</a></li>
 				<li><a href="class-LeanCloud.Push.html">Push</a></li>
 				<li><a href="class-LeanCloud.Query.html">Query</a></li>
+				<li><a href="class-LeanCloud.Region.html">Region</a></li>
 				<li><a href="class-LeanCloud.Relation.html">Relation</a></li>
 				<li><a href="class-LeanCloud.Role.html">Role</a></li>
+				<li><a href="class-LeanCloud.RouteCache.html">RouteCache</a></li>
 				<li><a href="class-LeanCloud.SaveOption.html">SaveOption</a></li>
 				<li><a href="class-LeanCloud.SMS.html">SMS</a></li>
 				<li><a href="class-LeanCloud.User.html">User</a></li>
@@ -136,7 +139,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
 		
 
-			<b>Located at</b> <a href="source-class-LeanCloud.Client.html#14-708" title="Go to source code">LeanCloud/Client.php</a>
+			<b>Located at</b> <a href="source-class-LeanCloud.Client.html#15-694" title="Go to source code">LeanCloud/Client.php</a>
 		<br>
 	</div>
 
@@ -156,7 +159,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_initialize">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#120-146" title="Go to source code">initialize</a>( <span>string <var>$appId</var></span>, <span>string <var>$appKey</var></span>, <span>string <var>$appMasterKey</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#101-128" title="Go to source code">initialize</a>( <span>string <var>$appId</var></span>, <span>string <var>$appKey</var></span>, <span>string <var>$appMasterKey</var></span> )</code>
 
 		<div class="description short">
 			<p>Initialize application key and settings</p>
@@ -195,7 +198,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getVersionString">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#163-170" title="Go to source code">getVersionString</a>( )</code>
+		<code><a href="source-class-LeanCloud.Client.html#145-152" title="Go to source code">getVersionString</a>( )</code>
 
 		<div class="description short">
 			<p>Get version string used as user agent</p>
@@ -229,7 +232,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_useRegion">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#172-185" title="Go to source code">useRegion</a>( <span>string <var>$region</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#154-164" title="Go to source code">useRegion</a>( <span>mixed <var>$region</var></span> )</code>
 
 		<div class="description short">
 			<p>Set API region</p>
@@ -238,7 +241,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 		<div class="description detailed hidden">
 			<p>Set API region</p>
 
-<p>Available regions are "CN", "US", "E1".</p>
+<p>See <code>LeanCloud\Region</code> for available regions.</p>
 
 
 				<h4>Parameters</h4>
@@ -266,7 +269,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_useProduction">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#187-194" title="Go to source code">useProduction</a>( <span>boolean <var>$flag</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#166-173" title="Go to source code">useProduction</a>( <span>boolean <var>$flag</var></span> )</code>
 
 		<div class="description short">
 			<p>Use production or not</p>
@@ -301,7 +304,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setDebug">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#196-205" title="Go to source code">setDebug</a>( <span>boolean <var>$flag</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#175-184" title="Go to source code">setDebug</a>( <span>boolean <var>$flag</var></span> )</code>
 
 		<div class="description short">
 			<p>Set debug mode</p>
@@ -338,7 +341,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_useMasterKey">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#207-214" title="Go to source code">useMasterKey</a>( <span>boolean <var>$flag</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#186-193" title="Go to source code">useMasterKey</a>( <span>boolean <var>$flag</var></span> )</code>
 
 		<div class="description short">
 			<p>Use master key or not</p>
@@ -373,7 +376,7 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getAPIEndPoint">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#216-226" title="Go to source code">getAPIEndPoint</a>( )</code>
+		<code><a href="source-class-LeanCloud.Client.html#195-209" title="Go to source code">getAPIEndPoint</a>( )</code>
 
 		<div class="description short">
 			<p>Get API Endpoint</p>
@@ -382,8 +385,8 @@ such as <code>::randomFloat</code> to generate a random float number.</p>
 		<div class="description detailed hidden">
 			<p>Get API Endpoint</p>
 
-<p>Build the API endpoint, the returned endpoint will include
-version string. For example: https://api.leancloud.cn/1.1 .</p>
+<p>The returned endpoint will include version string.
+For example: https://api.leancloud.cn/1.1 .</p>
 
 
 
@@ -410,7 +413,7 @@ version string. For example: https://api.leancloud.cn/1.1 .</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_buildHeaders">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#228-261" title="Go to source code">buildHeaders</a>( <span>string <var>$sessionToken</var></span>, <span>boolean <var>$useMasterKey</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#211-244" title="Go to source code">buildHeaders</a>( <span>string <var>$sessionToken</var></span>, <span>boolean <var>$useMasterKey</var></span> )</code>
 
 		<div class="description short">
 			<p>Build authentication headers</p>
@@ -451,7 +454,7 @@ version string. For example: https://api.leancloud.cn/1.1 .</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_verifySign">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#263-283" title="Go to source code">verifySign</a>( <span>string <var>$appId</var></span>, <span>string <var>$sign</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#246-266" title="Go to source code">verifySign</a>( <span>string <var>$appId</var></span>, <span>string <var>$sign</var></span> )</code>
 
 		<div class="description short">
 			<p>Verify app ID and sign</p>
@@ -495,7 +498,7 @@ which follows the format as in header "X-LC-Sign".</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_verifyKey">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#285-304" title="Go to source code">verifyKey</a>( <span>string <var>$appId</var></span>, <span>string <var>$key</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#268-287" title="Go to source code">verifyKey</a>( <span>string <var>$appId</var></span>, <span>string <var>$key</var></span> )</code>
 
 		<div class="description short">
 			<p>Verify app ID and key</p>
@@ -539,7 +542,7 @@ as master key if master suffix present.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_signHook">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#306-316" title="Go to source code">signHook</a>( <span>string <var>$hookName</var></span>, <span>integer <var>$msec</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#289-299" title="Go to source code">signHook</a>( <span>string <var>$hookName</var></span>, <span>integer <var>$msec</var></span> )</code>
 
 		<div class="description short">
 			<p>Generate a sign used to auth hook invocation on LeanEngine</p>
@@ -580,7 +583,7 @@ as master key if master suffix present.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_verifyHookSign">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#318-332" title="Go to source code">verifyHookSign</a>( <span>string <var>$hookName</var></span>, <span>string <var>$sign</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#301-315" title="Go to source code">verifyHookSign</a>( <span>string <var>$hookName</var></span>, <span>string <var>$sign</var></span> )</code>
 
 		<div class="description short">
 			<p>Verify a signed hook</p>
@@ -621,7 +624,7 @@ as master key if master suffix present.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_request">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#334-442" title="Go to source code">request</a>( <span>string <var>$method</var></span>, <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#317-425" title="Go to source code">request</a>( <span>string <var>$method</var></span>, <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Issue request to LeanCloud</p>
@@ -681,7 +684,7 @@ will overwrite the items in default headers.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_get">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#444-459" title="Go to source code">get</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var> = <span class="php-keyword1">null</span></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#427-442" title="Go to source code">get</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var> = <span class="php-keyword1">null</span></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Issue GET request to LeanCloud</p>
@@ -732,7 +735,7 @@ will overwrite the items in default headers.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_post">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#461-476" title="Go to source code">post</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#444-459" title="Go to source code">post</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Issue POST request to LeanCloud</p>
@@ -783,7 +786,7 @@ will overwrite the items in default headers.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_put">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#478-493" title="Go to source code">put</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#461-476" title="Go to source code">put</a>( <span>string <var>$path</var></span>, <span>array <var>$data</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Issue PUT request to LeanCloud</p>
@@ -834,7 +837,7 @@ will overwrite the items in default headers.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_delete">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#495-509" title="Go to source code">delete</a>( <span>string <var>$path</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#478-492" title="Go to source code">delete</a>( <span>string <var>$path</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Issue DELETE request to LeanCloud</p>
@@ -883,7 +886,7 @@ will overwrite the items in default headers.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_batch">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#511-541" title="Go to source code">batch</a>( <span>array <var>$requests</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#494-524" title="Go to source code">batch</a>( <span>array <var>$requests</var></span>, <span>string <var>$sessionToken</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$headers</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$useMasterKey</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Issue a batch request</p>
@@ -932,7 +935,7 @@ will overwrite the items in default headers.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_encode">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#543-604" title="Go to source code">encode</a>( <span>mixed <var>$value</var></span>, <span>string <var>$encoder</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$seen</var> = <span class="php-keyword1">array</span>()</span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#526-587" title="Go to source code">encode</a>( <span>mixed <var>$value</var></span>, <span>string <var>$encoder</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$seen</var> = <span class="php-keyword1">array</span>()</span> )</code>
 
 		<div class="description short">
 			<p>Recursively encode value as JSON representation</p>
@@ -993,7 +996,7 @@ Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;
 
 		<td class="name"><div>
 		<a class="anchor" href="#_formatDate">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#606-619" title="Go to source code">formatDate</a>( <span>DateTime <var>$date</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#589-603" title="Go to source code">formatDate</a>( <span>DateTime <var>$date</var></span> )</code>
 
 		<div class="description short">
 			<p>Format date according to LeanCloud spec.</p>
@@ -1032,7 +1035,7 @@ Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;
 
 		<td class="name"><div>
 		<a class="anchor" href="#_decode">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#621-674" title="Go to source code">decode</a>( <span>mixed <var>$value</var></span>, <span>string <var>$key</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#605-660" title="Go to source code">decode</a>( <span>mixed <var>$value</var></span>, <span>string <var>$key</var></span> )</code>
 
 		<div class="description short">
 			<p>Decode value from LeanCloud response.</p>
@@ -1073,7 +1076,7 @@ Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getStorage">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#676-683" title="Go to source code">getStorage</a>( )</code>
+		<code><a href="source-class-LeanCloud.Client.html#662-669" title="Go to source code">getStorage</a>( )</code>
 
 		<div class="description short">
 			<p>Get storage</p>
@@ -1107,7 +1110,7 @@ Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setStorage">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#685-694" title="Go to source code">setStorage</a>( <span><code><a href="class-LeanCloud.Storage.IStorage.html">LeanCloud\Storage\IStorage</a></code> <var>$storage</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#671-680" title="Go to source code">setStorage</a>( <span><code><a href="class-LeanCloud.Storage.IStorage.html">LeanCloud\Storage\IStorage</a></code> <var>$storage</var></span> )</code>
 
 		<div class="description short">
 			<p>Set storage</p>
@@ -1144,7 +1147,7 @@ Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;
 
 		<td class="name"><div>
 		<a class="anchor" href="#_randomFloat">#</a>
-		<code><a href="source-class-LeanCloud.Client.html#696-706" title="Go to source code">randomFloat</a>( <span>float <var>$min</var> = <span class="php-num">0</span></span>, <span>float <var>$max</var> = <span class="php-num">1</span></span> )</code>
+		<code><a href="source-class-LeanCloud.Client.html#682-692" title="Go to source code">randomFloat</a>( <span>float <var>$min</var> = <span class="php-num">0</span></span>, <span>float <var>$max</var> = <span class="php-num">1</span></span> )</code>
 
 		<div class="description short">
 			<p>Generate a random float between [$min, $max)</p>
@@ -1189,7 +1192,7 @@ Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;
 		<td class="attributes"><code>string</code></td>
 		<td class="name">
 			<code>
-				<a href="source-class-LeanCloud.Client.html#23-26" title="Go to source code"><b>VERSION</b></a>
+				<a href="source-class-LeanCloud.Client.html#24-27" title="Go to source code"><b>VERSION</b></a>
 			</code>
 
 			<div class="description short">
@@ -1204,7 +1207,7 @@ Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;
 		<td class="value">
 			<div>
 				<a href="#VERSION" class="anchor">#</a>
-				<code><span class="php-quote">'0.5.5'</span></code>
+				<code><span class="php-quote">'0.6.0'</span></code>
 			</div>
 		</td>
 	</tr>
@@ -1222,7 +1225,7 @@ Client::encode(<span class="php-var">$obj</span>, <span class="php-quote">&quot;
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-LeanCloud.Client.html#92-97" title="Go to source code"><var>$isProduction</var></a>
+				<a href="source-class-LeanCloud.Client.html#73-78" title="Go to source code"><var>$isProduction</var></a>
 
 			<div class="description short">
 				<p>Is in production or not</p>

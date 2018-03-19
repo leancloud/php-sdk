@@ -10,6 +10,7 @@ use LeanCloud\User;
 use LeanCloud\Operation\IOperation;
 use LeanCloud\Storage\IStorage;
 use LeanCloud\Storage\SessionStorage;
+use LeanCloud\AppRouter;
 
 /**
  * Client interfacing with LeanCloud REST API
@@ -160,16 +161,13 @@ class Client {
     /**
      * Set API region
      *
-     * Deprecated and takes no effect any more.
-     * Available regions are "CN", "US", "E1".
+     * See `LeanCloud\Region` for available regions.
      *
-     * @param string $region
+     * @param mixed $region
      */
     public static function useRegion($region) {
-        error_log("Warning: `Client::useRegion` is deprecated and takes no" .
-                  " effect anymore. When requiring sdk manually, please set" .
-                  " environment variable, e.g.".
-                  " export LEANCLOUD_API_SERVER=https://api.leancloud.cn");
+        self::assertInitialized();
+        AppRouter::getInstance($this->appId)->setRegion($region);
     }
 
     /**
@@ -227,8 +225,8 @@ class Client {
         } else if ($url = getenv("LEANCLOUD_API_SERVER")) {
             return $url . "/" . self::$apiVersion;
         } else {
-            throw new \RuntimeException("Server url not set, please set it as:" .
-                                        "`Client::setServerUrl('https://{left-8-chars-of-appid}.api.lncld.net}')`");
+            $host = AppRouter::getInstance($this->appId)->getRoute(AppRouter::API_SERVER_KEY);
+            return "https://{$host}/" . self::$apiVersion;
         }
     }
 
