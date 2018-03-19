@@ -64,6 +64,13 @@ class Client {
     private static $appMasterKey;
 
     /**
+     *  Server url
+     *
+     * @var string
+     */
+    private static $serverUrl;
+
+    /**
      * Use master key or not
      *
      * @var bool
@@ -193,6 +200,18 @@ class Client {
     }
 
     /**
+     * Set server url
+     *
+     * Explicitly set server url with which this client will communicate.
+     * Url shall be in the form of: `https://api.leancloud.cn` .
+     *
+     * @param string $url
+     */
+    public static function setServerUrl($url) {
+        self::$serverUrl = rtrim($url, "/");
+    }
+
+    /**
      * Get API Endpoint
      *
      * The returned endpoint will include version string.
@@ -201,11 +220,14 @@ class Client {
      * @return string
      */
     public static function getAPIEndPoint() {
-        if ($url = getenv("LEANCLOUD_API_SERVER")) {
-            return "{$url}/" . self::$apiVersion;
+        if ($url = self::$serverUrl) {
+            return $url . "/" . self::$apiVersion;
+        } else if ($url = getenv("LEANCLOUD_API_SERVER")) {
+            return $url . "/" . self::$apiVersion;
+        } else {
+            $host = AppRouter::getInstance($this->appId)->getRoute(AppRouter::API_SERVER_KEY);
+            return "https://{$host}/" . self::$apiVersion;
         }
-        $host = AppRouter::getInstance($this->appId)->getRoute(AppRouter::API_SERVER_KEY);
-        return "https://{$host}/" . self::$apiVersion;
     }
 
     /**
