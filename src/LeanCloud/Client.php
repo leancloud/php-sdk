@@ -63,6 +63,13 @@ class Client {
     private static $appMasterKey;
 
     /**
+     *  Server url
+     *
+     * @var string
+     */
+    private static $serverUrl;
+
+    /**
      * Use master key or not
      *
      * @var bool
@@ -195,6 +202,18 @@ class Client {
     }
 
     /**
+     * Set server url
+     *
+     * Explicitly set server url with which this client will communicate.
+     * Url shall be in the form of: `https://api.leancloud.cn` .
+     *
+     * @param string $url
+     */
+    public static function setServerUrl($url) {
+        self::$serverUrl = rtrim($url, "/");
+    }
+
+    /**
      * Get API Endpoint
      *
      * The returned endpoint will include version string.
@@ -203,7 +222,14 @@ class Client {
      * @return string
      */
     public static function getAPIEndPoint() {
-        return getenv("LEANCLOUD_API_SERVER") . "/" . self::$apiVersion;
+        if ($url = self::$serverUrl) {
+            return $url . "/" . self::$apiVersion;
+        } else if ($url = getenv("LEANCLOUD_API_SERVER")) {
+            return $url . "/" . self::$apiVersion;
+        } else {
+            throw new \RuntimeException("Server url not set, please set it as:" .
+                                        "`Client::setServerUrl('https://{left-8-chars-of-appid}.api.lncld.net}')`");
+        }
     }
 
     /**
@@ -594,7 +620,8 @@ class Client {
         $utc = clone $date;
         $utc->setTimezone(new \DateTimezone("UTC"));
         $iso = $utc->format("Y-m-d\TH:i:s.u");
-        // chops 3 zeros of microseconds to comply with cloud date format
+        // Milliseconds precision is required for server to correctly parse time,
+        // thus we have to chop off last 3 microseconds to milliseconds.
         $iso = substr($iso, 0, 23) . "Z";
         return $iso;
     }
@@ -626,7 +653,9 @@ class Client {
 
         if ($type === "Date") {
             // return time in default time zone
-            return new \DateTime($value["iso"]);
+            $date = new \DateTime($value["iso"]);
+            $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+            return $date;
         }
         if ($type === "Bytes") {
             return Bytes::createFromBase64Data($value["base64"]);
