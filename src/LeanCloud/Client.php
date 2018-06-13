@@ -225,7 +225,7 @@ class Client {
         } else if ($url = getenv("LEANCLOUD_API_SERVER")) {
             return $url . "/" . self::$apiVersion;
         } else {
-            $host = AppRouter::getInstance($this->appId)->getRoute(AppRouter::API_SERVER_KEY);
+            $host = AppRouter::getInstance(self::$appId)->getRoute(AppRouter::API_SERVER_KEY);
             return "https://{$host}/" . self::$apiVersion;
         }
     }
