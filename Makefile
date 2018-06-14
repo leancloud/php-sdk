@@ -1,5 +1,6 @@
 test:
 	vendor/bin/phpunit test
+	php -r 'exit(PHP_VERSION_ID >= 70200 ? 0 : 1);' || vendor/bin/phpunit test/Php72ObjectDeprecated.php
 
 release:
 	./release.sh $V

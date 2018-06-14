@@ -14,7 +14,8 @@ install:
 
 script:
     - "make test_engine &"
-    - ./vendor/bin/phpunit --coverage-clover=coverage.xml test
+    - "php -r 'exit(PHP_VERSION_ID >= 70200 ? 0 : 1);' || vendor/bin/phpunit test/Php72ObjectDeprecated.php"
+    - "./vendor/bin/phpunit --coverage-clover=coverage.xml test"
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)
