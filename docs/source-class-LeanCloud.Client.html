@@ -65,8 +65,8 @@
 				<li><a href="class-LeanCloud.Engine.SlimEngine.html">LeanCloud\Engine\SlimEngine</a></li>
 				<li><a href="class-LeanCloud.File.html">LeanCloud\File</a></li>
 				<li><a href="class-LeanCloud.GeoPoint.html">LeanCloud\GeoPoint</a></li>
+				<li><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></li>
 				<li><a href="class-LeanCloud.MIMEType.html">LeanCloud\MIMEType</a></li>
-				<li><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></li>
 				<li><a href="class-LeanCloud.Operation.ArrayOperation.html">LeanCloud\Operation\ArrayOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.DeleteOperation.html">LeanCloud\Operation\DeleteOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.IncrementOperation.html">LeanCloud\Operation\IncrementOperation</a></li>
@@ -140,7 +140,7 @@
 </span><span id="3" class="l"><span class="php-keyword1">namespace</span> LeanCloud;
 </span><span id="4" class="l">
 </span><span id="5" class="l"><span class="php-keyword1">use</span> LeanCloud\Bytes;
-</span><span id="6" class="l"><span class="php-keyword1">use</span> LeanCloud\Object;
+</span><span id="6" class="l"><span class="php-keyword1">use</span> LeanCloud\LeanObject;
 </span><span id="7" class="l"><span class="php-keyword1">use</span> LeanCloud\ACL;
 </span><span id="8" class="l"><span class="php-keyword1">use</span> LeanCloud\<span class="php-keyword2">File</span>;
 </span><span id="9" class="l"><span class="php-keyword1">use</span> LeanCloud\User;
@@ -362,7 +362,7 @@
 </span><span id="225" class="l">        } <span class="php-keyword1">else</span> <span class="php-keyword1">if</span> (<span class="php-var">$url</span> = <span class="php-keyword2">getenv</span>(<span class="php-quote">&quot;LEANCLOUD_API_SERVER&quot;</span>)) {
 </span><span id="226" class="l">            <span class="php-keyword1">return</span> <span class="php-var">$url</span> . <span class="php-quote">&quot;/&quot;</span> . self::<span class="php-var">$apiVersion</span>;
 </span><span id="227" class="l">        } <span class="php-keyword1">else</span> {
-</span><span id="228" class="l">            <span class="php-var">$host</span> = AppRouter::getInstance(<span class="php-var">$this</span>-&gt;appId)-&gt;getRoute(AppRouter::API_SERVER_KEY);
+</span><span id="228" class="l">            <span class="php-var">$host</span> = AppRouter::getInstance(self::<span class="php-var">$appId</span>)-&gt;getRoute(AppRouter::API_SERVER_KEY);
 </span><span id="229" class="l">            <span class="php-keyword1">return</span> <span class="php-quote">&quot;https://</span><span class="php-var">{$host}</span><span class="php-quote">/&quot;</span> . self::<span class="php-var">$apiVersion</span>;
 </span><span id="230" class="l">        }
 </span><span id="231" class="l">    }
@@ -685,12 +685,12 @@
 </span><span id="548" class="l">    <span class="php-comment">/**
 </span></span><span id="549" class="l"><span class="php-comment">     * Recursively encode value as JSON representation
 </span></span><span id="550" class="l"><span class="php-comment">     *
-</span></span><span id="551" class="l"><span class="php-comment">     * By default Object will be encoded as pointer, though
+</span></span><span id="551" class="l"><span class="php-comment">     * By default LeanObject will be encoded as pointer, though
 </span></span><span id="552" class="l"><span class="php-comment">     * `$encoder` could be provided to encode to customized type, such
 </span></span><span id="553" class="l"><span class="php-comment">     * as full `__type` annotated json object. The $encoder must be
-</span></span><span id="554" class="l"><span class="php-comment">     * name of instance method of Object.
+</span></span><span id="554" class="l"><span class="php-comment">     * name of instance method of object.
 </span></span><span id="555" class="l"><span class="php-comment">     *
-</span></span><span id="556" class="l"><span class="php-comment">     * To vaoid infinite loop in the case of circular Object
+</span></span><span id="556" class="l"><span class="php-comment">     * To vaoid infinite loop in the case of circular object
 </span></span><span id="557" class="l"><span class="php-comment">     * references, previously seen objects (`$seen`) are encoded
 </span></span><span id="558" class="l"><span class="php-comment">     * in pointer, even a customized encoder was provided.
 </span></span><span id="559" class="l"><span class="php-comment">     *
@@ -719,7 +719,7 @@
 </span><span id="582" class="l">                   (<span class="php-var">$value</span> <span class="php-keyword1">instanceof</span> \DateTimeImmutable)) {
 </span><span id="583" class="l">            <span class="php-keyword1">return</span> <span class="php-keyword1">array</span>(<span class="php-quote">&quot;__type&quot;</span> =&gt; <span class="php-quote">&quot;Date&quot;</span>,
 </span><span id="584" class="l">                         <span class="php-quote">&quot;iso&quot;</span>    =&gt; self::formatDate(<span class="php-var">$value</span>));
-</span><span id="585" class="l">        } <span class="php-keyword1">else</span> <span class="php-keyword1">if</span> (<span class="php-var">$value</span> <span class="php-keyword1">instanceof</span> Object) {
+</span><span id="585" class="l">        } <span class="php-keyword1">else</span> <span class="php-keyword1">if</span> (<span class="php-var">$value</span> <span class="php-keyword1">instanceof</span> LeanObject) {
 </span><span id="586" class="l">            <span class="php-keyword1">if</span> (<span class="php-var">$encoder</span> &amp;&amp; <span class="php-var">$value</span>-&gt;hasData() &amp;&amp; !<span class="php-keyword2">in_array</span>(<span class="php-var">$value</span>, <span class="php-var">$seen</span>)) {
 </span><span id="587" class="l">                <span class="php-var">$seen</span>[] = <span class="php-var">$value</span>;
 </span><span id="588" class="l">                <span class="php-keyword1">return</span> <span class="php-keyword2">call_user_func</span>(<span class="php-keyword1">array</span>(<span class="php-var">$value</span>, <span class="php-var">$encoder</span>), <span class="php-var">$seen</span>);
@@ -805,7 +805,7 @@
 </span><span id="668" class="l">        }
 </span><span id="669" class="l">        <span class="php-keyword1">if</span> (<span class="php-var">$type</span> === <span class="php-quote">&quot;Pointer&quot;</span> || <span class="php-var">$type</span> === <span class="php-quote">&quot;Object&quot;</span>) {
 </span><span id="670" class="l">            <span class="php-var">$id</span>  = <span class="php-keyword1">isset</span>(<span class="php-var">$value</span>[<span class="php-quote">&quot;objectId&quot;</span>]) ? <span class="php-var">$value</span>[<span class="php-quote">&quot;objectId&quot;</span>] : <span class="php-keyword1">null</span>;
-</span><span id="671" class="l">            <span class="php-var">$obj</span> = Object::create(<span class="php-var">$value</span>[<span class="php-quote">&quot;className&quot;</span>], <span class="php-var">$id</span>);
+</span><span id="671" class="l">            <span class="php-var">$obj</span> = LeanObject::create(<span class="php-var">$value</span>[<span class="php-quote">&quot;className&quot;</span>], <span class="php-var">$id</span>);
 </span><span id="672" class="l">            <span class="php-keyword1">unset</span>(<span class="php-var">$value</span>[<span class="php-quote">&quot;__type&quot;</span>]);
 </span><span id="673" class="l">            <span class="php-keyword1">unset</span>(<span class="php-var">$value</span>[<span class="php-quote">&quot;className&quot;</span>]);
 </span><span id="674" class="l">            <span class="php-keyword1">if</span> (!<span class="php-keyword1">empty</span>(<span class="php-var">$value</span>)) {
@@ -859,7 +859,7 @@
 	</div>
 </div>
 </div>
-<script src="resources/combined.js?768909401efe0895b1dd6335be9b2c57dc8be831"></script>
-<script src="elementlist.js?1a561149a6b9984da484e0893c3fb1812eebc9a5"></script>
+<script src="resources/combined.js?cbdeb73e51d76e573fbf0d45200b1b3a4995a2ab"></script>
+<script src="elementlist.js?d3b04b9153841d150cd793bfb391f6615e44f291"></script>
 </body>
 </html>
