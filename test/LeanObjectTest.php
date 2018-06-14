@@ -21,7 +21,7 @@ class Movie extends LeanObject {
 }
 Movie::registerClass();
 
-class ObjectTest extends TestCase {
+class LeanObjectTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),
@@ -459,4 +459,3 @@ class ObjectTest extends TestCase {
         $this->assertFalse($obj->hasData());
     }
 }
-
