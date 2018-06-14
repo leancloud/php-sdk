@@ -1,6 +1,6 @@
 <?php
 
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\Query;
 use LeanCloud\GeoPoint;
 use LeanCloud\Client;
@@ -31,7 +31,7 @@ class QueryTest extends PHPUnit_Framework_TestCase {
         $cnt   = $query->count();
         $this->assertGreaterThanOrEqual(0, $cnt);
 
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $id  = microtime();
         $obj->set("testid", $id);
         $obj->save();
@@ -44,7 +44,7 @@ class QueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testGetById() {
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $id  = microtime();
         $obj->set("testid", $id);
         $obj->save();
@@ -58,7 +58,7 @@ class QueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testFind() {
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $id  = microtime();
         $obj->set("testid", $id);
         $obj->save();
@@ -300,7 +300,7 @@ class QueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRelatedTo() {
-        $obj   = new Object("TestObject", "id123");
+        $obj   = new LeanObject("TestObject", "id123");
         $query = new Query("TestObject");
         $query->relatedTo("relField", $obj);
 
@@ -598,7 +598,7 @@ class QueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testDoCloudQueryCount() {
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $obj->set("name", "alice");
         $obj->save();
         $resp = Query::doCloudQuery("SELECT count(*) FROM TestObject");
@@ -608,7 +608,7 @@ class QueryTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testDoCloudQueryWithPvalues() {
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $obj->set("name", "alice");
         $obj->save();
         $resp = Query::doCloudQuery("SELECT * FROM TestObject ".
@@ -620,7 +620,7 @@ class QueryTest extends PHPUnit_Framework_TestCase {
 
     /*
     public function testDoCloudQueryWithDate() {
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $obj->set("name", "alice");
         $obj->save();
         $date = $obj->getCreatedAt();
@@ -633,7 +633,7 @@ class QueryTest extends PHPUnit_Framework_TestCase {
 
     public function testDoCloudQueryGeoPoint() {
         $point = new GeoPoint(39.9, 116.4);
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $obj->set("name", "alice");
         $obj->set("location", $point);
         $obj->save();

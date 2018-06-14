@@ -3,7 +3,7 @@
 namespace LeanCloud;
 
 /**
- * Byte array data type for Object
+ * Byte array data type for LeanObject
  */
 class Bytes {
     /**

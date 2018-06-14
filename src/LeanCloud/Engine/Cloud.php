@@ -268,7 +268,7 @@ class Cloud {
      *
      * @param string $className  Classname
      * @param string $hookName   Hook name, e.g. beforeUpdate
-     * @param Object $object The object of attached hook
+     * @param LeanObject $object The object of attached hook
      * @param User   $user   Request user
      * @param array      $meta   Optional parameters that will be passed to
      *                           user function

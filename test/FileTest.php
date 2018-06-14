@@ -1,6 +1,6 @@
 <?php
 
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\Client;
 use LeanCloud\File;
 
@@ -102,7 +102,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
      * leancloud/php-sdk#46
      */
     public function testSaveObjectWithFile() {
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $obj->set("name", "alice");
 
         $file = File::createWithData("test.txt", "你好，中国!");

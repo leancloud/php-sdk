@@ -104,10 +104,10 @@ User::logInWith("weibo", array("openid" => "..."));
 #### 对象存储
 
 ```php
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\CloudException;
 
-$obj = new Object("TestObject");
+$obj = new LeanObject("TestObject");
 $obj->set("name", "alice");
 $obj->set("height", 60.0);
 $obj->set("weight", 4.5);
@@ -142,7 +142,7 @@ $obj->destroy();
 我们同样支持子类继承，子类中需要定义静态变量 `$className` ，并注册到存储类:
 
 ```php
-class TestObject extends Object {
+class TestObject extends LeanObject {
     protected static $className = "TestObject";
     public setName($name) {
         $this->set("name", $name);

@@ -9,10 +9,10 @@ use LeanCloud\Operation\ArrayOperation;
 use LeanCloud\Operation\IncrementOperation;
 
 /**
- * Object interface to LeanCloud storage API
+ * LeanObject interface to LeanCloud storage API
  *
  */
-class Object {
+class LeanObject {
 
     /**
      * Preserved keys
@@ -58,7 +58,7 @@ class Object {
     private $_saveOption;
 
     /**
-     * Make a new *plain* Object.
+     * Make a new *plain* LeanObject.
      *
      * @param string $className
      * @param string $objectId
@@ -87,24 +87,24 @@ class Object {
      *
      * @param string $className
      * @param string $objectId
-     * @return Object
+     * @return LeanObject
      */
     public static function create($className, $objectId=null) {
         if (isset(self::$_registeredClasses[$className])) {
             return new self::$_registeredClasses[$className]($className,
                                                                $objectId);
         } else {
-            return new Object($className, $objectId);
+            return new LeanObject($className, $objectId);
         }
     }
 
     /**
-     * Register a sub-class to Object.
+     * Register a sub-class to LeanObject.
      *
-     * When a sub-class extends Object, it should specify a static
+     * When a sub-class extends LeanObject, it should specify a static
      * string variable `::$className`, which corresponds to a className on
      * LeanCloud. It shall then invoke `->registerClass` to register
-     * itself to Object. Such that Object maintains a map of
+     * itself to LeanObject. Such that LeanObject maintains a map of
      * className to sub-classes.
      *
      * It is only callable on sub-class.
@@ -167,7 +167,7 @@ class Object {
      */
     public function getPointer() {
         if (!$this->getObjectId()) {
-            throw new \RuntimeException("Object without ID cannot " .
+            throw new \RuntimeException("LeanObject without ID cannot " .
                                       "be serialized.");
         }
         return array(
@@ -617,7 +617,7 @@ class Object {
     /**
      * Traverse value in a hierarchy of arrays and objects
      *
-     * Array and data attributes of Object will be traversed, each time
+     * Array and data attributes of LeanObject will be traversed, each time
      * a non-array value found the func will be invoked with the value as
      * arguement.
      *
@@ -625,7 +625,7 @@ class Object {
      * @param function $func A function to call when non-array value found.
      */
     public static function traverse($value, &$seen, $func) {
-        if ($value instanceof Object) {
+        if ($value instanceof LeanObject) {
             if (!in_array($value, $seen)) {
                 $seen[] = $value;
                 static::traverse($value->_data, $seen, $func);
@@ -635,7 +635,7 @@ class Object {
             forEach($value as $val) {
                 if (is_array($val)) {
                     static::traverse($val, $seen, $func);
-                } else if ($val instanceof Object) {
+                } else if ($val instanceof LeanObject) {
                     static::traverse($val, $seen, $func);
                 } else {
                     $func($val);
@@ -656,7 +656,7 @@ class Object {
         $seen            = array($this); // excluding object itself
         static::traverse($this->_data, $seen,
                        function($val) use (&$unsavedChildren) {
-                           if (($val instanceof Object) ||
+                           if (($val instanceof LeanObject) ||
                                ($val instanceof File)) {
                                if ($val->isDirty()) {
                                    $unsavedChildren[] = $val;
@@ -686,7 +686,7 @@ class Object {
         forEach($unsavedChildren as $obj) {
             if ($obj instanceof File) {
                 $obj->save();
-            } else if ($obj instanceof Object) {
+            } else if ($obj instanceof LeanObject) {
                 if (!in_array($obj, $children)) {
                     $children[] = $obj;
                 }
@@ -789,4 +789,3 @@ class Object {
         $response = Client::batch($requests, $sessionToken);
     }
 }
-

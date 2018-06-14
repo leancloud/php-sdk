@@ -2,7 +2,7 @@
 namespace LeanCloud;
 
 use LeanCloud\Client;
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 
 /**
  * Query representation for finding objects on LeanCloud
@@ -65,7 +65,7 @@ class Query {
     public function __construct($queryClass) {
         if (is_string($queryClass)) {
             $this->className = $queryClass;
-        } else if (is_subclass_of($queryClass, "Object")) {
+        } else if (is_subclass_of($queryClass, "LeanObject")) {
             $this->className = $queryClass::$className;
         } else {
             throw new \InvalidArgumentException("Query class invalid.");
@@ -391,7 +391,7 @@ class Query {
      * Relation field related to an object
      *
      * @param string $key     A relation field key
-     * @param Object $obj Target object to relate
+     * @param LeanObject $obj Target object to relate
      * @return self
      */
     public function relatedTo($key, $obj) {
@@ -698,7 +698,7 @@ class Query {
      * Query object by id
      *
      * @param string $objectId
-     * @return Object
+     * @return LeanObject
      */
     public function get($objectId) {
         $this->equalTo('objectId', $objectId);
@@ -708,7 +708,7 @@ class Query {
     /**
      * Find the first object by the query
      *
-     * @return Object
+     * @return LeanObject
      */
     public function first() {
         $objects = $this->find($this->skip, 1);
@@ -741,7 +741,7 @@ class Query {
         $resp = Client::get("/classes/{$this->getClassName()}", $params);
         $objects = array();
         forEach($resp["results"] as $props) {
-            $obj = Object::create($this->getClassName());
+            $obj = LeanObject::create($this->getClassName());
             $obj->mergeAfterFetch($props);
             $objects[] = $obj;
         }
@@ -783,7 +783,7 @@ class Query {
         $resp = Client::get('/cloudQuery', $data);
         $objects = array();
         forEach($resp["results"] as $val) {
-            $obj = Object::create($resp["className"], $val["objectId"]);
+            $obj = LeanObject::create($resp["className"], $val["objectId"]);
             $obj->mergeAfterFetch($val);
             $objects[] = $obj;
         }
