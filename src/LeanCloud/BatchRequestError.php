@@ -73,7 +73,7 @@ class BatchRequestError extends CloudException {
     public function __toString() {
         $message = $this->message;
         if (!$this->isEmpty()) {
-            $message .= json_encode($this-errors);
+            $message .= json_encode($this->errors);
         }
         return __CLASS__ . ": [{$this->code}]: {$message}\n";
     }
