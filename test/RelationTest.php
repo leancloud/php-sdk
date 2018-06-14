@@ -2,6 +2,7 @@
 
 use LeanCloud\LeanObject;
 use LeanCloud\Relation;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test on Relation
@@ -10,7 +11,7 @@ use LeanCloud\Relation;
  * `likes`, where it keeps Users who liked the test object.
  *
  */
-class RelationTest extends PHPUnit_Framework_TestCase {
+class RelationTest extends TestCase {
     public function testRelationEncode() {
         $obj = new LeanObject("TestObject");
         $rel = $obj->getRelation("likes");

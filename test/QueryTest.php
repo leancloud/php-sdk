@@ -5,8 +5,9 @@ use LeanCloud\Query;
 use LeanCloud\GeoPoint;
 use LeanCloud\Client;
 use LeanCloud\CloudException;
+use PHPUnit\Framework\TestCase;
 
-class QueryTest extends PHPUnit_Framework_TestCase {
+class QueryTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),

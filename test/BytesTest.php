@@ -1,8 +1,9 @@
 <?php
 
 use LeanCloud\Bytes;
+use PHPUnit\Framework\TestCase;
 
-class BytesTest extends PHPUnit_Framework_TestCase {
+class BytesTest extends TestCase {
     public function testEncodeEmptyArray() {
         $bytes = Bytes::createFromByteArray(array());
         $out   = $bytes->encode();

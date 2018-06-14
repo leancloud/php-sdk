@@ -10,8 +10,9 @@ use LeanCloud\ACL;
 use LeanCloud\GeoPoint;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
+use PHPUnit\Framework\TestCase;
 
-class ClientTest extends PHPUnit_Framework_TestCase {
+class ClientTest extends TestCase {
     public function setUp() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),

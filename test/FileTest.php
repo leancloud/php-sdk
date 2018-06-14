@@ -3,8 +3,9 @@
 use LeanCloud\LeanObject;
 use LeanCloud\Client;
 use LeanCloud\File;
+use PHPUnit\Framework\TestCase;
 
-class FileTest extends PHPUnit_Framework_TestCase {
+class FileTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),

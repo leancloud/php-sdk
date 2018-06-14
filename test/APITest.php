@@ -1,12 +1,14 @@
 <?php
+
 use LeanCloud\Client;
 use LeanCloud\CloudException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testing API behaviors
  */
 
-class LeanAPITest extends PHPUnit_Framework_TestCase {
+class LeanAPITest extends TestCase {
     public function setUp() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),

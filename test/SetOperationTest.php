@@ -5,8 +5,9 @@ use LeanCloud\Operation\ArrayOperation;
 use LeanCloud\Operation\DeleteOperation;
 use LeanCloud\Operation\IncrementOperation;
 use LeanCloud\Client;
+use PHPUnit\Framework\TestCase;
 
-class SetOperationTest extends PHPUnit_Framework_TestCase {
+class SetOperationTest extends TestCase {
     public function testGetKey() {
         $op = new SetOperation("name", "alice");
         $this->assertEquals($op->getKey(), "name");

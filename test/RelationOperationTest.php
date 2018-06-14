@@ -4,8 +4,9 @@ use LeanCloud\LeanObject;
 use LeanCloud\Client;
 use LeanCloud\Relation;
 use LeanCloud\Operation\RelationOperation;
+use PHPUnit\Framework\TestCase;
 
-class RelationOperationTest extends PHPUnit_Framework_TestCase {
+class RelationOperationTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),

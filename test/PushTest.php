@@ -3,8 +3,9 @@
 use LeanCloud\Client;
 use LeanCloud\Query;
 use LeanCloud\Push;
+use PHPUnit\Framework\TestCase;
 
-class PushTest extends PHPUnit_Framework_TestCase {
+class PushTest extends TestCase {
 
     public function setUp() {
         Client::initialize(

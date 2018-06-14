@@ -7,6 +7,7 @@ use LeanCloud\GeoPoint;
 use LeanCloud\Client;
 use LeanCloud\Relation;
 use LeanCloud\Storage\SessionStorage;
+use PHPUnit\Framework\TestCase;
 
 class Movie extends LeanObject {
     protected static $className = "Movie";
@@ -20,7 +21,7 @@ class Movie extends LeanObject {
 }
 Movie::registerClass();
 
-class ObjectTest extends PHPUnit_Framework_TestCase {
+class ObjectTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),
