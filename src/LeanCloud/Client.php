@@ -553,7 +553,7 @@ class Client {
      * as full `__type` annotated json object. The $encoder must be
      * name of instance method of object.
      *
-     * To vaoid infinite loop in the case of circular object
+     * To avoid infinite loop in the case of circular object
      * references, previously seen objects (`$seen`) are encoded
      * in pointer, even a customized encoder was provided.
      *
