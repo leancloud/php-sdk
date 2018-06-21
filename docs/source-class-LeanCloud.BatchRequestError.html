@@ -65,8 +65,8 @@
 				<li><a href="class-LeanCloud.Engine.SlimEngine.html">LeanCloud\Engine\SlimEngine</a></li>
 				<li><a href="class-LeanCloud.File.html">LeanCloud\File</a></li>
 				<li><a href="class-LeanCloud.GeoPoint.html">LeanCloud\GeoPoint</a></li>
+				<li><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></li>
 				<li><a href="class-LeanCloud.MIMEType.html">LeanCloud\MIMEType</a></li>
-				<li><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></li>
 				<li><a href="class-LeanCloud.Operation.ArrayOperation.html">LeanCloud\Operation\ArrayOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.DeleteOperation.html">LeanCloud\Operation\DeleteOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.IncrementOperation.html">LeanCloud\Operation\IncrementOperation</a></li>
@@ -152,8 +152,8 @@
 </span></span><span id="15" class="l"><span class="php-comment">     *
 </span></span><span id="16" class="l"><span class="php-comment">     * @var array
 </span></span><span id="17" class="l"><span class="php-comment">     */</span>
-</span><span id="18" class="l">    <span class="php-keyword1">private</span> <span class="php-var">$errors</span>;
-</span><span id="19" class="l">    
+</span><span id="18" class="l">    <span class="php-keyword1">private</span> <span class="php-var">$errors</span> = [];
+</span><span id="19" class="l">
 </span><span id="20" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> __construct(<span class="php-var">$message</span>=<span class="php-quote">&quot;&quot;</span>, <span class="php-var">$code</span> = <span class="php-num">1</span>) {
 </span><span id="21" class="l">        <span class="php-var">$message</span> = <span class="php-keyword1">empty</span>(<span class="php-var">$message</span>) ? <span class="php-quote">&quot;Batch request error.&quot;</span> : <span class="php-var">$message</span>;
 </span><span id="22" class="l">        parent::__construct(<span class="php-var">$message</span>, <span class="php-var">$code</span>);
@@ -210,7 +210,7 @@
 </span><span id="73" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> __toString() {
 </span><span id="74" class="l">        <span class="php-var">$message</span> = <span class="php-var">$this</span>-&gt;message;
 </span><span id="75" class="l">        <span class="php-keyword1">if</span> (!<span class="php-var">$this</span>-&gt;isEmpty()) {
-</span><span id="76" class="l">            <span class="php-var">$message</span> .= <span class="php-keyword2">json_encode</span>(<span class="php-var">$this</span>-errors);
+</span><span id="76" class="l">            <span class="php-var">$message</span> .= <span class="php-keyword2">json_encode</span>(<span class="php-var">$this</span>-&gt;errors);
 </span><span id="77" class="l">        }
 </span><span id="78" class="l">        <span class="php-keyword1">return</span> __CLASS__ . <span class="php-quote">&quot;: [</span><span class="php-var">{$this-&gt;code}</span><span class="php-quote">]: </span><span class="php-var">{$message}</span><span class="php-quote">\n&quot;</span>;
 </span><span id="79" class="l">    }
@@ -224,6 +224,6 @@
 </div>
 </div>
 <script src="resources/combined.js?768909401efe0895b1dd6335be9b2c57dc8be831"></script>
-<script src="elementlist.js?1a561149a6b9984da484e0893c3fb1812eebc9a5"></script>
+<script src="elementlist.js?d3b04b9153841d150cd793bfb391f6615e44f291"></script>
 </body>
 </html>

@@ -65,8 +65,8 @@
 				<li><a href="class-LeanCloud.Engine.SlimEngine.html">LeanCloud\Engine\SlimEngine</a></li>
 				<li><a href="class-LeanCloud.File.html">LeanCloud\File</a></li>
 				<li><a href="class-LeanCloud.GeoPoint.html">LeanCloud\GeoPoint</a></li>
+				<li><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></li>
 				<li><a href="class-LeanCloud.MIMEType.html">LeanCloud\MIMEType</a></li>
-				<li><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></li>
 				<li><a href="class-LeanCloud.Operation.ArrayOperation.html">LeanCloud\Operation\ArrayOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.DeleteOperation.html">LeanCloud\Operation\DeleteOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.IncrementOperation.html">LeanCloud\Operation\IncrementOperation</a></li>
@@ -139,7 +139,7 @@
 </span><span id="2" class="l"><span class="php-keyword1">namespace</span> LeanCloud;
 </span><span id="3" class="l">
 </span><span id="4" class="l"><span class="php-keyword1">use</span> LeanCloud\Client;
-</span><span id="5" class="l"><span class="php-keyword1">use</span> LeanCloud\Object;
+</span><span id="5" class="l"><span class="php-keyword1">use</span> LeanCloud\LeanObject;
 </span><span id="6" class="l">
 </span><span id="7" class="l"><span class="php-comment">/**
 </span></span><span id="8" class="l"><span class="php-comment"> * Query representation for finding objects on LeanCloud
@@ -202,7 +202,7 @@
 </span><span id="65" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> __construct(<span class="php-var">$queryClass</span>) {
 </span><span id="66" class="l">        <span class="php-keyword1">if</span> (<span class="php-keyword2">is_string</span>(<span class="php-var">$queryClass</span>)) {
 </span><span id="67" class="l">            <span class="php-var">$this</span>-&gt;className = <span class="php-var">$queryClass</span>;
-</span><span id="68" class="l">        } <span class="php-keyword1">else</span> <span class="php-keyword1">if</span> (<span class="php-keyword2">is_subclass_of</span>(<span class="php-var">$queryClass</span>, <span class="php-quote">&quot;Object&quot;</span>)) {
+</span><span id="68" class="l">        } <span class="php-keyword1">else</span> <span class="php-keyword1">if</span> (<span class="php-keyword2">is_subclass_of</span>(<span class="php-var">$queryClass</span>, <span class="php-quote">&quot;LeanObject&quot;</span>)) {
 </span><span id="69" class="l">            <span class="php-var">$this</span>-&gt;className = <span class="php-var">$queryClass</span>::<span class="php-var">$className</span>;
 </span><span id="70" class="l">        } <span class="php-keyword1">else</span> {
 </span><span id="71" class="l">            <span class="php-keyword1">throw</span> <span class="php-keyword1">new</span> \InvalidArgumentException(<span class="php-quote">&quot;Query class invalid.&quot;</span>);
@@ -528,7 +528,7 @@
 </span></span><span id="391" class="l"><span class="php-comment">     * Relation field related to an object
 </span></span><span id="392" class="l"><span class="php-comment">     *
 </span></span><span id="393" class="l"><span class="php-comment">     * @param string $key     A relation field key
-</span></span><span id="394" class="l"><span class="php-comment">     * @param Object $obj Target object to relate
+</span></span><span id="394" class="l"><span class="php-comment">     * @param LeanObject $obj Target object to relate
 </span></span><span id="395" class="l"><span class="php-comment">     * @return self
 </span></span><span id="396" class="l"><span class="php-comment">     */</span>
 </span><span id="397" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> relatedTo(<span class="php-var">$key</span>, <span class="php-var">$obj</span>) {
@@ -835,7 +835,7 @@
 </span></span><span id="698" class="l"><span class="php-comment">     * Query object by id
 </span></span><span id="699" class="l"><span class="php-comment">     *
 </span></span><span id="700" class="l"><span class="php-comment">     * @param string $objectId
-</span></span><span id="701" class="l"><span class="php-comment">     * @return Object
+</span></span><span id="701" class="l"><span class="php-comment">     * @return LeanObject
 </span></span><span id="702" class="l"><span class="php-comment">     */</span>
 </span><span id="703" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> get(<span class="php-var">$objectId</span>) {
 </span><span id="704" class="l">        <span class="php-var">$this</span>-&gt;equalTo(<span class="php-quote">'objectId'</span>, <span class="php-var">$objectId</span>);
@@ -845,7 +845,7 @@
 </span><span id="708" class="l">    <span class="php-comment">/**
 </span></span><span id="709" class="l"><span class="php-comment">     * Find the first object by the query
 </span></span><span id="710" class="l"><span class="php-comment">     *
-</span></span><span id="711" class="l"><span class="php-comment">     * @return Object
+</span></span><span id="711" class="l"><span class="php-comment">     * @return LeanObject
 </span></span><span id="712" class="l"><span class="php-comment">     */</span>
 </span><span id="713" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> first() {
 </span><span id="714" class="l">        <span class="php-var">$objects</span> = <span class="php-var">$this</span>-&gt;find(<span class="php-var">$this</span>-&gt;skip, <span class="php-num">1</span>);
@@ -878,7 +878,7 @@
 </span><span id="741" class="l">        <span class="php-var">$resp</span> = Client::get(<span class="php-quote">&quot;/classes/</span><span class="php-var">{$this-&gt;getClassName()}</span><span class="php-quote">&quot;</span>, <span class="php-var">$params</span>);
 </span><span id="742" class="l">        <span class="php-var">$objects</span> = <span class="php-keyword1">array</span>();
 </span><span id="743" class="l">        <span class="php-keyword1">forEach</span>(<span class="php-var">$resp</span>[<span class="php-quote">&quot;results&quot;</span>] <span class="php-keyword1">as</span> <span class="php-var">$props</span>) {
-</span><span id="744" class="l">            <span class="php-var">$obj</span> = Object::create(<span class="php-var">$this</span>-&gt;getClassName());
+</span><span id="744" class="l">            <span class="php-var">$obj</span> = LeanObject::create(<span class="php-var">$this</span>-&gt;getClassName());
 </span><span id="745" class="l">            <span class="php-var">$obj</span>-&gt;mergeAfterFetch(<span class="php-var">$props</span>);
 </span><span id="746" class="l">            <span class="php-var">$objects</span>[] = <span class="php-var">$obj</span>;
 </span><span id="747" class="l">        }
@@ -920,7 +920,7 @@
 </span><span id="783" class="l">        <span class="php-var">$resp</span> = Client::get(<span class="php-quote">'/cloudQuery'</span>, <span class="php-var">$data</span>);
 </span><span id="784" class="l">        <span class="php-var">$objects</span> = <span class="php-keyword1">array</span>();
 </span><span id="785" class="l">        <span class="php-keyword1">forEach</span>(<span class="php-var">$resp</span>[<span class="php-quote">&quot;results&quot;</span>] <span class="php-keyword1">as</span> <span class="php-var">$val</span>) {
-</span><span id="786" class="l">            <span class="php-var">$obj</span> = Object::create(<span class="php-var">$resp</span>[<span class="php-quote">&quot;className&quot;</span>], <span class="php-var">$val</span>[<span class="php-quote">&quot;objectId&quot;</span>]);
+</span><span id="786" class="l">            <span class="php-var">$obj</span> = LeanObject::create(<span class="php-var">$resp</span>[<span class="php-quote">&quot;className&quot;</span>], <span class="php-var">$val</span>[<span class="php-quote">&quot;objectId&quot;</span>]);
 </span><span id="787" class="l">            <span class="php-var">$obj</span>-&gt;mergeAfterFetch(<span class="php-var">$val</span>);
 </span><span id="788" class="l">            <span class="php-var">$objects</span>[] = <span class="php-var">$obj</span>;
 </span><span id="789" class="l">        }
@@ -938,6 +938,6 @@
 </div>
 </div>
 <script src="resources/combined.js?768909401efe0895b1dd6335be9b2c57dc8be831"></script>
-<script src="elementlist.js?1a561149a6b9984da484e0893c3fb1812eebc9a5"></script>
+<script src="elementlist.js?d3b04b9153841d150cd793bfb391f6615e44f291"></script>
 </body>
 </html>

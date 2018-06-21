@@ -3,6 +3,7 @@
 use LeanCloud\Client;
 use LeanCloud\CloudException;
 use LeanCloud\User;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test LeanEngine app server
@@ -11,7 +12,7 @@ use LeanCloud\User;
  * see that for returned response.
  */
 
-class LeanEngineTest extends PHPUnit_Framework_TestCase {
+class LeanEngineTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),

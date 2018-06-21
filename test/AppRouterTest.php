@@ -2,8 +2,9 @@
 
 use LeanCloud\AppRouter;
 use LeanCloud\Region;
+use PHPUnit\Framework\TestCase;
 
-class AppRouterTest extends PHPUnit_Framework_TestCase {
+class AppRouterTest extends TestCase {
 
     private function getShortAppId($appid) {
         return strtolower(substr($appid, 0, 8));

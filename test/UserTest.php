@@ -8,8 +8,9 @@ use LeanCloud\File;
 use LeanCloud\Query;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
+use PHPUnit\Framework\TestCase;
 
-class UserTest extends PHPUnit_Framework_TestCase {
+class UserTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),

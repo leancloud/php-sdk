@@ -2,7 +2,7 @@
 namespace LeanCloud;
 
 use LeanCloud\Client;
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\CloudException;
 
 /**
@@ -35,7 +35,7 @@ use LeanCloud\CloudException;
  *
  */
 
-class User extends Object {
+class User extends LeanObject {
 
     /**
      * className on LeanCloud

@@ -4,8 +4,9 @@ use LeanCloud\Operation\DeleteOperation;
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\IncrementOperation;
 use LeanCloud\Operation\ArrayOperation;
+use PHPUnit\Framework\TestCase;
 
-class DeleteOperationTest extends PHPUnit_Framework_TestCase {
+class DeleteOperationTest extends TestCase {
     public function testOperationEncode() {
         $op = new DeleteOperation("tags");
         $out = $op->encode();

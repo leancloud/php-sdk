@@ -2,8 +2,9 @@
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\IncrementOperation;
 use LeanCloud\Operation\DeleteOperation;
+use PHPUnit\Framework\TestCase;
 
-class IncrementOperationTest extends PHPUnit_Framework_TestCase {
+class IncrementOperationTest extends TestCase {
     public function testGetKey() {
         $op = new IncrementOperation("score", 1);
         $this->assertEquals($op->getKey(), "score");

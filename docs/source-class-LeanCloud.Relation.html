@@ -65,8 +65,8 @@
 				<li><a href="class-LeanCloud.Engine.SlimEngine.html">LeanCloud\Engine\SlimEngine</a></li>
 				<li><a href="class-LeanCloud.File.html">LeanCloud\File</a></li>
 				<li><a href="class-LeanCloud.GeoPoint.html">LeanCloud\GeoPoint</a></li>
+				<li><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></li>
 				<li><a href="class-LeanCloud.MIMEType.html">LeanCloud\MIMEType</a></li>
-				<li><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></li>
 				<li><a href="class-LeanCloud.Operation.ArrayOperation.html">LeanCloud\Operation\ArrayOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.DeleteOperation.html">LeanCloud\Operation\DeleteOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.IncrementOperation.html">LeanCloud\Operation\IncrementOperation</a></li>
@@ -142,7 +142,7 @@
 </span><span id="5" class="l"><span class="php-keyword1">use</span> LeanCloud\Operation\RelationOperation;
 </span><span id="6" class="l">
 </span><span id="7" class="l"><span class="php-comment">/**
-</span></span><span id="8" class="l"><span class="php-comment"> * Many-to-many relationship for Object
+</span></span><span id="8" class="l"><span class="php-comment"> * Many-to-many relationship for LeanObject
 </span></span><span id="9" class="l"><span class="php-comment"> *
 </span></span><span id="10" class="l"><span class="php-comment"> * A relation consists of an array of objects, of which items can be
 </span></span><span id="11" class="l"><span class="php-comment"> * added to, and removed from. Each field could only have one kind of
@@ -152,7 +152,7 @@
 </span><span id="15" class="l">    <span class="php-comment">/**
 </span></span><span id="16" class="l"><span class="php-comment">     * The parent object of relation.
 </span></span><span id="17" class="l"><span class="php-comment">     *
-</span></span><span id="18" class="l"><span class="php-comment">     * @var Object
+</span></span><span id="18" class="l"><span class="php-comment">     * @var LeanObject
 </span></span><span id="19" class="l"><span class="php-comment">     */</span>
 </span><span id="20" class="l">    <span class="php-keyword1">private</span> <span class="php-var">$parent</span>;
 </span><span id="21" class="l">
@@ -176,7 +176,7 @@
 </span></span><span id="39" class="l"><span class="php-comment">     * Build a relation on parent field. It shall be rarely used
 </span></span><span id="40" class="l"><span class="php-comment">     * directly, use `$parent-&gt;getRelation($key)` instead.
 </span></span><span id="41" class="l"><span class="php-comment">     *
-</span></span><span id="42" class="l"><span class="php-comment">     * @param Object $parent    Parent object
+</span></span><span id="42" class="l"><span class="php-comment">     * @param LeanObject $parent    Parent object
 </span></span><span id="43" class="l"><span class="php-comment">     * @param string     $key       Field key on parent object
 </span></span><span id="44" class="l"><span class="php-comment">     * @param string     $className ClassName the object relatedTo
 </span></span><span id="45" class="l"><span class="php-comment">     */</span>
@@ -199,7 +199,7 @@
 </span><span id="62" class="l">    <span class="php-comment">/**
 </span></span><span id="63" class="l"><span class="php-comment">     * Attempt to set and validate parent of relation
 </span></span><span id="64" class="l"><span class="php-comment">     *
-</span></span><span id="65" class="l"><span class="php-comment">     * @param Object $parent Parent object of relation
+</span></span><span id="65" class="l"><span class="php-comment">     * @param LeanObject $parent Parent object of relation
 </span></span><span id="66" class="l"><span class="php-comment">     * @param string     $key    Field key
 </span></span><span id="67" class="l"><span class="php-comment">     * @throws RuntimeException
 </span></span><span id="68" class="l"><span class="php-comment">     */</span>
@@ -226,7 +226,7 @@
 </span><span id="89" class="l">    <span class="php-comment">/**
 </span></span><span id="90" class="l"><span class="php-comment">     * Add object(s) to the field as relation
 </span></span><span id="91" class="l"><span class="php-comment">     *
-</span></span><span id="92" class="l"><span class="php-comment">     * @param object|array $objects Object(s) to add
+</span></span><span id="92" class="l"><span class="php-comment">     * @param object|array $objects LeanObject(s) to add
 </span></span><span id="93" class="l"><span class="php-comment">     */</span>
 </span><span id="94" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> add(<span class="php-var">$objects</span>) {
 </span><span id="95" class="l">        <span class="php-keyword1">if</span> (!<span class="php-keyword2">is_array</span>(<span class="php-var">$objects</span>)) { <span class="php-var">$objects</span> = <span class="php-keyword1">array</span>(<span class="php-var">$objects</span>); }
@@ -240,7 +240,7 @@
 </span><span id="103" class="l">    <span class="php-comment">/**
 </span></span><span id="104" class="l"><span class="php-comment">     * Remove object(s) from the field
 </span></span><span id="105" class="l"><span class="php-comment">     *
-</span></span><span id="106" class="l"><span class="php-comment">     * @param object|array $objects Object(s) to remove
+</span></span><span id="106" class="l"><span class="php-comment">     * @param object|array $objects LeanObject(s) to remove
 </span></span><span id="107" class="l"><span class="php-comment">     */</span>
 </span><span id="108" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> remove(<span class="php-var">$objects</span>) {
 </span><span id="109" class="l">        <span class="php-keyword1">if</span> (!<span class="php-keyword2">is_array</span>(<span class="php-var">$objects</span>)) { <span class="php-var">$objects</span> = <span class="php-keyword1">array</span>(<span class="php-var">$objects</span>); }
@@ -270,10 +270,10 @@
 </span><span id="133" class="l">    <span class="php-comment">/**
 </span></span><span id="134" class="l"><span class="php-comment">     * Query on the parent class where child is in the relation
 </span></span><span id="135" class="l"><span class="php-comment">     *
-</span></span><span id="136" class="l"><span class="php-comment">     * @param Object $child  Child object
+</span></span><span id="136" class="l"><span class="php-comment">     * @param LeanObject $child  Child object
 </span></span><span id="137" class="l"><span class="php-comment">     * @return Query
 </span></span><span id="138" class="l"><span class="php-comment">     */</span>
-</span><span id="139" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> getReverseQuery(Object <span class="php-var">$child</span>) {
+</span><span id="139" class="l">    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> getReverseQuery(LeanObject <span class="php-var">$child</span>) {
 </span><span id="140" class="l">        <span class="php-var">$query</span> = <span class="php-keyword1">new</span> Query(<span class="php-var">$this</span>-&gt;parent-&gt;getClassName());
 </span><span id="141" class="l">        <span class="php-var">$query</span>-&gt;equalTo(<span class="php-var">$this</span>-&gt;<span class="php-keyword2">key</span>, <span class="php-var">$child</span>-&gt;getPointer());
 </span><span id="142" class="l">        <span class="php-keyword1">return</span> <span class="php-var">$query</span>;
@@ -289,6 +289,6 @@
 </div>
 </div>
 <script src="resources/combined.js?768909401efe0895b1dd6335be9b2c57dc8be831"></script>
-<script src="elementlist.js?1a561149a6b9984da484e0893c3fb1812eebc9a5"></script>
+<script src="elementlist.js?d3b04b9153841d150cd793bfb391f6615e44f291"></script>
 </body>
 </html>

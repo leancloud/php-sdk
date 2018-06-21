@@ -1,7 +1,7 @@
 <?php
 
 use LeanCloud\Client;
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\Bytes;
 use LeanCloud\User;
 use LeanCloud\File;
@@ -10,8 +10,9 @@ use LeanCloud\ACL;
 use LeanCloud\GeoPoint;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
+use PHPUnit\Framework\TestCase;
 
-class ClientTest extends PHPUnit_Framework_TestCase {
+class ClientTest extends TestCase {
     public function setUp() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),
@@ -207,7 +208,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
                       "objectId" => "abc101");
         $val  = Client::decode($type, null);
 
-        $this->assertTrue($val instanceof Object);
+        $this->assertTrue($val instanceof LeanObject);
         $this->assertEquals("TestObject", $val->getClassName());
     }
 
@@ -219,7 +220,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
                       "tags"      => array("fiction", "bar"));
         $val  = Client::decode($type, null);
 
-        $this->assertTrue($val instanceof Object);
+        $this->assertTrue($val instanceof LeanObject);
         $this->assertEquals("TestObject", $val->getClassName());
         $this->assertEquals($type["name"], $val->get("name"));
         $this->assertEquals($type["tags"], $val->get("tags"));
@@ -306,12 +307,12 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             )
         );
         $val = Client::decode($type, null);
-        $this->assertTrue($val instanceof Object);
+        $this->assertTrue($val instanceof LeanObject);
         $this->assertEquals('alice', $val->get('name'));
         $this->assertTrue($val->getACL() instanceof ACL);
 
         $parent = $val->get("parent");
-        $this->assertTrue($parent instanceof Object);
+        $this->assertTrue($parent instanceof LeanObject);
         $this->assertEquals('jill', $parent->get('name'));
         $this->assertTrue($parent->getACL() instanceof ACL);
     }
@@ -329,7 +330,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             'className' => 'TestObject',
             'objectId' => '5682bd'
         ), 0);
-        $this->assertTrue($val instanceof Object);
+        $this->assertTrue($val instanceof LeanObject);
     }
 
     public function testDecodeGeoPoint() {
@@ -345,7 +346,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEncodeRelation() {
-        $a = new Object("TestObject", "id001");
+        $a = new LeanObject("TestObject", "id001");
         $rel = $a->getRelation("likes");
         $out = Client::encode($rel);
         $this->assertEquals("Relation",
@@ -353,8 +354,8 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEncodeObjectToJSON() {
-        $a = new Object("TestObject", "id001");
-        $b = new Object("TestObject", "id002");
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
         $a->set("name", "A");
         $b->set("name", "B");
         $a->addIn("likes", $b);
@@ -373,8 +374,8 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEncodeObjectToFullJSON() {
-        $a = new Object("TestObject", "id001");
-        $b = new Object("TestObject", "id002");
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
         $a->set("name", "A");
         $b->set("name", "B");
         $a->addIn("likes", $b);
@@ -391,9 +392,9 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEncodeCircularObjectAsPointer() {
-        $a = new Object("TestObject", "id001");
-        $b = new Object("TestObject", "id002");
-        $c = new Object("TestObject", "id003");
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
+        $c = new LeanObject("TestObject", "id003");
         $a->set("name", "A");
         $b->set("name", "B");
         $c->set("name", "C");
@@ -423,8 +424,8 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             )
         );
         $a = Client::decode($json, null);
-        $this->assertTrue($a instanceof Object);
-        $this->assertTrue($a->get("likes") instanceof Object);
+        $this->assertTrue($a instanceof LeanObject);
+        $this->assertTrue($a->get("likes") instanceof LeanObject);
 
         $out = $a->toFullJSON();
         $this->assertEquals("A", $out["name"]);

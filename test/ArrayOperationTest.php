@@ -1,9 +1,11 @@
 <?php
+
 use LeanCloud\Operation\ArrayOperation;
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\DeleteOperation;
+use PHPUnit\Framework\TestCase;
 
-class ArrayOperationTest extends PHPUnit_Framework_TestCase {
+class ArrayOperationTest extends TestCase {
     public function testInvalidOp() {
         $this->setExpectedException("InvalidArgumentException",
                                     "Operation on array not supported: Set.");

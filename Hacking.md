@@ -14,6 +14,6 @@ export LC_API_REGION=US
 ```
 
 * `make test` to run test
-* `make doc` to build documentation
+* `make doc` to build documentation (should running on PHP <= 7.2)
 
 Thanks for your contribution!
