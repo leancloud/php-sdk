@@ -167,7 +167,7 @@ class Client {
      */
     public static function useRegion($region) {
         self::assertInitialized();
-        AppRouter::getInstance($this->appId)->setRegion($region);
+        AppRouter::getInstance(self::$appId)->setRegion($region);
     }
 
     /**
