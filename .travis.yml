@@ -7,7 +7,7 @@ php:
     - 7.2
 
 env:
-    - LEANCLOUD_API_SERVER="https://us-api.leancloud.cn" LEANCLOUD_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LEANCLOUD_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LEANCLOUD_REGION=US LEANCLOUD_APP_HOST="127.0.0.1" LEANCLOUD_APP_PORT=8081
+    - LEANCLOUD_API_SERVER="https://us-api.leancloud.cn" LEANCLOUD_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LEANCLOUD_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LEANCLOUD_REGION=US LEANCLOUD_APP_HOST="127.0.0.1" LEANCLOUD_APP_PORT=8081 LEANCLOUD_WILDCARD_DOMAIN=lncldglobal.com
 
 install:
     - composer install
@@ -22,4 +22,3 @@ after_success:
 
 notifications:
     webhooks: https://hook.bearychat.com/=bw52Y/travis/6e26f4422b2871c20a5b2d40e1d49f73
-
