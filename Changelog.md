@@ -1,3 +1,7 @@
+0.8.1 发布日期：2018-09-25
+----
+
+- 修复 `Client::useRegion`
 
 0.8.0 发布日期：2018-06-21
 ----
@@ -139,4 +143,3 @@ LeanQuery LeanRelation LeanRole LeanUser
 
 0.1.0 发布日期: 2015-10-30
 ----
-
