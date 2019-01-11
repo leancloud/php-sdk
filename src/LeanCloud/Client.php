@@ -134,6 +134,11 @@ class Client {
         Role::registerClass();
     }
 
+    public static function setApiVersion($version)
+    {
+        self::$apiVersion = $version;
+    }
+
     /**
      * Assert client is correctly initialized
      *
