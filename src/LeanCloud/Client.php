@@ -139,6 +139,11 @@ class Client {
         self::$apiVersion = $version;
     }
 
+    public static function getApiVersion()
+    {
+        return self::$apiVersion;
+    }
+
     /**
      * Assert client is correctly initialized
      *
