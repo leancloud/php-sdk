@@ -70,6 +70,11 @@ class Conversations
         return new static($response['objectId']);
     }
 
+    /**
+     * 添加用户进入群聊
+     * @param array $members
+     * @return mixed
+     */
     public function addMembers($members = [])
     {
         $response = self::useApiVersionCall('1.2', function () use ($members) {
@@ -80,6 +85,24 @@ class Conversations
         });
 
         return $response;
+    }
+
+    /**
+     * 发送消息到群聊
+     * @param $message
+     * @param $fromClient
+     * @param $masterKey
+     * @return mixed
+     */
+    public function send($message, $fromClient, $masterKey)
+    {
+        return self::useApiVersionCall('1.2', function () use ($message, $fromClient, $masterKey) {
+            $charRoomId = $this->getConversationId();
+            return Client::post("/rtm/conversations/${$charRoomId}/messages", [
+                'from_client' => $fromClient,
+                'message' => $message,
+            ], '', $masterKey);
+        });
     }
 }
 
