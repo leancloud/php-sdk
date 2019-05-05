@@ -72,15 +72,16 @@ class Conversations
 
     /**
      * 添加用户进入群聊
-     * @param array $members
+     * @param string $member
+     * @link https://leancloud.github.io/javascript-sdk/docs/AV.Conversation.html#addMember
      * @return mixed
      */
-    public function addMembers($members = [])
+    public function addMember($member)
     {
-        $response = self::useApiVersionCall('1.2', function () use ($members) {
+        $response = self::useApiVersionCall('1.2', function () use ($member) {
             $charRoomId = $this->getConversationId();
             return Client::post("/rtm/conversations/{$charRoomId}/members", [
-                'client_ids' => $members
+                'client_ids' => $member
             ]);
         });
 
@@ -88,20 +89,44 @@ class Conversations
     }
 
     /**
-     * 发送消息到群聊
-     * @param $message
+     *
      * @param $fromClient
-     * @param $masterKey
+     * @param $message
+     * @param $options
+     * @param $authOptions
+     * {
+     *   'useMasterKey' => '',
+     *   'sessionToken' => '',
+     * }
      * @return mixed
+     * @link https://leancloud.github.io/javascript-sdk/docs/AV.Conversation.html#send
      */
-    public function send($message, $fromClient, $masterKey)
+    public function send(
+        $fromClient,
+        $message,
+        $options = [],
+        $authOptions = []
+    )
     {
-        return self::useApiVersionCall('1.2', function () use ($message, $fromClient, $masterKey) {
+        $defaultOptions = [
+            'transient' => false,
+        ];
+
+        $defaultAuthOptions = [
+            'useMasterKey' => '',
+            'sessionToken' => ''
+        ];
+
+        $authOptions = $authOptions + $defaultAuthOptions;
+        $options = $options + $defaultOptions;
+
+        return self::useApiVersionCall('1.2', function () use ($message, $fromClient, $options, $authOptions) {
             $charRoomId = $this->getConversationId();
-            return Client::post("/rtm/conversations/${$charRoomId}/messages", [
+            return Client::post("/rtm/conversations/${charRoomId}/messages", [
                 'from_client' => $fromClient,
                 'message' => $message,
-            ], '', $masterKey);
+                'transient' => $options['transient']
+            ], $authOptions['sessionToken'], $authOptions['useMasterKey']);
         });
     }
 }
