@@ -299,8 +299,8 @@ class User extends LeanObject {
     }
 
 
-    private static function _login($authData) {
-        $resp = Client::post("/login", $authData);
+    private static function _login($userData) {
+        $resp = Client::post("/login", $userData);
         $user = new static();
         $user->mergeAfterFetch($resp);
         static::saveCurrentUser($user);
