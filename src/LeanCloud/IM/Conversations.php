@@ -72,16 +72,16 @@ class Conversations
 
     /**
      * 添加用户进入群聊
-     * @param string $member
+     * @param array $members
      * @link https://leancloud.github.io/javascript-sdk/docs/AV.Conversation.html#addMember
      * @return mixed
      */
-    public function addMember($member)
+    public function addMembers($members)
     {
-        $response = self::useApiVersionCall('1.2', function () use ($member) {
+        $response = self::useApiVersionCall('1.2', function () use ($members) {
             $charRoomId = $this->getConversationId();
             return Client::post("/rtm/conversations/{$charRoomId}/members", [
-                'client_ids' => $member
+                'client_ids' => $members
             ]);
         });
 
