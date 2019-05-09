@@ -126,7 +126,7 @@ class Conversations
                 'from_client' => $fromClient,
                 'message' => $message,
                 'transient' => $options['transient']
-            ], $authOptions['sessionToken'], $authOptions['useMasterKey']);
+            ], $authOptions['sessionToken'], [], $authOptions['useMasterKey']);
         });
     }
 }
