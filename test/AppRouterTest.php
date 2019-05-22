@@ -31,7 +31,7 @@ class AppRouterTest extends TestCase {
             $this->assertRegexp("/{$this->getShortAppId($appid)}.*.{$domain}/",
                                 $host);
         } else {
-            $this->assertEquals($router->getRegionDefaultRoute(AppRouter::API_SERVER_KEY),
+            $this->assertEquals("{$this->getShortAppId($appid)}.api.lncldglobal.com",
                                 $host);
         }
 
@@ -40,7 +40,7 @@ class AppRouterTest extends TestCase {
             $this->assertRegexp("/{$this->getShortAppId($appid)}.*.{$domain}/",
                                 $host);
         } else {
-            $this->assertEquals($router->getRegionDefaultRoute(AppRouter::ENGINE_SERVER_KEY),
+            $this->assertEquals("{$this->getShortAppId($appid)}.engine.lncldglobal.com",
                                 $host);
         }
     }
