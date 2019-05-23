@@ -322,7 +322,7 @@ class User extends LeanObject {
         return $user;
     }
     /**
-     * Log-in user by username and email
+     * Log-in user by email and password
      *
      * And set current user.
      *
