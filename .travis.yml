@@ -20,6 +20,3 @@ script:
 after_success:
     - bash <(curl -s https://codecov.io/bash)
 
-notifications:
-    webhooks: https://hook.bearychat.com/=bw52Y/travis/6e26f4422b2871c20a5b2d40e1d49f73
-
