@@ -23,6 +23,7 @@ class UserTest extends TestCase {
         $user = new User();
         $user->setUsername("alice");
         $user->setPassword("blabla");
+        $user->setEmail("alice@example.com");
         try {
             $user->signUp();
         } catch (CloudException $ex) {
@@ -100,6 +101,13 @@ class UserTest extends TestCase {
 
     public function testUserLogIn() {
         $user = User::logIn("alice", "blabla");
+
+        $this->assertNotEmpty($user->getObjectId());
+        $this->assertEquals($user, User::getCurrentUser());
+    }
+
+    public function testUserLogInWithEmail() {
+        $user = User::logInWithEmail("alice@example.com", "blabla");
 
         $this->assertNotEmpty($user->getObjectId());
         $this->assertEquals($user, User::getCurrentUser());

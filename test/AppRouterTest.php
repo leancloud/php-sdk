@@ -27,22 +27,12 @@ class AppRouterTest extends TestCase {
         $appid = getenv("LEANCLOUD_APP_ID");
         $router = AppRouter::getInstance($appid);
         $host = $router->getRoute(AppRouter::API_SERVER_KEY);
-        if ($domain = getenv("LEANCLOUD_WILDCARD_DOMAIN")) {
-            $this->assertRegexp("/{$this->getShortAppId($appid)}.*.{$domain}/",
-                                $host);
-        } else {
-            $this->assertEquals($router->getRegionDefaultRoute(AppRouter::API_SERVER_KEY),
-                                $host);
-        }
+        $domain = getenv("LEANCLOUD_WILDCARD_DOMAIN");
+        $this->assertEquals("{$this->getShortAppId($appid)}.api.{$domain}", $host);
 
         $host = $router->getRoute(AppRouter::ENGINE_SERVER_KEY);
-        if ($domain = getenv("LEANCLOUD_WILDCARD_DOMAIN")) {
-            $this->assertRegexp("/{$this->getShortAppId($appid)}.*.{$domain}/",
-                                $host);
-        } else {
-            $this->assertEquals($router->getRegionDefaultRoute(AppRouter::ENGINE_SERVER_KEY),
-                                $host);
-        }
+        $domain = getenv("LEANCLOUD_WILDCARD_DOMAIN");
+        $this->assertEquals("{$this->getShortAppId($appid)}.engine.{$domain}", $host);
     }
 
     public function testGetRouteWhenAppRouterNotAvailable() {
