@@ -298,6 +298,14 @@ class User extends LeanObject {
         return $user;
     }
 
+
+    private static function _login($userData) {
+        $resp = Client::post("/login", $userData);
+        $user = new static();
+        $user->mergeAfterFetch($resp);
+        static::saveCurrentUser($user);
+        return $user;
+    }
     /**
      * Log-in user by username and password
      *
@@ -309,13 +317,26 @@ class User extends LeanObject {
      * @throws CloudException
      */
     public static function logIn($username, $password) {
-        $resp = Client::post("/login", array("username" => $username,
-                                                 "password" => $password));
-        $user = new static();
-        $user->mergeAfterFetch($resp);
-        static::saveCurrentUser($user);
+        $user = static::_login(array("username" => $username,
+            "password" => $password));
         return $user;
     }
+    /**
+     * Log-in user by email and password
+     *
+     * And set current user.
+     *
+     * @param string $email
+     * @param string $password
+     * @return User
+     * @throws CloudException
+     */
+    public static function logInWithEmail($email, $password) {
+        $user = static::_login(array("email" => $email,
+            "password" => $password));
+        return $user;
+    }
+
 
     /**
      * Log-out current user
