@@ -24,7 +24,7 @@ class Client {
     /**
      * Client version
      */
-    const VERSION = '0.8.0';
+    const VERSION = '0.9.0';
 
     /**
      * API Version string
@@ -183,7 +183,7 @@ class Client {
      * Set debug mode
      *
      * Enable debug mode to log request params and response.
-     * 
+     *
      * @param bool $flag Default false
      */
     public static function setDebug($flag) {
@@ -714,4 +714,3 @@ class Client {
     }
 
 }
-
