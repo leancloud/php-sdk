@@ -479,7 +479,7 @@ class User extends LeanObject {
             "smsCode" => $smsCode
         ));
         $user = new static();
-        $user->mergeAfterFetch($data);
+        $user->mergeAfterFetch($resp);
         User::saveCurrentUser($user);
     }
 
