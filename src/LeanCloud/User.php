@@ -467,7 +467,21 @@ class User extends LeanObject {
         Client::post("/verifyMobilePhone/{$smsCode}", null);
     }
 
-
+    /**
+     * Sign up user by mobile phone and SMS code
+     *
+     * @param string  $phoneNumber
+     * @param string  $smsCode
+     */
+    public static function signUpOrLoginByMobilePhone($phoneNumber, $smsCode) {
+        $resp = Client::post("/usersByMobilePhone", array(
+            "mobilePhoneNumber" => $phoneNumber,
+            "smsCode" => $smsCode
+        ));
+        $user = new static();
+        $user->mergeAfterFetch($data);
+        User::saveCurrentUser($user);
+    }
 
     /*
      * Link and unlink with 3rd party auth provider
