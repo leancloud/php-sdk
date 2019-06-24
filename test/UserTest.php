@@ -175,6 +175,12 @@ class UserTest extends TestCase {
         User::verifyMobilePhone("000000");
     }
 
+    public function testSignUpOrLoginByMobilePhone() {
+        // Ensure the post format is correct
+        $this->setExpectedException("LeanCloud\CloudException", null, 603);
+        User::signUpOrLoginByMobilePhone("18612340000", "000000");
+    }
+
     public function testLogInWithLinkedService() {
         $user = User::logIn("alice", "blabla");
 
