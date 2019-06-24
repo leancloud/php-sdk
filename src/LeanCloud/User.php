@@ -480,7 +480,8 @@ class User extends LeanObject {
         ));
         $user = new static();
         $user->mergeAfterFetch($resp);
-        User::saveCurrentUser($user);
+        static::saveCurrentUser($user);
+        return $user;
     }
 
     /*
