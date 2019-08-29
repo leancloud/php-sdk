@@ -435,13 +435,15 @@ class Client {
                                         $errno);
         }
         if (strpos($respType, "text/html") !== false) {
-            throw new CloudException("Bad request", -1);
+            throw new CloudException("Bad response type text/html", -1, $respCode,
+                                     $method, $url);
         }
 
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
             $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new CloudException("{$code} {$data['error']}", $code);
+            throw new CloudException("{$data['error']}", $code, $respCode,
+                                     $method, $url);
         }
         return $data;
     }

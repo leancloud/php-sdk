@@ -50,6 +50,7 @@ class LeanEngineTest extends TestCase {
         }
         $resp = curl_exec($req);
         $errno = curl_errno($req);
+        $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         curl_close($req);
         if ($errno > 0) {
             throw new \RuntimeException("CURL connection error $errno: $url");
@@ -57,7 +58,8 @@ class LeanEngineTest extends TestCase {
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
             $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new CloudException("{$code} {$data['error']}", $code);
+            throw new CloudException("{$data['error']}", $code, $respCode,
+                                     $method, $url);
         }
         return $data;
     }

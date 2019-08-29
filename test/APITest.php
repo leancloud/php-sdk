@@ -22,7 +22,7 @@ class LeanAPITest extends TestCase {
         $resp = Client::post("/classes/TestObject", $obj);
 
         $this->setExpectedException("LeanCloud\CloudException",
-                                    "111 Invalid value type for field", 111);
+                                    "Invalid value type for field", 111);
         $resp2 = Client::put("/classes/TestObject/" . $resp["objectId"],
                                  array("name" => array("__op" => "Increment",
                                                        "amount" => 1)));
