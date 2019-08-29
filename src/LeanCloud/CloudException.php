@@ -49,8 +49,8 @@ class CloudException extends \Exception {
     }
 
     public function __toString() {
-        $req = $this->method ? "{$this->method} {$this->url} =>": "";
-        return __CLASS__ . ": ${req} [{$this->code}] {$this->message}\n";
+        $req = $this->method ? ": {$this->method} {$this->url}": "";
+        return __CLASS__ . ": [{$this->code}] {$this->message}{$req}\n";
     }
 }
 
