@@ -43,11 +43,14 @@ class CloudException extends \Exception {
     public function __construct($message, $code = 1, $status = 400,
                                 $method=null, $url=null) {
         parent::__construct($message, $code);
+        $this->status = $status;
+        $this->method = $method;
+        $this->url    = $url;
     }
 
     public function __toString() {
-        $req = $method ? "{$method} {$url}": "";
-        return __CLASS__ . ": [{$this->code}] {$this->message} ${req}\n";
+        $req = $this->method ? "{$this->method} {$this->url} =>": "";
+        return __CLASS__ . ": ${req} [{$this->code}] {$this->message}\n";
     }
 }
 
