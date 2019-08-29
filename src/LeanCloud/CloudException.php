@@ -5,19 +5,6 @@ namespace LeanCloud;
  * Exception thrown when cloud API returns error
  */
 class CloudException extends \Exception {
-    /**
-     * Error code returned by API
-     *
-     * @var int
-     */
-    public $code;
-
-    /**
-     * Error message returned by API
-     *
-     * @var string
-     */
-    public $message;
 
     /**
      * Http status returned by API
