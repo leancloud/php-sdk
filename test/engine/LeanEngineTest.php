@@ -212,5 +212,15 @@ class LeanEngineTest extends TestCase {
         $this->assertEquals(false, $resp["result"]["drop"]);
     }
 
+    public function testFunctionError() {
+        try {
+            $this->request("/1.1/functions/customError", "POST", array());
+        } catch (CloudException $ex) {
+            $this->assertEquals("My custom error.", $ex->getMessage());
+            $this->assertEquals(1, $ex->getCode());
+            $this->assertEquals(500, $ex->status);
+        }
+    }
+
 }
 

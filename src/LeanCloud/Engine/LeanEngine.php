@@ -571,8 +571,11 @@ class LeanEngine {
         try {
             $this->__dispatch($method, $url);
         } catch (FunctionError $ex) {
-            error_log($ex);
-            error_log($ex->getTraceAsString());
+            $status = (int) $ex->status;
+            if ( $status >= 500) {
+                error_log($ex);
+                error_log($ex->getTraceAsString());
+            }
             $this->renderError("{$ex->getMessage()}", $ex->getCode(), $ex->status);
         } catch (CloudException $ex) {
             error_log($ex);
