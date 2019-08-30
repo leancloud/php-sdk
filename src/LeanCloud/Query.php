@@ -712,10 +712,7 @@ class Query {
      */
     public function first() {
         $objects = $this->find($this->skip, 1);
-        if (empty($objects)) {
-            throw new CloudException("Object not found.", 101);
-        }
-        return $objects[0];
+        return empty($objects) ? null : $objects[0];
     }
 
     /**
