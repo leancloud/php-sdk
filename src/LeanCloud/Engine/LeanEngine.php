@@ -429,7 +429,8 @@ class LeanEngine {
         if (in_array($funcName, array(
             '_messageReceived', '_receiversOffline', '_messageSent',
             '_conversationStart', '_conversationStarted',
-            '_conversationAdd', '_conversationRemove', '_conversationUpdate'
+            '_conversationAdd', '_conversationRemove', '_conversationUpdate',
+            '_clientOnline', '_clientOffline'
         ))) {
             static::verifyHookSign($funcName, $body["__sign"]);
         }
