@@ -154,7 +154,7 @@ Exception
 		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
 		
 
-			<b>Located at</b> <a href="source-class-LeanCloud.CloudException.html#4-15" title="Go to source code">LeanCloud/CloudException.php</a>
+			<b>Located at</b> <a href="source-class-LeanCloud.CloudException.html#4-42" title="Go to source code">LeanCloud/CloudException.php</a>
 		<br>
 	</div>
 
@@ -174,7 +174,7 @@ Exception
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-LeanCloud.CloudException.html#8-10" title="Go to source code">__construct</a>( <span> <var>$message</var></span>, <span> <var>$code</var> = <span class="php-num">1</span></span> )</code>
+		<code><a href="source-class-LeanCloud.CloudException.html#30-36" title="Go to source code">__construct</a>( <span> <var>$message</var></span>, <span> <var>$code</var> = <span class="php-num">1</span></span>, <span> <var>$status</var> = <span class="php-num">400</span></span>, <span> <var>$method</var> = <span class="php-keyword1">null</span></span>, <span> <var>$url</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -206,7 +206,7 @@ Exception
 
 		<td class="name"><div>
 		<a class="anchor" href="#___toString">#</a>
-		<code><a href="source-class-LeanCloud.CloudException.html#12-14" title="Go to source code">__toString</a>( )</code>
+		<code><a href="source-class-LeanCloud.CloudException.html#38-41" title="Go to source code">__toString</a>( )</code>
 
 		<div class="description short">
 			
@@ -254,6 +254,84 @@ getTraceAsString()
 
 
 
+	<table class="summary properties" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="status" id="$status">
+		<td class="attributes"><code>
+			public  
+			integer
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-LeanCloud.CloudException.html#9-14" title="Go to source code"><var>$status</var></a>
+
+			<div class="description short">
+				<p>Http status returned by API</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Http status returned by API</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$status" class="anchor">#</a>
+				<code></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="method" id="$method">
+		<td class="attributes"><code>
+			public  
+			string
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-LeanCloud.CloudException.html#16-21" title="Go to source code"><var>$method</var></a>
+
+			<div class="description short">
+				<p>Http method request to API</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Http method request to API</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$method" class="anchor">#</a>
+				<code></code>
+			</div>
+		</td>
+	</tr>
+	<tr data-order="url" id="$url">
+		<td class="attributes"><code>
+			public  
+			string
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-LeanCloud.CloudException.html#23-28" title="Go to source code"><var>$url</var></a>
+
+			<div class="description short">
+				<p>Http url request to API</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Http url request to API</p>
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$url" class="anchor">#</a>
+				<code></code>
+			</div>
+		</td>
+	</tr>
+	</table>
 
 	<table class="summary inherited">
 	<caption>Properties inherited from Exception</caption>
