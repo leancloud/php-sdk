@@ -23,6 +23,6 @@ Hacking
     make test
     ```
 
-* `make doc` to build documentation (should running on PHP <= 7.2)
+* `make doc` to build documentation (should running on PHP < 7.2)
 
 Thanks for your contribution!
