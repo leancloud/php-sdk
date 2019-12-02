@@ -139,6 +139,18 @@ class Push {
     }
 
     /**
+     * Enable smooth push for message
+     *
+     * @param int $flowControl clients to push per second,
+     *                         a value <1000 is equivalent to 1000.
+     * @return self
+     * @see self::setOption()
+     */
+    public function setFlowControl($flowControl) {
+        return $this->setOption("flow_control", $flowControl);
+    }
+
+    /**
      * Encode to JSON representation
      *
      * @return array
