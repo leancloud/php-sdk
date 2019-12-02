@@ -138,6 +138,15 @@ class PushTest extends TestCase {
         ), $out["where"]);
     }
 
+    public function testSetFlowControl() {
+        $push = new Push(array(
+            "alert" => "Hello world!"
+        ));
+        $push->setFlowControl(3000);
+        $out = $push->encode();
+        $this->assertEquals(3000, $out["flow_control"]);
+    }
+
     public function testSendPush() {
         $push = new Push(array(
             "alert" => "Hello world!"
