@@ -430,7 +430,7 @@ class LeanEngine {
             '_messageReceived', '_receiversOffline', '_messageSent',
             '_conversationStart', '_conversationStarted',
             '_conversationAdd', '_conversationRemove', '_conversationUpdate',
-            '_clientOnline', '_clientOffline'
+            '_clientOnline', '_clientOffline', '_rtmClientSign'
         ))) {
             static::verifyHookSign($funcName, $body["__sign"]);
         }
