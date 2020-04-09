@@ -429,7 +429,7 @@ class LeanEngine {
         if (in_array($funcName, array(
             '_messageReceived', '_receiversOffline', '_messageSent',
             '_conversationStart', '_conversationStarted',
-            '_conversationAdd', '_conversationRemove', '_conversationUpdate',
+            '_conversationAdd', '_conversationAdded', '_conversationRemove', '_conversationRemoved', '_conversationUpdate',
             '_clientOnline', '_clientOffline', '_rtmClientSign'
         ))) {
             static::verifyHookSign($funcName, $body["__sign"]);
