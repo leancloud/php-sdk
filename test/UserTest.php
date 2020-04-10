@@ -8,8 +8,9 @@ use LeanCloud\File;
 use LeanCloud\Query;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
+use PHPUnit\Framework\TestCase;
 
-class UserTest extends PHPUnit_Framework_TestCase {
+class UserTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),
@@ -22,6 +23,7 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $user = new User();
         $user->setUsername("alice");
         $user->setPassword("blabla");
+        $user->setEmail("alice@example.com");
         try {
             $user->signUp();
         } catch (CloudException $ex) {
@@ -104,6 +106,13 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($user, User::getCurrentUser());
     }
 
+    public function testUserLogInWithEmail() {
+        $user = User::logInWithEmail("alice@example.com", "blabla");
+
+        $this->assertNotEmpty($user->getObjectId());
+        $this->assertEquals($user, User::getCurrentUser());
+    }
+
     public function testLoginWithMobilePhoneNumber() {
         $user = User::logIn("alice", "blabla");
         $user->setMobilePhoneNumber("18612340000");
@@ -164,6 +173,12 @@ class UserTest extends PHPUnit_Framework_TestCase {
         // Ensure the post format is correct
         $this->setExpectedException("LeanCloud\CloudException", null, 603);
         User::verifyMobilePhone("000000");
+    }
+
+    public function testSignUpOrLoginByMobilePhone() {
+        // Ensure the post format is correct
+        $this->setExpectedException("LeanCloud\CloudException", null, 603);
+        User::signUpOrLoginByMobilePhone("18612340000", "000000");
     }
 
     public function testLogInWithLinkedService() {

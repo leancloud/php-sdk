@@ -5,6 +5,7 @@ require_once "src/autoload.php";
 use LeanCloud\Client;
 use LeanCloud\Engine\LeanEngine;
 use LeanCloud\Engine\Cloud;
+use LeanCloud\Engine\FunctionError;
 use LeanCloud\Storage\CookieStorage;
 
 Client::initialize(
@@ -23,6 +24,10 @@ Cloud::define("hello", function() {
 // define function with named params
 Cloud::define("sayHello", function($params, $user) {
     return "hello {$params['name']}";
+});
+
+Cloud::define("customError", function($params, $user) {
+    throw new FunctionError("My custom error.", 1, 500);
 });
 
 Cloud::define("_messageReceived", function($params, $user){

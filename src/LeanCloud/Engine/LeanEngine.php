@@ -335,7 +335,7 @@ class LeanEngine {
      * @param string $method Request method
      * @param string $url    Request url
      */
-    protected function dispatch($method, $url) {
+    private function __dispatch($method, $url) {
         if (static::$useHttpsRedirect) {
             $this->httpsRedirect();
         }
@@ -393,41 +393,26 @@ class LeanEngine {
             // extract func params from path:
             // /1.1/call/{0}/{1}
             $funcParams = explode("/", ltrim($pathParts["extra"], "/"));
-            try {
-                if (count($funcParams) == 1) {
-                    // {1,1.1}/functions/{funcName}
-                    $this->dispatchFunc($funcParams[0], $json,
-                                        $pathParts["endpoint"] === "call");
-                } else {
-                    if ($funcParams[0] == "onVerified") {
-                        // {1,1.1}/functions/onVerified/sms
-                        $this->dispatchOnVerified($funcParams[1], $json);
-                    } else if ($funcParams[0] == "_User" &&
-                               $funcParams[1] == "onLogin") {
-                        // {1,1.1}/functions/_User/onLogin
-                        $this->dispatchOnLogin($json);
-                    } else if ($funcParams[0] == "BigQuery" ||
-                               $funcParams[0] == "Insight") {
-                        // {1,1.1}/functions/Insight/onComplete
-                        $this->dispatchOnInsight($json);
-                    } else if (count($funcParams) == 2) {
-                        // {1,1.1}/functions/{className}/beforeSave
-                        $this->dispatchHook($funcParams[0], $funcParams[1], $json);
-                    }
+            if (count($funcParams) == 1) {
+                // {1,1.1}/functions/{funcName}
+                $this->dispatchFunc($funcParams[0], $json,
+                                    $pathParts["endpoint"] === "call");
+            } else {
+                if ($funcParams[0] == "onVerified") {
+                    // {1,1.1}/functions/onVerified/sms
+                    $this->dispatchOnVerified($funcParams[1], $json);
+                } else if ($funcParams[0] == "_User" &&
+                           $funcParams[1] == "onLogin") {
+                    // {1,1.1}/functions/_User/onLogin
+                    $this->dispatchOnLogin($json);
+                } else if ($funcParams[0] == "BigQuery" ||
+                           $funcParams[0] == "Insight") {
+                    // {1,1.1}/functions/Insight/onComplete
+                    $this->dispatchOnInsight($json);
+                } else if (count($funcParams) == 2) {
+                    // {1,1.1}/functions/{className}/beforeSave
+                    $this->dispatchHook($funcParams[0], $funcParams[1], $json);
                 }
-            } catch (FunctionError $ex) {
-                error_log($ex->getMessage());
-                error_log($ex->getTraceAsString());
-                $this->renderError("Cloud function error: {$ex->getMessage()}", $ex->getCode());
-            } catch (CloudException $ex) {
-                error_log($ex->getMessage());
-                error_log($ex->getTraceAsString());
-                $this->renderError("Request to API failed: {$ex->getMessage()}", $ex->getCode());
-            } catch (\Exception $ex) {
-                error_log($ex->getMessage());
-                error_log($ex->getTraceAsString());
-                $this->renderError($ex->getMessage(),
-                                   $ex->getCode() ? $ex->getCode() : 1);
             }
         }
     }
@@ -444,7 +429,8 @@ class LeanEngine {
         if (in_array($funcName, array(
             '_messageReceived', '_receiversOffline', '_messageSent',
             '_conversationStart', '_conversationStarted',
-            '_conversationAdd', '_conversationRemove', '_conversationUpdate'
+            '_conversationAdd', '_conversationAdded', '_conversationRemove', '_conversationRemoved', '_conversationUpdate',
+            '_clientOnline', '_clientOffline', '_rtmClientSign'
         ))) {
             static::verifyHookSign($funcName, $body["__sign"]);
         }
@@ -574,6 +560,36 @@ class LeanEngine {
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
         Cloud::runOnInsight($body, $meta);
         $this->renderJSON(array("result" => "ok"));
+    }
+
+    /**
+     * Dispatch LeanEngine functions.
+     *
+     * @param string $method Request method
+     * @param string $url    Request url
+     */
+    protected function dispatch($method, $url) {
+        try {
+            $this->__dispatch($method, $url);
+        } catch (FunctionError $ex) {
+            $status = (int) $ex->status;
+            if ( $status >= 500) {
+                error_log($ex);
+                error_log($ex->getTraceAsString());
+            }
+            $this->renderError("{$ex->getMessage()}", $ex->getCode(), $ex->status);
+        } catch (CloudException $ex) {
+            error_log($ex);
+            error_log($ex->getTraceAsString());
+            $this->renderError("{$ex->getMessage()}", $ex->getCode(), $ex->status);
+        } catch (\Exception $ex) {
+            error_log($ex);
+            error_log($ex->getTraceAsString());
+            $this->renderError($ex->getMessage(),
+                               $ex->getCode() ? $ex->getCode() : 1,
+                               // unhandled internal exception
+                               500);
+        }
     }
 
     /**

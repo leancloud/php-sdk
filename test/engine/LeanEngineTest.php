@@ -3,6 +3,7 @@
 use LeanCloud\Client;
 use LeanCloud\CloudException;
 use LeanCloud\User;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test LeanEngine app server
@@ -11,7 +12,7 @@ use LeanCloud\User;
  * see that for returned response.
  */
 
-class LeanEngineTest extends PHPUnit_Framework_TestCase {
+class LeanEngineTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),
@@ -49,6 +50,7 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         }
         $resp = curl_exec($req);
         $errno = curl_errno($req);
+        $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         curl_close($req);
         if ($errno > 0) {
             throw new \RuntimeException("CURL connection error $errno: $url");
@@ -56,7 +58,8 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
             $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new CloudException("{$code} {$data['error']}", $code);
+            throw new CloudException("{$data['error']}", $code, $respCode,
+                                     $method, $url);
         }
         return $data;
     }
@@ -207,6 +210,16 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
             "__sign"   => $this->signHook("_messageReceived")
         ));
         $this->assertEquals(false, $resp["result"]["drop"]);
+    }
+
+    public function testFunctionError() {
+        try {
+            $this->request("/1.1/functions/customError", "POST", array());
+        } catch (CloudException $ex) {
+            $this->assertEquals("My custom error.", $ex->getMessage());
+            $this->assertEquals(1, $ex->getCode());
+            $this->assertEquals(500, $ex->status);
+        }
     }
 
 }

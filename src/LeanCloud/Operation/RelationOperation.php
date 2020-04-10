@@ -103,7 +103,7 @@ class RelationOperation implements IOperation {
     /**
      * Add object(s) to relation
      *
-     * @param array $objects Object(s) to add
+     * @param array $objects LeanObject(s) to add
      */
     private function add($objects) {
         if (empty($objects)) { return; }
@@ -116,7 +116,7 @@ class RelationOperation implements IOperation {
                                             " to relation.");
             }
             if ($obj->getClassName() !== $this->targetClassName) {
-                throw new \RuntimeException("Object type incompatible" .
+                throw new \RuntimeException("LeanObject type incompatible" .
                                             " with relation.");
             }
             if (isset($this->objects_to_remove[$obj->getObjectID()])) {
@@ -129,7 +129,7 @@ class RelationOperation implements IOperation {
     /**
      * Remove object(s) from relation
      *
-     * @param array $objects Object(s) to remove
+     * @param array $objects LeanObject(s) to remove
      */
     private function remove($objects) {
         if (empty($objects)) { return; }
@@ -142,7 +142,7 @@ class RelationOperation implements IOperation {
                                             " from relation.");
             }
             if ($obj->getClassName() !== $this->targetClassName) {
-                throw new \RuntimeException("Object type incompatible" .
+                throw new \RuntimeException("LeanObject type incompatible" .
                                             " with relation.");
             }
             if (isset($this->objects_to_add[$obj->getObjectID()])) {
@@ -156,7 +156,7 @@ class RelationOperation implements IOperation {
      * Apply the operation on previous relation
      *
      * @param Relation $relation Previous relation
-     * @param Object   $object   Parent of relation
+     * @param LeanObject   $object   Parent of relation
      * @return Relation
      * @throws RuntimeException
      */

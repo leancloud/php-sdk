@@ -3,7 +3,7 @@
 namespace LeanCloud;
 
 use LeanCloud\Bytes;
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\ACL;
 use LeanCloud\File;
 use LeanCloud\User;
@@ -24,7 +24,7 @@ class Client {
     /**
      * Client version
      */
-    const VERSION = '0.7.0';
+    const VERSION = '0.12.0';
 
     /**
      * API Version string
@@ -167,7 +167,7 @@ class Client {
      */
     public static function useRegion($region) {
         self::assertInitialized();
-        AppRouter::getInstance($this->appId)->setRegion($region);
+        AppRouter::getInstance(self::$appId)->setRegion($region);
     }
 
     /**
@@ -183,7 +183,7 @@ class Client {
      * Set debug mode
      *
      * Enable debug mode to log request params and response.
-     * 
+     *
      * @param bool $flag Default false
      */
     public static function setDebug($flag) {
@@ -225,7 +225,7 @@ class Client {
         } else if ($url = getenv("LEANCLOUD_API_SERVER")) {
             return $url . "/" . self::$apiVersion;
         } else {
-            $host = AppRouter::getInstance($this->appId)->getRoute(AppRouter::API_SERVER_KEY);
+            $host = AppRouter::getInstance(self::$appId)->getRoute(AppRouter::API_SERVER_KEY);
             return "https://{$host}/" . self::$apiVersion;
         }
     }
@@ -435,13 +435,15 @@ class Client {
                                         $errno);
         }
         if (strpos($respType, "text/html") !== false) {
-            throw new CloudException("Bad request", -1);
+            throw new CloudException("Bad response type text/html", -1, $respCode,
+                                     $method, $url);
         }
 
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
             $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new CloudException("{$code} {$data['error']}", $code);
+            throw new CloudException("{$data['error']}", $code, $respCode,
+                                     $method, $url);
         }
         return $data;
     }
@@ -548,12 +550,12 @@ class Client {
     /**
      * Recursively encode value as JSON representation
      *
-     * By default Object will be encoded as pointer, though
+     * By default LeanObject will be encoded as pointer, though
      * `$encoder` could be provided to encode to customized type, such
      * as full `__type` annotated json object. The $encoder must be
-     * name of instance method of Object.
+     * name of instance method of object.
      *
-     * To vaoid infinite loop in the case of circular Object
+     * To avoid infinite loop in the case of circular object
      * references, previously seen objects (`$seen`) are encoded
      * in pointer, even a customized encoder was provided.
      *
@@ -582,7 +584,7 @@ class Client {
                    ($value instanceof \DateTimeImmutable)) {
             return array("__type" => "Date",
                          "iso"    => self::formatDate($value));
-        } else if ($value instanceof Object) {
+        } else if ($value instanceof LeanObject) {
             if ($encoder && $value->hasData() && !in_array($value, $seen)) {
                 $seen[] = $value;
                 return call_user_func(array($value, $encoder), $seen);
@@ -668,7 +670,7 @@ class Client {
         }
         if ($type === "Pointer" || $type === "Object") {
             $id  = isset($value["objectId"]) ? $value["objectId"] : null;
-            $obj = Object::create($value["className"], $id);
+            $obj = LeanObject::create($value["className"], $id);
             unset($value["__type"]);
             unset($value["className"]);
             if (!empty($value)) {
@@ -714,4 +716,3 @@ class Client {
     }
 
 }
-

@@ -5,7 +5,7 @@ namespace LeanCloud;
 use LeanCloud\Operation\RelationOperation;
 
 /**
- * Many-to-many relationship for Object
+ * Many-to-many relationship for LeanObject
  *
  * A relation consists of an array of objects, of which items can be
  * added to, and removed from. Each field could only have one kind of
@@ -15,7 +15,7 @@ class Relation {
     /**
      * The parent object of relation.
      *
-     * @var Object
+     * @var LeanObject
      */
     private $parent;
 
@@ -39,7 +39,7 @@ class Relation {
      * Build a relation on parent field. It shall be rarely used
      * directly, use `$parent->getRelation($key)` instead.
      *
-     * @param Object $parent    Parent object
+     * @param LeanObject $parent    Parent object
      * @param string     $key       Field key on parent object
      * @param string     $className ClassName the object relatedTo
      */
@@ -62,7 +62,7 @@ class Relation {
     /**
      * Attempt to set and validate parent of relation
      *
-     * @param Object $parent Parent object of relation
+     * @param LeanObject $parent Parent object of relation
      * @param string     $key    Field key
      * @throws RuntimeException
      */
@@ -89,7 +89,7 @@ class Relation {
     /**
      * Add object(s) to the field as relation
      *
-     * @param object|array $objects Object(s) to add
+     * @param object|array $objects LeanObject(s) to add
      */
     public function add($objects) {
         if (!is_array($objects)) { $objects = array($objects); }
@@ -103,7 +103,7 @@ class Relation {
     /**
      * Remove object(s) from the field
      *
-     * @param object|array $objects Object(s) to remove
+     * @param object|array $objects LeanObject(s) to remove
      */
     public function remove($objects) {
         if (!is_array($objects)) { $objects = array($objects); }
@@ -133,10 +133,10 @@ class Relation {
     /**
      * Query on the parent class where child is in the relation
      *
-     * @param Object $child  Child object
+     * @param LeanObject $child  Child object
      * @return Query
      */
-    public function getReverseQuery(Object $child) {
+    public function getReverseQuery(LeanObject $child) {
         $query = new Query($this->parent->getClassName());
         $query->equalTo($this->key, $child->getPointer());
         return $query;

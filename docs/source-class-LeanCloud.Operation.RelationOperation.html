@@ -65,8 +65,8 @@
 				<li><a href="class-LeanCloud.Engine.SlimEngine.html">LeanCloud\Engine\SlimEngine</a></li>
 				<li><a href="class-LeanCloud.File.html">LeanCloud\File</a></li>
 				<li><a href="class-LeanCloud.GeoPoint.html">LeanCloud\GeoPoint</a></li>
+				<li><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></li>
 				<li><a href="class-LeanCloud.MIMEType.html">LeanCloud\MIMEType</a></li>
-				<li><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></li>
 				<li><a href="class-LeanCloud.Operation.ArrayOperation.html">LeanCloud\Operation\ArrayOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.DeleteOperation.html">LeanCloud\Operation\DeleteOperation</a></li>
 				<li><a href="class-LeanCloud.Operation.IncrementOperation.html">LeanCloud\Operation\IncrementOperation</a></li>
@@ -240,7 +240,7 @@
 </span><span id="103" class="l">    <span class="php-comment">/**
 </span></span><span id="104" class="l"><span class="php-comment">     * Add object(s) to relation
 </span></span><span id="105" class="l"><span class="php-comment">     *
-</span></span><span id="106" class="l"><span class="php-comment">     * @param array $objects Object(s) to add
+</span></span><span id="106" class="l"><span class="php-comment">     * @param array $objects LeanObject(s) to add
 </span></span><span id="107" class="l"><span class="php-comment">     */</span>
 </span><span id="108" class="l">    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> add(<span class="php-var">$objects</span>) {
 </span><span id="109" class="l">        <span class="php-keyword1">if</span> (<span class="php-keyword1">empty</span>(<span class="php-var">$objects</span>)) { <span class="php-keyword1">return</span>; }
@@ -253,7 +253,7 @@
 </span><span id="116" class="l">                                            <span class="php-quote">&quot; to relation.&quot;</span>);
 </span><span id="117" class="l">            }
 </span><span id="118" class="l">            <span class="php-keyword1">if</span> (<span class="php-var">$obj</span>-&gt;getClassName() !== <span class="php-var">$this</span>-&gt;targetClassName) {
-</span><span id="119" class="l">                <span class="php-keyword1">throw</span> <span class="php-keyword1">new</span> \RuntimeException(<span class="php-quote">&quot;Object type incompatible&quot;</span> .
+</span><span id="119" class="l">                <span class="php-keyword1">throw</span> <span class="php-keyword1">new</span> \RuntimeException(<span class="php-quote">&quot;LeanObject type incompatible&quot;</span> .
 </span><span id="120" class="l">                                            <span class="php-quote">&quot; with relation.&quot;</span>);
 </span><span id="121" class="l">            }
 </span><span id="122" class="l">            <span class="php-keyword1">if</span> (<span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;objects_to_remove[<span class="php-var">$obj</span>-&gt;getObjectID()])) {
@@ -266,7 +266,7 @@
 </span><span id="129" class="l">    <span class="php-comment">/**
 </span></span><span id="130" class="l"><span class="php-comment">     * Remove object(s) from relation
 </span></span><span id="131" class="l"><span class="php-comment">     *
-</span></span><span id="132" class="l"><span class="php-comment">     * @param array $objects Object(s) to remove
+</span></span><span id="132" class="l"><span class="php-comment">     * @param array $objects LeanObject(s) to remove
 </span></span><span id="133" class="l"><span class="php-comment">     */</span>
 </span><span id="134" class="l">    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> remove(<span class="php-var">$objects</span>) {
 </span><span id="135" class="l">        <span class="php-keyword1">if</span> (<span class="php-keyword1">empty</span>(<span class="php-var">$objects</span>)) { <span class="php-keyword1">return</span>; }
@@ -279,7 +279,7 @@
 </span><span id="142" class="l">                                            <span class="php-quote">&quot; from relation.&quot;</span>);
 </span><span id="143" class="l">            }
 </span><span id="144" class="l">            <span class="php-keyword1">if</span> (<span class="php-var">$obj</span>-&gt;getClassName() !== <span class="php-var">$this</span>-&gt;targetClassName) {
-</span><span id="145" class="l">                <span class="php-keyword1">throw</span> <span class="php-keyword1">new</span> \RuntimeException(<span class="php-quote">&quot;Object type incompatible&quot;</span> .
+</span><span id="145" class="l">                <span class="php-keyword1">throw</span> <span class="php-keyword1">new</span> \RuntimeException(<span class="php-quote">&quot;LeanObject type incompatible&quot;</span> .
 </span><span id="146" class="l">                                            <span class="php-quote">&quot; with relation.&quot;</span>);
 </span><span id="147" class="l">            }
 </span><span id="148" class="l">            <span class="php-keyword1">if</span> (<span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;objects_to_add[<span class="php-var">$obj</span>-&gt;getObjectID()])) {
@@ -293,7 +293,7 @@
 </span></span><span id="156" class="l"><span class="php-comment">     * Apply the operation on previous relation
 </span></span><span id="157" class="l"><span class="php-comment">     *
 </span></span><span id="158" class="l"><span class="php-comment">     * @param Relation $relation Previous relation
-</span></span><span id="159" class="l"><span class="php-comment">     * @param Object   $object   Parent of relation
+</span></span><span id="159" class="l"><span class="php-comment">     * @param LeanObject   $object   Parent of relation
 </span></span><span id="160" class="l"><span class="php-comment">     * @return Relation
 </span></span><span id="161" class="l"><span class="php-comment">     * @throws RuntimeException
 </span></span><span id="162" class="l"><span class="php-comment">     */</span>
@@ -340,7 +340,7 @@
 	</div>
 </div>
 </div>
-<script src="resources/combined.js?768909401efe0895b1dd6335be9b2c57dc8be831"></script>
-<script src="elementlist.js?1a561149a6b9984da484e0893c3fb1812eebc9a5"></script>
+<script src="resources/combined.js?7115ad923cc5b57b06c7c24c5808ce8e57e9dc4e"></script>
+<script src="elementlist.js?d3b04b9153841d150cd793bfb391f6615e44f291"></script>
 </body>
 </html>

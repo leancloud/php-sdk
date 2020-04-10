@@ -60,8 +60,8 @@
 				<li><a href="class-LeanCloud.Client.html">Client</a></li>
 				<li><a href="class-LeanCloud.File.html">File</a></li>
 				<li><a href="class-LeanCloud.GeoPoint.html">GeoPoint</a></li>
+				<li><a href="class-LeanCloud.LeanObject.html">LeanObject</a></li>
 				<li><a href="class-LeanCloud.MIMEType.html">MIMEType</a></li>
-				<li><a href="class-LeanCloud.Object.html">Object</a></li>
 				<li><a href="class-LeanCloud.Push.html">Push</a></li>
 				<li class="active"><a href="class-LeanCloud.Query.html">Query</a></li>
 				<li><a href="class-LeanCloud.Region.html">Region</a></li>
@@ -135,7 +135,7 @@
 		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
 		
 
-			<b>Located at</b> <a href="source-class-LeanCloud.Query.html#7-794" title="Go to source code">LeanCloud/Query.php</a>
+			<b>Located at</b> <a href="source-class-LeanCloud.Query.html#7-791" title="Go to source code">LeanCloud/Query.php</a>
 		<br>
 	</div>
 
@@ -1066,7 +1066,7 @@ for large datasets.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_relatedTo">#</a>
-		<code><a href="source-class-LeanCloud.Query.html#390-403" title="Go to source code">relatedTo</a>( <span>string <var>$key</var></span>, <span><code><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></code> <var>$obj</var></span> )</code>
+		<code><a href="source-class-LeanCloud.Query.html#390-403" title="Go to source code">relatedTo</a>( <span>string <var>$key</var></span>, <span><code><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></code> <var>$obj</var></span> )</code>
 
 		<div class="description short">
 			<p>Relation field related to an object</p>
@@ -1810,7 +1810,7 @@ sending query to cloud.</p>
 		<td class="attributes"><code>
 			 public 
 
-			<code><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></code>
+			<code><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></code>
 			
 			</code>
 		</td>
@@ -1835,7 +1835,7 @@ sending query to cloud.</p>
 
 				<h4>Returns</h4>
 				<div class="list">
-					<code><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></code>
+					<code><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></code>
 				</div>
 
 
@@ -1849,14 +1849,14 @@ sending query to cloud.</p>
 		<td class="attributes"><code>
 			 public 
 
-			<code><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></code>
+			<code><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></code>
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_first">#</a>
-		<code><a href="source-class-LeanCloud.Query.html#708-719" title="Go to source code">first</a>( )</code>
+		<code><a href="source-class-LeanCloud.Query.html#708-716" title="Go to source code">first</a>( )</code>
 
 		<div class="description short">
 			<p>Find the first object by the query</p>
@@ -1869,7 +1869,7 @@ sending query to cloud.</p>
 
 				<h4>Returns</h4>
 				<div class="list">
-					<code><a href="class-LeanCloud.Object.html">LeanCloud\Object</a></code>
+					<code><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></code>
 				</div>
 
 
@@ -1890,7 +1890,7 @@ sending query to cloud.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_find">#</a>
-		<code><a href="source-class-LeanCloud.Query.html#721-749" title="Go to source code">find</a>( <span>integer <var>$skip</var> = -<span class="php-num">1</span></span>, <span>integer <var>$limit</var> = -<span class="php-num">1</span></span> )</code>
+		<code><a href="source-class-LeanCloud.Query.html#718-746" title="Go to source code">find</a>( <span>integer <var>$skip</var> = -<span class="php-num">1</span></span>, <span>integer <var>$limit</var> = -<span class="php-num">1</span></span> )</code>
 
 		<div class="description short">
 			<p>Find and return objects by the query</p>
@@ -1935,7 +1935,7 @@ It does not mutate query.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_count">#</a>
-		<code><a href="source-class-LeanCloud.Query.html#751-762" title="Go to source code">count</a>( )</code>
+		<code><a href="source-class-LeanCloud.Query.html#748-759" title="Go to source code">count</a>( )</code>
 
 		<div class="description short">
 			<p>Count number of objects by the query</p>
@@ -1969,7 +1969,7 @@ It does not mutate query.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_doCloudQuery">#</a>
-		<code><a href="source-class-LeanCloud.Query.html#764-793" title="Go to source code">doCloudQuery</a>( <span>string <var>$cql</var></span>, <span>array <var>$pvalues</var> = <span class="php-keyword1">array</span>()</span> )</code>
+		<code><a href="source-class-LeanCloud.Query.html#761-790" title="Go to source code">doCloudQuery</a>( <span>string <var>$cql</var></span>, <span>array <var>$pvalues</var> = <span class="php-keyword1">array</span>()</span> )</code>
 
 		<div class="description short">
 			<p>Doing a CQL query to retrive objects</p>

@@ -18,7 +18,7 @@ abstract class Region {
      * @param string $name
      */
     public static function fromName($name) {
-        return constant(self::class . "::" . $name);
+        return constant(self::class . "::" . strtoupper($name));
     }
 }
 

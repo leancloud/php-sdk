@@ -4,8 +4,9 @@ use LeanCloud\Client;
 use LeanCloud\ACL;
 use LeanCloud\User;
 use LeanCloud\Role;
+use PHPUnit\Framework\TestCase;
 
-class ACLTest extends PHPUnit_Framework_TestCase {
+class ACLTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
             getenv("LEANCLOUD_APP_ID"),

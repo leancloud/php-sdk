@@ -1,19 +1,45 @@
-Hacking
-----
+# Hacking
+
+## Pull Request
 
 * Get and install [composer](https://getcomposer.org)
 * Fork the SDK from leancloud/php-sdk
 * Run `composer install` to get dependencies
 * Setup app credential in env variables:
 
-```
-export LC_APP_ID=...
-export LC_APP_KEY=...
-export LC_APP_MASTER_KEY=...
-export LC_API_REGION=US
-```
+    ```sh
+    export LC_APP_ID=...
+    export LC_APP_KEY=...
+    export LC_APP_MASTER_KEY=...
+    export LC_API_REGION=US
+    export LEANCLOUD_APP_HOST="127.0.0.1"
+    export LEANCLOUD_APP_PORT=8081
+    export LEANCLOUD_WILDCARD_DOMAIN="lncldglobal.com"
+    ```
 
-* `make test` to run test
-* `make doc` to build documentation
+* Run tests:
+
+    ```sh
+    make test_engine &
+    make test
+    ```
+
+* `make doc` to build documentation (should running on PHP < 7.2)
+
+* Send a pull request at leancloud/php-sdk
 
 Thanks for your contribution!
+
+## Prepare a Release
+
+Make sure all tests are passed.
+
+Run `make doc` and commit auto generated api doc.
+
+Run `make release V=MAJOR.MINOR.PATCH` (e.g. `make release V=0.11.0`),
+and edit `Changelog.md` (git log subjects are for reference only, do not leave them unchanged).
+
+Commit changes and send a pull request at leancloud/php-sdk.
+
+If everything is O.K., the maintainer will merge the pull request, push a new tag, and publish a new release at GitHub.
+Then a new version will be published at Packagist automatically.

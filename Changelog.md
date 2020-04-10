@@ -1,4 +1,57 @@
 
+0.12.0 发布日期：2019-12-30
+----
+
+* 支持平滑推送（`flow_control`）
+* 支持即使通讯服务的 `_rtmClientSign` hook
+* 支持 PHP 7.4
+
+0.11.0 发布日期：2019-10-25
+----
+
+* 支持即时通讯服务新增的 `_clientOnline`、`_clientOffline` 这两个 hook。
+* 支持 PHP 7.3。
+
+0.10.3 发布日期：2019-08-30
+----
+
+* 优化云引擎错误处理
+* 处理中间件中的异常，避免返回 500 内部错误。比如 sessionToken 不合法的异常。
+* 在云引擎错误栈中，打印请求到 API 的 method, url
+
+0.10.2 发布日期：2019-06-24
+----
+
+* 修复 signUpOrLoginByMobilePhone 登录问题
+
+0.10.1 发布日期：2019-06-24
+----
+
+* 修复 signUpOrLoginByMobilePhone 登录问题
+
+0.10.0 发布日期：2019-06-24
+----
+
+- 添加 `User::signUpOrLoginByMobilePhone` 支持手机注册或登录
+
+0.9.0 发布日期：2019-05-23
+----
+
+- 添加 `Cloud::start` 函数，更便捷地初始化云函数服务
+- 添加 `User::logInWithEmail` 函数，支持邮箱密码登录功能
+
+0.8.1 发布日期：2018-09-25
+----
+
+- 修复 `Client::useRegion`
+
+0.8.0 发布日期：2018-06-21
+----
+
+- `Object` 类更名为了 `LeanObject`，兼容 PHP 7.2
+
+当 SDK 运行在 PHP 7.2 以下版本时，会为 `LeanObject` 创建一个别名，继续支持之前使用 `Object` 类的代码，这两个名字实际上指向同一个类，两个类名也可以混用。我们会在 PHP 7.2 以下继续支持 `Object` 一段时间，希望开发者尽快将代码中的 `Object` 改为 `LeanObject`。
+
 0.7.0 发布日期：2018-03-19
 ----
 
@@ -132,4 +185,3 @@ LeanQuery LeanRelation LeanRole LeanUser
 
 0.1.0 发布日期: 2015-10-30
 ----
-

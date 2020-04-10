@@ -1,8 +1,9 @@
 <?php
 
 use LeanCloud\Engine\Cloud;
+use PHPUnit\Framework\TestCase;
 
-class CloudTest extends PHPUnit_Framework_TestCase {
+class CloudTest extends TestCase {
     public function testGetKeys() {
         $name = uniqid();
         Cloud::define($name, function($params, $user) {

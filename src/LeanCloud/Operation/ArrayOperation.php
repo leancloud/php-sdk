@@ -2,6 +2,7 @@
 namespace LeanCloud\Operation;
 
 use LeanCloud\Client;
+use LeanCloud\LeanObject;
 use LeanCloud\Operation\SetOperation;
 use LeanCloud\Operation\DeleteOperation;
 
@@ -112,12 +113,12 @@ class ArrayOperation implements IOperation {
         $newval = $oldval; // New result array
         $found  = array(); // Hash map of objects with objectId as key
         forEach($oldval as $obj) {
-            if (($obj instanceof Object) && ($obj->getObjectId())) {
+            if (($obj instanceof LeanObject) && ($obj->getObjectId())) {
                 $found[$obj->getObjectId()] = true;
             }
         }
         forEach($this->getValue() as $obj) {
-            if (($obj instanceof Object) && ($obj->getObjectId())) {
+            if (($obj instanceof LeanObject) && ($obj->getObjectId())) {
                 if (isset($found[$obj->getObjectId()])) {
                     // skip duplicate object
                 } else {

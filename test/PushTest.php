@@ -3,8 +3,9 @@
 use LeanCloud\Client;
 use LeanCloud\Query;
 use LeanCloud\Push;
+use PHPUnit\Framework\TestCase;
 
-class PushTest extends PHPUnit_Framework_TestCase {
+class PushTest extends TestCase {
 
     public function setUp() {
         Client::initialize(
@@ -135,6 +136,15 @@ class PushTest extends PHPUnit_Framework_TestCase {
                 '$lt' => Client::encode($date)
             )
         ), $out["where"]);
+    }
+
+    public function testSetFlowControl() {
+        $push = new Push(array(
+            "alert" => "Hello world!"
+        ));
+        $push->setFlowControl(3000);
+        $out = $push->encode();
+        $this->assertEquals(3000, $out["flow_control"]);
     }
 
     public function testSendPush() {
