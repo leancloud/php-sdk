@@ -4,6 +4,7 @@ test:
 
 release:
 	./release.sh $V
+	make doc
 
 doc:
 	vendor/bin/apigen generate --source src --destination docs
