@@ -385,7 +385,7 @@ class File {
                 $uploader = SimpleUploader::createUploader($resp["provider"]);
                 $uploader->initialize($resp["upload_url"], $resp["token"]);
                 $uploader->upload($this->_source, $this->getMimeType(), $key);
-                $callbackParams["result"] = false;
+                $callbackParams["result"] = true;
             } catch (\Exception $ex) {
                 $callbackParams["result"] = false;
                 throw $ex;
@@ -450,4 +450,3 @@ class File {
         );
     }
 }
-
