@@ -1,4 +1,26 @@
 
+0.12.0 发布日期：2020-04-20
+----
+Merge pull request #134 from juvenn/file-callback
+Merge branch 'master' into file-callback
+fix(file): typo
+Merge pull request #172 from juvenn/feat/auto-doc
+remove docs before building
+Merge branch 'master' into feat/auto-doc
+Merge pull request #203 from weakish/convAddedRemovedHook
+feat(engine): _conversationAdded/Removed hooks
+Merge pull request #201 from weakish/prepare-release-0.12.0
+docs: update doc via apigen
+docs: prepare to release 0.12.0
+Merge pull request #200 from leancloud/php-7.4
+:heavy_plus_sign: Run tests on PHP 7.4
+feat: add _rtmClientSign hook (#199)
+feat: add _rtmClientSign hook
+feat: smooth push (flow_control) (#196)
+feat: smooth push (flow_control)
+Update doc when release
+Invoke fileCallback after file uploaded (or failed so)
+
 0.12.0 发布日期：2019-12-30
 ----
 

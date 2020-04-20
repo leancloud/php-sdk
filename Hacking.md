@@ -34,8 +34,6 @@ Thanks for your contribution!
 
 Make sure all tests are passed.
 
-Run `make doc` and commit auto generated api doc.
-
 Run `make release V=MAJOR.MINOR.PATCH` (e.g. `make release V=0.11.0`),
 and edit `Changelog.md` (git log subjects are for reference only, do not leave them unchanged).
 
