@@ -1,8 +1,9 @@
 <?php
 
 use LeanCloud\Storage\SessionStorage;
+use PHPUnit\Framework\TestCase;
 
-class StorageTest extends PHPUnit_Framework_TestCase {
+class StorageTest extends TestCase {
 
     public function testSessionStorage() {
         $storage = new SessionStorage();

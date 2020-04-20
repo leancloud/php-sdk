@@ -1,7 +1,6 @@
 <?php
 namespace LeanCloud;
 
-use LeanCloud\Object;
 use LeanCloud\Client;
 use LeanCloud\CloudException;
 use LeanCloud\MIMEType;

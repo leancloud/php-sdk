@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class LeanCloud\Relation</title>
+
+	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.html">
+						LeanCloud<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-LeanCloud.Engine.html">
+						Engine					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Operation.html">
+						Operation					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Storage.html">
+						Storage					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Uploader.html">
+						Uploader					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-LeanCloud.ACL.html">ACL</a></li>
+				<li><a href="class-LeanCloud.AppRouter.html">AppRouter</a></li>
+				<li><a href="class-LeanCloud.Bytes.html">Bytes</a></li>
+				<li><a href="class-LeanCloud.Client.html">Client</a></li>
+				<li><a href="class-LeanCloud.File.html">File</a></li>
+				<li><a href="class-LeanCloud.GeoPoint.html">GeoPoint</a></li>
+				<li><a href="class-LeanCloud.LeanObject.html">LeanObject</a></li>
+				<li><a href="class-LeanCloud.MIMEType.html">MIMEType</a></li>
+				<li><a href="class-LeanCloud.Push.html">Push</a></li>
+				<li><a href="class-LeanCloud.Query.html">Query</a></li>
+				<li><a href="class-LeanCloud.Region.html">Region</a></li>
+				<li class="active"><a href="class-LeanCloud.Relation.html">Relation</a></li>
+				<li><a href="class-LeanCloud.Role.html">Role</a></li>
+				<li><a href="class-LeanCloud.RouteCache.html">RouteCache</a></li>
+				<li><a href="class-LeanCloud.SaveOption.html">SaveOption</a></li>
+				<li><a href="class-LeanCloud.SMS.html">SMS</a></li>
+				<li><a href="class-LeanCloud.User.html">User</a></li>
+			</ul>
+
+
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-LeanCloud.BatchRequestError.html">BatchRequestError</a></li>
+				<li><a href="class-LeanCloud.CloudException.html">CloudException</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-LeanCloud.html" title="Summary of LeanCloud"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Relation</h1>
+
+
+	<div class="description">
+	<p>Many-to-many relationship for LeanObject</p>
+
+<p>A relation consists of an array of objects, of which items can be
+added to, and removed from. Each field could only have one kind of
+object.</p>
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-LeanCloud.Relation.html#7-145" title="Go to source code">LeanCloud/Relation.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-LeanCloud.Relation.html#36-50" title="Go to source code">__construct</a>( <span><code><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></code> <var>$parent</var></span>, <span>string <var>$key</var></span>, <span>string <var>$className</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Initialize relation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Initialize relation</p>
+
+<p>Build a relation on parent field. It shall be rarely used
+directly, use <code>$parent-&gt;getRelation($key)</code> instead.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$parent</var></dt>
+					<dd>Parent object</dd>
+					<dt><var>$key</var></dt>
+					<dd>Field key on parent object</dd>
+					<dt><var>$className</var></dt>
+					<dd>ClassName the object relatedTo</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="encode" id="_encode">
+
+		<td class="attributes"><code>
+			 public 
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_encode">#</a>
+		<code><a href="source-class-LeanCloud.Relation.html#52-60" title="Go to source code">encode</a>( )</code>
+
+		<div class="description short">
+			<p>Encode to JSON representation of relation.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Encode to JSON representation of relation.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					array
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setParentAndKey" id="_setParentAndKey">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setParentAndKey">#</a>
+		<code><a href="source-class-LeanCloud.Relation.html#62-78" title="Go to source code">setParentAndKey</a>( <span><code><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></code> <var>$parent</var></span>, <span>string <var>$key</var></span> )</code>
+
+		<div class="description short">
+			<p>Attempt to set and validate parent of relation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Attempt to set and validate parent of relation</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$parent</var></dt>
+					<dd>Parent object of relation</dd>
+					<dt><var>$key</var></dt>
+					<dd>Field key</dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					RuntimeException
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getTargetClassName" id="_getTargetClassName">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getTargetClassName">#</a>
+		<code><a href="source-class-LeanCloud.Relation.html#80-87" title="Go to source code">getTargetClassName</a>( )</code>
+
+		<div class="description short">
+			<p>Get target className of relation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get target className of relation</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="add" id="_add">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_add">#</a>
+		<code><a href="source-class-LeanCloud.Relation.html#89-101" title="Go to source code">add</a>( <span>object|array <var>$objects</var></span> )</code>
+
+		<div class="description short">
+			<p>Add object(s) to the field as relation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Add object(s) to the field as relation</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$objects</var></dt>
+					<dd>LeanObject(s) to add</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="remove" id="_remove">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_remove">#</a>
+		<code><a href="source-class-LeanCloud.Relation.html#103-115" title="Go to source code">remove</a>( <span>object|array <var>$objects</var></span> )</code>
+
+		<div class="description short">
+			<p>Remove object(s) from the field</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Remove object(s) from the field</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$objects</var></dt>
+					<dd>LeanObject(s) to remove</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getQuery" id="_getQuery">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Query.html">LeanCloud\Query</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getQuery">#</a>
+		<code><a href="source-class-LeanCloud.Relation.html#117-131" title="Go to source code">getQuery</a>( )</code>
+
+		<div class="description short">
+			<p>Query on the target class of relation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Query on the target class of relation</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Query.html">LeanCloud\Query</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getReverseQuery" id="_getReverseQuery">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Query.html">LeanCloud\Query</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getReverseQuery">#</a>
+		<code><a href="source-class-LeanCloud.Relation.html#133-143" title="Go to source code">getReverseQuery</a>( <span><code><a href="class-LeanCloud.LeanObject.html">LeanCloud\LeanObject</a></code> <var>$child</var></span> )</code>
+
+		<div class="description short">
+			<p>Query on the parent class where child is in the relation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Query on the parent class where child is in the relation</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$child</var></dt>
+					<dd>Child object</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Query.html">LeanCloud\Query</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

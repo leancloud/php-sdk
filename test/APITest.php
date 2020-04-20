@@ -1,18 +1,20 @@
 <?php
+
 use LeanCloud\Client;
 use LeanCloud\CloudException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testing API behaviors
  */
 
-class LeanAPITest extends PHPUnit_Framework_TestCase {
+class LeanAPITest extends TestCase {
     public function setUp() {
         Client::initialize(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY"),
-            getenv("LC_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LC_API_REGION"));
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+
     }
 
     public function testIncrementOnStringField() {
@@ -20,7 +22,7 @@ class LeanAPITest extends PHPUnit_Framework_TestCase {
         $resp = Client::post("/classes/TestObject", $obj);
 
         $this->setExpectedException("LeanCloud\CloudException",
-                                    "111 Invalid value type for field", 111);
+                                    "Invalid value type for field", 111);
         $resp2 = Client::put("/classes/TestObject/" . $resp["objectId"],
                                  array("name" => array("__op" => "Increment",
                                                        "amount" => 1)));

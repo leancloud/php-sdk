@@ -1,8 +1,9 @@
 <?php
 
 use LeanCloud\GeoPoint;
+use PHPUnit\Framework\TestCase;
 
-class GeoPointTest extends PHPUnit_Framework_TestCase {
+class GeoPointTest extends TestCase {
 
     public function testInitializeDefaultGeoPoint() {
         $point = new GeoPoint();

@@ -15,8 +15,8 @@ class BatchRequestError extends CloudException {
      *
      * @var array
      */
-    private $errors;
-    
+    private $errors = [];
+
     public function __construct($message="", $code = 1) {
         $message = empty($message) ? "Batch request error." : $message;
         parent::__construct($message, $code);
@@ -73,7 +73,7 @@ class BatchRequestError extends CloudException {
     public function __toString() {
         $message = $this->message;
         if (!$this->isEmpty()) {
-            $message .= json_encode($this-errors);
+            $message .= json_encode($this->errors);
         }
         return __CLASS__ . ": [{$this->code}]: {$message}\n";
     }

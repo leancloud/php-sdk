@@ -3,8 +3,19 @@
 use LeanCloud\Client;
 use LeanCloud\Query;
 use LeanCloud\Push;
+use PHPUnit\Framework\TestCase;
 
-class PushTest extends PHPUnit_Framework_TestCase {
+class PushTest extends TestCase {
+
+    public function setUp() {
+        Client::initialize(
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+
+        Client::useMasterKey(false);
+    }
+
     public function testMessageEncode() {
         $data = array(
             "alert" => "Hello world!",
@@ -87,7 +98,8 @@ class PushTest extends PHPUnit_Framework_TestCase {
         $time = new DateTime();
         $push->setPushTime($time);
         $out = $push->encode();
-        $this->assertEquals($time, $out["push_time"]);
+        $time2 = new DateTime($out["push_time"]);
+        $this->assertEquals($time->getTimestamp(), $time2->getTimestamp());
     }
 
     public function testSetExpirationInterval() {
@@ -106,7 +118,8 @@ class PushTest extends PHPUnit_Framework_TestCase {
         $date = new DateTime();
         $push->setExpirationTime($date);
         $out = $push->encode();
-        $this->assertEquals($date, $out["expiration_time"]);
+        $date2 = new DateTime($out["expiration_time"]);
+        $this->assertEquals($date->getTimestamp(), $date2->getTimestamp());
     }
 
     public function testSetWhere() {
@@ -123,5 +136,29 @@ class PushTest extends PHPUnit_Framework_TestCase {
                 '$lt' => Client::encode($date)
             )
         ), $out["where"]);
+    }
+
+    public function testSetFlowControl() {
+        $push = new Push(array(
+            "alert" => "Hello world!"
+        ));
+        $push->setFlowControl(3000);
+        $out = $push->encode();
+        $this->assertEquals(3000, $out["flow_control"]);
+    }
+
+    public function testSendPush() {
+        $push = new Push(array(
+            "alert" => "Hello world!"
+        ));
+        $query = new Query("_Installation");
+        $query->equalTo("deviceType", "Android");
+        $push->setWhere($query);
+
+        $at = new DateTime();
+        $at->add(new DateInterval("P1D"));
+        $push->setPushTime($at);
+
+        // $push->send();
     }
 }

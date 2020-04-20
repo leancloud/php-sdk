@@ -3,6 +3,7 @@
 use LeanCloud\Client;
 use LeanCloud\CloudException;
 use LeanCloud\User;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test LeanEngine app server
@@ -11,23 +12,23 @@ use LeanCloud\User;
  * see that for returned response.
  */
 
-class LeanEngineTest extends PHPUnit_Framework_TestCase {
+class LeanEngineTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY"),
-            getenv("LC_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LC_API_REGION"));
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+
         User::clearCurrentUser();
     }
 
     private function request($url, $method, $data=null) {
-        $appUrl = "http://" . getenv("LC_APP_HOST") . ":" .
-                getenv("LC_APP_PORT");
+        $appUrl = "http://" . getenv("LEANCLOUD_APP_HOST") . ":" .
+                getenv("LEANCLOUD_APP_PORT");
         $url = $appUrl . $url;
         $headers = Client::buildHeaders(null, true);
         $headers["Content-Type"] = "application/json;charset=utf-8";
-        $headers["Origin"] = getenv("LC_APP_HOST"); // emulate CORS
+        $headers["Origin"] = getenv("LEANCLOUD_APP_HOST"); // emulate CORS
         $h = array_map(
             function($k, $v) {return "$k: $v";},
             array_keys($headers),
@@ -49,6 +50,7 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         }
         $resp = curl_exec($req);
         $errno = curl_errno($req);
+        $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         curl_close($req);
         if ($errno > 0) {
             throw new \RuntimeException("CURL connection error $errno: $url");
@@ -56,7 +58,8 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         $data = json_decode($resp, true);
         if (isset($data["error"])) {
             $code = isset($data["code"]) ? $data["code"] : -1;
-            throw new CloudException("{$code} {$data['error']}", $code);
+            throw new CloudException("{$data['error']}", $code, $respCode,
+                                     $method, $url);
         }
         return $data;
     }
@@ -67,7 +70,7 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
         }
         $hash = hash_hmac("sha1",
                           "{$hookName}:{$msec}",
-                          getenv("LC_APP_MASTER_KEY"));
+                          getenv("LEANCLOUD_APP_MASTER_KEY"));
         return "{$msec},{$hash}";
     }
 
@@ -154,18 +157,21 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
 
     public function testBeforeSave() {
         $obj = array(
-            "__type"    => "Object",
-            "className" => "TestObject",
-            "objectId"  => "id002",
             "name"      => "alice",
+            "likes"     => array(
+                "__type"    => "Pointer",
+                "className" => "TestObject",
+                "objectId"  => "id002"
+            ),
             "__before"  => $this->signHook("__before_for_TestObject")
         );
         $resp = $this->request("/1/functions/TestObject/beforeSave", "POST",
                                array("object" => $obj));
         $obj2 = $resp;
-        $this->assertEquals($obj["objectId"], $obj2["objectId"]);
         $this->assertEquals($obj["name"],     $obj2["name"]);
         $this->assertEquals(42,               $obj2["__testKey"]);
+        $this->assertEquals("Pointer",        $obj2["likes"]["__type"]);
+        $this->assertEquals("id002",          $obj2["likes"]["objectId"]);
     }
 
     public function testAfterSave() {
@@ -204,6 +210,16 @@ class LeanEngineTest extends PHPUnit_Framework_TestCase {
             "__sign"   => $this->signHook("_messageReceived")
         ));
         $this->assertEquals(false, $resp["result"]["drop"]);
+    }
+
+    public function testFunctionError() {
+        try {
+            $this->request("/1.1/functions/customError", "POST", array());
+        } catch (CloudException $ex) {
+            $this->assertEquals("My custom error.", $ex->getMessage());
+            $this->assertEquals(1, $ex->getCode());
+            $this->assertEquals(500, $ex->status);
+        }
     }
 
 }

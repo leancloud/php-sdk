@@ -1,7 +1,7 @@
 <?php
 
 use LeanCloud\Client;
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\Bytes;
 use LeanCloud\User;
 use LeanCloud\File;
@@ -10,61 +10,56 @@ use LeanCloud\ACL;
 use LeanCloud\GeoPoint;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
+use PHPUnit\Framework\TestCase;
 
-class ClientTest extends PHPUnit_Framework_TestCase {
+class ClientTest extends TestCase {
     public function setUp() {
         Client::initialize(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY"),
-            getenv("LC_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LC_API_REGION"));
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+
         Client::useMasterKey(false);
     }
 
-    public function testGetAPIEndpoint() {
-        Client::useRegion("CN");
-        $this->assertEquals(Client::getAPIEndpoint(),
-                            "https://api.leancloud.cn/1.1");
-    }
+    public function testAPIEndPoint() {
+        $url = getenv("LEANCLOUD_API_SERVER");
+        $this->assertEquals("{$url}/1.1", Client::getAPIEndPoint());
 
-    public function testUseInvalidRegion() {
-        $this->setExpectedException("RuntimeException", "Invalid API region");
-        Client::useRegion("cn-bla");
-    }
+        Client::setServerURL("https://hello.api.lncld.net");
+        $this->assertEquals("https://hello.api.lncld.net/1.1", Client::getAPIEndPoint());
+        Client::setServerURL(null);
 
-    public function testUseRegion() {
-        Client::useRegion("US");
-        $this->assertEquals(Client::getAPIEndpoint(),
-                            "https://us-api.leancloud.cn/1.1");
+        $this->assertEquals("{$url}/1.1", Client::getAPIEndPoint());
     }
 
     public function testVerifyKey() {
         $result = Client::verifyKey(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY")
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY")
         );
         $this->assertTrue($result);
     }
 
     # public function testVerifyKeyMaster() {
     #     $result = Client::verifyKey(
-    #         getenv("LC_APP_ID"),
-    #         getenv("LC_APP_MASTER_KEY") . ",master"
+    #         getenv("LEANCLOUD_APP_ID"),
+    #         getenv("LEANCLOUD_APP_MASTER_KEY") . ",master"
     #     );
     #     $this->assertTrue($result);
     # }
 
     public function testVerifySign() {
         $time = time();
-        $sign = md5($time . getenv("LC_APP_KEY")) . ",{$time}";
-        $result = Client::verifySign(getenv("LC_APP_ID"), $sign);
+        $sign = md5($time . getenv("LEANCLOUD_APP_KEY")) . ",{$time}";
+        $result = Client::verifySign(getenv("LEANCLOUD_APP_ID"), $sign);
         $this->assertTrue($result);
     }
 
     public function testVerifySignMaster() {
         $time = time();
-        $sign = md5($time . getenv("LC_APP_MASTER_KEY")) . ",{$time},master";
-        $result = Client::verifySign(getenv("LC_APP_ID"), $sign);
+        $sign = md5($time . getenv("LEANCLOUD_APP_MASTER_KEY")) . ",{$time},master";
+        $result = Client::verifySign(getenv("LEANCLOUD_APP_ID"), $sign);
         $this->assertTrue($result);
     }
 
@@ -98,7 +93,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testRequestUnauthorized() {
-        Client::initialize(getenv("LC_APP_ID"),
+        Client::initialize(getenv("LEANCLOUD_APP_ID"),
                                "invalid key",
                                "invalid master key");
         $this->setExpectedException("LeanCloud\CloudException", "Unauthorized");
@@ -181,7 +176,9 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         $date = new DateTime();
         $type = array("__type" => "Date",
                       "iso" => Client::formatDate($date));
-        $this->assertEquals($date, Client::decode($type, null));
+        $date2 = Client::decode($type, null);
+        $this->assertEquals($date->getTimestamp(),
+                            $date2->getTimestamp());
     }
 
     public function testDecodeDateWithTimeZone() {
@@ -191,7 +188,9 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             $date = new DateTime("now", new DateTimeZone($zone));
             $type = array("__type" => "Date",
                           "iso" => Client::formatDate($date));
-            $this->assertEquals($date, Client::decode($type, null));
+            $date2 = Client::decode($type, null);
+            $this->assertEquals($date->getTimestamp(),
+                                $date2->getTimestamp());
         }
     }
 
@@ -209,7 +208,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
                       "objectId" => "abc101");
         $val  = Client::decode($type, null);
 
-        $this->assertTrue($val instanceof Object);
+        $this->assertTrue($val instanceof LeanObject);
         $this->assertEquals("TestObject", $val->getClassName());
     }
 
@@ -221,7 +220,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
                       "tags"      => array("fiction", "bar"));
         $val  = Client::decode($type, null);
 
-        $this->assertTrue($val instanceof Object);
+        $this->assertTrue($val instanceof LeanObject);
         $this->assertEquals("TestObject", $val->getClassName());
         $this->assertEquals($type["name"], $val->get("name"));
         $this->assertEquals($type["tags"], $val->get("tags"));
@@ -308,12 +307,12 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             )
         );
         $val = Client::decode($type, null);
-        $this->assertTrue($val instanceof Object);
+        $this->assertTrue($val instanceof LeanObject);
         $this->assertEquals('alice', $val->get('name'));
         $this->assertTrue($val->getACL() instanceof ACL);
 
         $parent = $val->get("parent");
-        $this->assertTrue($parent instanceof Object);
+        $this->assertTrue($parent instanceof LeanObject);
         $this->assertEquals('jill', $parent->get('name'));
         $this->assertTrue($parent->getACL() instanceof ACL);
     }
@@ -331,7 +330,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             'className' => 'TestObject',
             'objectId' => '5682bd'
         ), 0);
-        $this->assertTrue($val instanceof Object);
+        $this->assertTrue($val instanceof LeanObject);
     }
 
     public function testDecodeGeoPoint() {
@@ -347,7 +346,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEncodeRelation() {
-        $a = new Object("TestObject", "id001");
+        $a = new LeanObject("TestObject", "id001");
         $rel = $a->getRelation("likes");
         $out = Client::encode($rel);
         $this->assertEquals("Relation",
@@ -355,8 +354,8 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEncodeObjectToJSON() {
-        $a = new Object("TestObject", "id001");
-        $b = new Object("TestObject", "id002");
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
         $a->set("name", "A");
         $b->set("name", "B");
         $a->addIn("likes", $b);
@@ -375,8 +374,8 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEncodeObjectToFullJSON() {
-        $a = new Object("TestObject", "id001");
-        $b = new Object("TestObject", "id002");
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
         $a->set("name", "A");
         $b->set("name", "B");
         $a->addIn("likes", $b);
@@ -393,9 +392,9 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testEncodeCircularObjectAsPointer() {
-        $a = new Object("TestObject", "id001");
-        $b = new Object("TestObject", "id002");
-        $c = new Object("TestObject", "id003");
+        $a = new LeanObject("TestObject", "id001");
+        $b = new LeanObject("TestObject", "id002");
+        $c = new LeanObject("TestObject", "id003");
         $a->set("name", "A");
         $b->set("name", "B");
         $c->set("name", "C");
@@ -425,8 +424,8 @@ class ClientTest extends PHPUnit_Framework_TestCase {
             )
         );
         $a = Client::decode($json, null);
-        $this->assertTrue($a instanceof Object);
-        $this->assertTrue($a->get("likes") instanceof Object);
+        $this->assertTrue($a instanceof LeanObject);
+        $this->assertTrue($a->get("likes") instanceof LeanObject);
 
         $out = $a->toFullJSON();
         $this->assertEquals("A", $out["name"]);

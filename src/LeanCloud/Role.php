@@ -18,7 +18,7 @@ namespace LeanCloud;
  *
  * @see ACL, Relation
  */
-class Role extends Object {
+class Role extends LeanObject {
     /**
      * Table name on LeanCloud
      * @var string

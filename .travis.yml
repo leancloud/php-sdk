@@ -1,20 +1,23 @@
 language: php
 
 php:
-  - 5.4
-  - 5.5
-  - 7.0
+    - 5.6
+    - 7.0
+    - 7.1
+    - 7.2
+    - 7.3
+    - 7.4
 
 env:
-  - LC_API_REGION=US LC_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LC_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LC_APP_HOST=127.0.0.1 LC_APP_PORT=8081
+    - LEANCLOUD_API_SERVER="https://us.avoscloud.com" LEANCLOUD_APP_ID=wnDg0lPt0wcYGJSiHRwHBhD4 LEANCLOUD_APP_KEY=u9ekx9HFSFFBErWwyWHFmPDy LEANCLOUD_REGION=US LEANCLOUD_APP_HOST="127.0.0.1" LEANCLOUD_APP_PORT=8081 LEANCLOUD_WILDCARD_DOMAIN="lncldglobal.com"
+
+install:
+    - composer install
 
 script:
-  - "make test_engine &"
-  - phpunit --coverage-clover=coverage.xml test
+    - "make test_engine &"
+    - "php -r 'exit(PHP_VERSION_ID >= 70200 ? 0 : 1);' || vendor/bin/phpunit test/Php72ObjectDeprecated.php"
+    - "./vendor/bin/phpunit --coverage-clover=coverage.xml test"
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
-notifications:
-  webhooks: https://hook.bearychat.com/=bw52Y/travis/6e26f4422b2871c20a5b2d40e1d49f73
-
+    - bash <(curl -s https://codecov.io/bash)

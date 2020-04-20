@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class LeanCloud\Operation\RelationOperation</title>
+
+	<link rel="stylesheet" href="resources/style.css?c2f33731c1948fbed7c333554678bfa68d4817da">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-LeanCloud.html">
+						LeanCloud<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-LeanCloud.Engine.html">
+						Engine					</a>
+
+						</li>
+				<li class="active">
+					<a href="namespace-LeanCloud.Operation.html">
+						Operation					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Storage.html">
+						Storage					</a>
+
+						</li>
+				<li>
+					<a href="namespace-LeanCloud.Uploader.html">
+						Uploader					</a>
+
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-LeanCloud.Operation.ArrayOperation.html">ArrayOperation</a></li>
+				<li><a href="class-LeanCloud.Operation.DeleteOperation.html">DeleteOperation</a></li>
+				<li><a href="class-LeanCloud.Operation.IncrementOperation.html">IncrementOperation</a></li>
+				<li class="active"><a href="class-LeanCloud.Operation.RelationOperation.html">RelationOperation</a></li>
+				<li><a href="class-LeanCloud.Operation.SetOperation.html">SetOperation</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li><a href="class-LeanCloud.Operation.IOperation.html">IOperation</a></li>
+			</ul>
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-LeanCloud.Operation.html" title="Summary of LeanCloud\Operation"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class RelationOperation</h1>
+
+
+	<div class="description">
+	<p>Relation operation</p>
+
+<p>Operation that supports adding and removing objects from <code>Relation</code>.</p>
+	</div>
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+<b><span>LeanCloud\Operation\RelationOperation</span></b>			
+			 implements 
+				<a href="class-LeanCloud.Operation.IOperation.html"><span>LeanCloud\Operation\IOperation</span></a>
+			
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a>\<a href="namespace-LeanCloud.Operation.html">Operation</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-LeanCloud.Operation.RelationOperation.html#6-197" title="Go to source code">LeanCloud/Operation/RelationOperation.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-LeanCloud.Operation.RelationOperation.html#40-56" title="Go to source code">__construct</a>( <span>string <var>$key</var></span>, <span>array <var>$adds</var></span>, <span>array <var>$removes</var></span> )</code>
+
+		<div class="description short">
+			<p>Initialize relation operation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Initialize relation operation</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$key</var></dt>
+					<dd>Field key</dd>
+					<dt><var>$adds</var></dt>
+					<dd>The objects to add</dd>
+					<dt><var>$removes</var></dt>
+					<dd>The objects to remove</dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					RuntimeException
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getKey" id="_getKey">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getKey">#</a>
+		<code><a href="source-class-LeanCloud.Operation.RelationOperation.html#58-65" title="Go to source code">getKey</a>( )</code>
+
+		<div class="description short">
+			<p>Get key of field the operation applies to.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get key of field the operation applies to.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getTargetClassName" id="_getTargetClassName">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getTargetClassName">#</a>
+		<code><a href="source-class-LeanCloud.Operation.RelationOperation.html#67-74" title="Go to source code">getTargetClassName</a>( )</code>
+
+		<div class="description short">
+			<p>Get target className of relation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get target className of relation</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="encode" id="_encode">
+
+		<td class="attributes"><code>
+			 public 
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_encode">#</a>
+		<code><a href="source-class-LeanCloud.Operation.RelationOperation.html#76-101" title="Go to source code">encode</a>( )</code>
+
+		<div class="description short">
+			<p>Encode to JSON represented operation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Encode to JSON represented operation</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					array
+				</div>
+
+
+
+
+				<h4>Implementation of</h4>
+				<div class="list"><code><a href="class-LeanCloud.Operation.IOperation.html#_encode">LeanCloud\Operation\IOperation::encode()</a></code></div>
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="applyOn" id="_applyOn">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Relation.html">LeanCloud\Relation</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_applyOn">#</a>
+		<code><a href="source-class-LeanCloud.Operation.RelationOperation.html#155-174" title="Go to source code">applyOn</a>( <span><code><a href="class-LeanCloud.Relation.html">LeanCloud\Relation</a></code> <var>$relation</var></span>, <span>LeanObject <var>$object</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Apply the operation on previous relation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Apply the operation on previous relation</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$relation</var></dt>
+					<dd>Previous relation</dd>
+					<dt><var>$object</var></dt>
+					<dd>Parent of relation</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Relation.html">LeanCloud\Relation</a></code>
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					RuntimeException
+				</div>
+
+
+
+				<h4>Implementation of</h4>
+				<div class="list"><code><a href="class-LeanCloud.Operation.IOperation.html#_applyOn">LeanCloud\Operation\IOperation::applyOn()</a></code></div>
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="mergeWith" id="_mergeWith">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-LeanCloud.Operation.IOperation.html">LeanCloud\Operation\IOperation</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_mergeWith">#</a>
+		<code><a href="source-class-LeanCloud.Operation.RelationOperation.html#176-196" title="Go to source code">mergeWith</a>( <span><code><a href="class-LeanCloud.Operation.IOperation.html">LeanCloud\Operation\IOperation</a></code> <var>$prevOp</var></span> )</code>
+
+		<div class="description short">
+			<p>Merge with (previous) operation</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Merge with (previous) operation</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$prevOp</var></dt>
+					<dd>Previous operation</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.Operation.IOperation.html">LeanCloud\Operation\IOperation</a></code>
+				</div>
+
+
+
+
+				<h4>Implementation of</h4>
+				<div class="list"><code><a href="class-LeanCloud.Operation.IOperation.html#_mergeWith">LeanCloud\Operation\IOperation::mergeWith()</a></code></div>
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

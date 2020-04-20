@@ -56,7 +56,7 @@ class QiniuUploader extends SimpleUploader {
         $resp     = curl_exec($ch);
         $respCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $respType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        $error    = curl_errno($ch);
+        $error    = curl_error($ch);
         $errno    = curl_errno($ch);
         curl_close($ch);
 

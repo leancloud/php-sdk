@@ -139,6 +139,18 @@ class Push {
     }
 
     /**
+     * Enable smooth push for message
+     *
+     * @param int $flowControl clients to push per second,
+     *                         a value <1000 is equivalent to 1000.
+     * @return self
+     * @see self::setOption()
+     */
+    public function setFlowControl($flowControl) {
+        return $this->setOption("flow_control", $flowControl);
+    }
+
+    /**
      * Encode to JSON representation
      *
      * @return array
@@ -146,6 +158,16 @@ class Push {
     public function encode() {
         $out = $this->options;
         $out["data"] = $this->data;
+        $expire = isset($this->options["expiration_time"]) ? $this->options["expiration_time"] : null;
+        if (($expire instanceof \DateTime) ||
+            ($expire instanceof \DateTimeImmutable)) {
+            $out["expiration_time"] = Client::formatDate($expire);
+        }
+        $pushTime = isset($this->options["push_time"]) ? $this->options["push_time"] : null;
+        if (($pushTime instanceof \DateTime) ||
+            ($pushTime instanceof \DateTimeImmutable)){
+            $out["push_time"] = Client::formatDate($pushTime);
+        }
         if (isset($this->options["where"])) {
             $query = $this->options["where"]->encode();
             $out["where"] = json_decode($query["where"], true);

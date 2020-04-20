@@ -131,7 +131,7 @@ class LeanEngine {
             "code"  => $code,
             "error" => $message
         ));
-        $this->withHeader("Content-Type", "application/json; charset=utf-8;")
+        $this->withHeader("Content-Type", "application; charset=utf-8;")
             ->send($data, $status);
     }
 
@@ -139,7 +139,7 @@ class LeanEngine {
      * Retrieve header value with multiple version of keys
      *
      * @param array $keys Keys in order
-     * @retrun mixed
+     * @return mixed
      */
     private function retrieveHeader($keys) {
         $val = null;
@@ -299,6 +299,12 @@ class LeanEngine {
         $this->renderError("Unauthorized", 401, 401);
     }
 
+    private function verifyHookSign($hookName, $sign){
+        if (Client::verifyHookSign($hookName, $sign)) return true;
+        error_log("Invalid hook sign for {$hookName}");
+        $this->renderError("Unauthorized", 142, 401);
+    }
+
     /**
      * Set user session if sessionToken present
      */
@@ -329,7 +335,7 @@ class LeanEngine {
      * @param string $method Request method
      * @param string $url    Request url
      */
-    protected function dispatch($method, $url) {
+    private function __dispatch($method, $url) {
         if (static::$useHttpsRedirect) {
             $this->httpsRedirect();
         }
@@ -387,32 +393,26 @@ class LeanEngine {
             // extract func params from path:
             // /1.1/call/{0}/{1}
             $funcParams = explode("/", ltrim($pathParts["extra"], "/"));
-            try {
-                if (count($funcParams) == 1) {
-                    // {1,1.1}/functions/{funcName}
-                    $this->dispatchFunc($funcParams[0], $json,
-                                        $pathParts["endpoint"] === "call");
-                } else {
-                    if ($funcParams[0] == "onVerified") {
-                        // {1,1.1}/functions/onVerified/sms
-                        $this->dispatchOnVerified($funcParams[1], $json);
-                    } else if ($funcParams[0] == "_User" &&
-                               $funcParams[1] == "onLogin") {
-                        // {1,1.1}/functions/_User/onLogin
-                        $this->dispatchOnLogin($json);
-                    } else if ($funcParams[0] == "BigQuery" ||
-                               $funcParams[0] == "Insight") {
-                        // {1,1.1}/functions/Insight/onComplete
-                        $this->dispatchOnInsight($json);
-                    } else if (count($funcParams) == 2) {
-                        // {1,1.1}/functions/{className}/beforeSave
-                        $this->dispatchHook($funcParams[0], $funcParams[1], $json);
-                    }
+            if (count($funcParams) == 1) {
+                // {1,1.1}/functions/{funcName}
+                $this->dispatchFunc($funcParams[0], $json,
+                                    $pathParts["endpoint"] === "call");
+            } else {
+                if ($funcParams[0] == "onVerified") {
+                    // {1,1.1}/functions/onVerified/sms
+                    $this->dispatchOnVerified($funcParams[1], $json);
+                } else if ($funcParams[0] == "_User" &&
+                           $funcParams[1] == "onLogin") {
+                    // {1,1.1}/functions/_User/onLogin
+                    $this->dispatchOnLogin($json);
+                } else if ($funcParams[0] == "BigQuery" ||
+                           $funcParams[0] == "Insight") {
+                    // {1,1.1}/functions/Insight/onComplete
+                    $this->dispatchOnInsight($json);
+                } else if (count($funcParams) == 2) {
+                    // {1,1.1}/functions/{className}/beforeSave
+                    $this->dispatchHook($funcParams[0], $funcParams[1], $json);
                 }
-            } catch (CloudException $ex) {
-                $this->renderError($ex->getMessage(), $ex->getCode());
-            } catch (\Exception $ex) {
-                $this->renderError("Cloud script error: {$ex->getMessage()}", 141);
             }
         }
     }
@@ -429,13 +429,10 @@ class LeanEngine {
         if (in_array($funcName, array(
             '_messageReceived', '_receiversOffline', '_messageSent',
             '_conversationStart', '_conversationStarted',
-            '_conversationAdd', '_conversationRemove', '_conversationUpdate'
+            '_conversationAdd', '_conversationAdded', '_conversationRemove', '_conversationRemoved', '_conversationUpdate',
+            '_clientOnline', '_clientOffline', '_rtmClientSign'
         ))) {
-            if (!Client::verifyHookSign($funcName, $body["__sign"])) {
-                error_log("Invalid hook sign for message {$funcName}" .
-                          " from {$this->env['REMOTE_ADDR']}");
-                $this->renderError("Unauthorized.", 401, 401);
-            }
+            static::verifyHookSign($funcName, $body["__sign"]);
         }
 
         $params = $body;
@@ -444,14 +441,10 @@ class LeanEngine {
         }
 
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            $result = Cloud::run($funcName,
-                                 $params,
-                                 User::getCurrentUser(),
-                                 $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        $result = Cloud::run($funcName,
+                             $params,
+                             User::getCurrentUser(),
+                             $meta);
         if ($decodeObj) {
             // Encode object to full, type-annotated JSON
             $out = Client::encode($result, "toFullJSON");
@@ -472,16 +465,11 @@ class LeanEngine {
     private function dispatchHook($className, $hookName, $body) {
         $verified = false;
         if (strpos($hookName, "before") === 0) {
-            $verified = Client::verifyHookSign("__before_for_{$className}",
-                                                   $body["object"]["__before"]);
+            $this->verifyHookSign("__before_for_{$className}",
+                                   $body["object"]["__before"]);
         } else {
-            $verified = Client::verifyHookSign("__after_for_{$className}",
-                                                   $body["object"]["__after"]);
-        }
-        if (!$verified) {
-            error_log("Invalid hook sign for {$hookName} {$className}" .
-            " from {$this->env['REMOTE_ADDR']}");
-            $this->renderError("Unauthorized.", 401, 401);
+            $this->verifyHookSign("__after_for_{$className}",
+                                   $body["object"]["__after"]);
         }
 
         $json              = $body["object"];
@@ -513,23 +501,18 @@ class LeanEngine {
         }
 
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            $result = Cloud::runHook($className,
-                                     $hookName,
-                                     $obj,
-                                     User::getCurrentUser(),
-                                     $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        $result = Cloud::runHook($className,
+                                 $hookName,
+                                 $obj,
+                                 User::getCurrentUser(),
+                                 $meta);
         if ($hookName == "beforeDelete") {
             $this->renderJSON(array());
         } else if (strpos($hookName, "after") === 0) {
             $this->renderJSON(array("result" => "ok"));
         } else {
-            $outObj = $result;
             // Encode result object to type-less literal JSON
-            $this->renderJSON($outObj->toJSON());
+            $this->renderJSON($obj->toJSON());
         }
     }
 
@@ -540,21 +523,13 @@ class LeanEngine {
      * @param array  $body JSON decoded body params
      */
     private function dispatchOnVerified($type, $body) {
-        if (!Client::verifyHookSign("__on_verified_{$type}",
-                                        $body["object"]["__sign"])) {
-            error_log("Invalid hook sign for onVerified {$type}" .
-            " from {$this->env['REMOTE_ADDR']}");
-            $this->renderError("Unauthorized.", 401, 401);
-        }
+        $this->verifyHookSign("__on_verified_{$type}",
+                               $body["object"]["__sign"]);
 
         $userObj = Client::decode($body["object"], null);
         User::saveCurrentUser($userObj);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            Cloud::runOnVerified($type, $userObj, $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        Cloud::runOnVerified($type, $userObj, $meta);
         $this->renderJSON(array("result" => "ok"));
     }
 
@@ -564,20 +539,12 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private function dispatchOnLogin($body) {
-        if (!Client::verifyHookSign("__on_login__User",
-                                        $body["object"]["__sign"])) {
-            error_log("Invalid hook sign for onLogin User" .
-            " from {$this->env['REMOTE_ADDR']}");
-            $this->renderError("Unauthorized.", 401, 401);
-        }
+        $this->verifyHookSign("__on_login__User",
+                               $body["object"]["__sign"]);
 
         $userObj = Client::decode($body["object"], null);
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            Cloud::runOnLogin($userObj, $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        Cloud::runOnLogin($userObj, $meta);
         $this->renderJSON(array("result" => "ok"));
     }
 
@@ -587,20 +554,42 @@ class LeanEngine {
      * @param array $body JSON decoded body params
      */
     private function dispatchOnInsight($body) {
-        if (!Client::verifyHookSign("__on_complete_bigquery_job",
-                                        $body["__sign"])) {
-            error_log("Invalid hook sign for onComplete Insight" .
-            " from {$this->env['REMOTE_ADDR']}");
-            $this->renderError("Unauthorized.", 401, 401);
-        }
+        $this->verifyHookSign("__on_complete_bigquery_job",
+                               $body["__sign"]);
 
         $meta["remoteAddress"] = $this->env["REMOTE_ADDR"];
-        try {
-            Cloud::runOnInsight($body, $meta);
-        } catch (FunctionError $err) {
-            $this->renderError($err->getMessage(), $err->getCode());
-        }
+        Cloud::runOnInsight($body, $meta);
         $this->renderJSON(array("result" => "ok"));
+    }
+
+    /**
+     * Dispatch LeanEngine functions.
+     *
+     * @param string $method Request method
+     * @param string $url    Request url
+     */
+    protected function dispatch($method, $url) {
+        try {
+            $this->__dispatch($method, $url);
+        } catch (FunctionError $ex) {
+            $status = (int) $ex->status;
+            if ( $status >= 500) {
+                error_log($ex);
+                error_log($ex->getTraceAsString());
+            }
+            $this->renderError("{$ex->getMessage()}", $ex->getCode(), $ex->status);
+        } catch (CloudException $ex) {
+            error_log($ex);
+            error_log($ex->getTraceAsString());
+            $this->renderError("{$ex->getMessage()}", $ex->getCode(), $ex->status);
+        } catch (\Exception $ex) {
+            error_log($ex);
+            error_log($ex->getTraceAsString());
+            $this->renderError($ex->getMessage(),
+                               $ex->getCode() ? $ex->getCode() : 1,
+                               // unhandled internal exception
+                               500);
+        }
     }
 
     /**
@@ -617,7 +606,7 @@ class LeanEngine {
     private function httpsRedirect() {
         $reqProto = $this->getHeaderLine("HTTP_X_FORWARDED_PROTO");
         if ($reqProto === "http" &&
-            in_array(getenv("LC_APP_ENV"), array("production", "stg"))) {
+            in_array(getenv("LEANCLOUD_APP_ENV"), array("production", "stage"))) {
             $url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
             $this->redirect($url);
         }

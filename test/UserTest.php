@@ -8,20 +8,22 @@ use LeanCloud\File;
 use LeanCloud\Query;
 use LeanCloud\CloudException;
 use LeanCloud\Storage\SessionStorage;
+use PHPUnit\Framework\TestCase;
 
-class UserTest extends PHPUnit_Framework_TestCase {
+class UserTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY"),
-            getenv("LC_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LC_API_REGION"));
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+
         Client::setStorage(new SessionStorage());
 
         // Try to make a default user so we can login
         $user = new User();
         $user->setUsername("alice");
         $user->setPassword("blabla");
+        $user->setEmail("alice@example.com");
         try {
             $user->signUp();
         } catch (CloudException $ex) {
@@ -104,6 +106,13 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($user, User::getCurrentUser());
     }
 
+    public function testUserLogInWithEmail() {
+        $user = User::logInWithEmail("alice@example.com", "blabla");
+
+        $this->assertNotEmpty($user->getObjectId());
+        $this->assertEquals($user, User::getCurrentUser());
+    }
+
     public function testLoginWithMobilePhoneNumber() {
         $user = User::logIn("alice", "blabla");
         $user->setMobilePhoneNumber("18612340000");
@@ -164,6 +173,12 @@ class UserTest extends PHPUnit_Framework_TestCase {
         // Ensure the post format is correct
         $this->setExpectedException("LeanCloud\CloudException", null, 603);
         User::verifyMobilePhone("000000");
+    }
+
+    public function testSignUpOrLoginByMobilePhone() {
+        // Ensure the post format is correct
+        $this->setExpectedException("LeanCloud\CloudException", null, 603);
+        User::signUpOrLoginByMobilePhone("18612340000", "000000");
     }
 
     public function testLogInWithLinkedService() {

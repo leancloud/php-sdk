@@ -3,7 +3,7 @@ namespace LeanCloud;
 
 
 /**
- * Object save option builder
+ * LeanObject save option builder
  */
 class SaveOption {
 

@@ -1,16 +1,17 @@
 <?php
 
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\Client;
 use LeanCloud\File;
+use PHPUnit\Framework\TestCase;
 
-class FileTest extends PHPUnit_Framework_TestCase {
+class FileTest extends TestCase {
     public static function setUpBeforeClass() {
         Client::initialize(
-            getenv("LC_APP_ID"),
-            getenv("LC_APP_KEY"),
-            getenv("LC_APP_MASTER_KEY"));
-        Client::useRegion(getenv("LC_API_REGION"));
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+
     }
 
     public function testInitializeEmptyFileName() {
@@ -66,7 +67,8 @@ class FileTest extends PHPUnit_Framework_TestCase {
         $file = File::createWithData("testFetch.txt", "你好，中国!");
         $file->save();
         $file2 = File::fetch($file->getObjectId());
-        $this->assertEquals($file->getUrl(), $file2->getUrl());
+        // `uploadResult.getUrl() != fetchResult.getUrl()` is a feature
+        // $this->assertEquals($file->getUrl(), $file2->getUrl());
         $this->assertEquals($file->getName(), $file2->getName());
         $this->assertEquals($file->getSize(), $file2->getSize());
 
@@ -101,7 +103,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
      * leancloud/php-sdk#46
      */
     public function testSaveObjectWithFile() {
-        $obj = new Object("TestObject");
+        $obj = new LeanObject("TestObject");
         $obj->set("name", "alice");
 
         $file = File::createWithData("test.txt", "你好，中国!");

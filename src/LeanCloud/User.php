@@ -2,7 +2,7 @@
 namespace LeanCloud;
 
 use LeanCloud\Client;
-use LeanCloud\Object;
+use LeanCloud\LeanObject;
 use LeanCloud\CloudException;
 
 /**
@@ -35,7 +35,7 @@ use LeanCloud\CloudException;
  *
  */
 
-class User extends Object {
+class User extends LeanObject {
 
     /**
      * className on LeanCloud
@@ -298,6 +298,14 @@ class User extends Object {
         return $user;
     }
 
+
+    private static function _login($userData) {
+        $resp = Client::post("/login", $userData);
+        $user = new static();
+        $user->mergeAfterFetch($resp);
+        static::saveCurrentUser($user);
+        return $user;
+    }
     /**
      * Log-in user by username and password
      *
@@ -309,13 +317,26 @@ class User extends Object {
      * @throws CloudException
      */
     public static function logIn($username, $password) {
-        $resp = Client::post("/login", array("username" => $username,
-                                                 "password" => $password));
-        $user = new static();
-        $user->mergeAfterFetch($resp);
-        static::saveCurrentUser($user);
+        $user = static::_login(array("username" => $username,
+            "password" => $password));
         return $user;
     }
+    /**
+     * Log-in user by email and password
+     *
+     * And set current user.
+     *
+     * @param string $email
+     * @param string $password
+     * @return User
+     * @throws CloudException
+     */
+    public static function logInWithEmail($email, $password) {
+        $user = static::_login(array("email" => $email,
+            "password" => $password));
+        return $user;
+    }
+
 
     /**
      * Log-out current user
@@ -446,7 +467,22 @@ class User extends Object {
         Client::post("/verifyMobilePhone/{$smsCode}", null);
     }
 
-
+    /**
+     * Sign up user by mobile phone and SMS code
+     *
+     * @param string  $phoneNumber
+     * @param string  $smsCode
+     */
+    public static function signUpOrLoginByMobilePhone($phoneNumber, $smsCode) {
+        $resp = Client::post("/usersByMobilePhone", array(
+            "mobilePhoneNumber" => $phoneNumber,
+            "smsCode" => $smsCode
+        ));
+        $user = new static();
+        $user->mergeAfterFetch($resp);
+        static::saveCurrentUser($user);
+        return $user;
+    }
 
     /*
      * Link and unlink with 3rd party auth provider

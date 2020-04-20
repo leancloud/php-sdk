@@ -1,6 +1,8 @@
 <?php
 namespace LeanCloud\Engine;
 
+use LeanCloud\Client;
+
 /**
  * Cloud functions and hooks repository
  *
@@ -257,6 +259,24 @@ class Cloud {
     }
 
     /**
+     * Start cloud function Stand-alone mode, start to process request.
+     */
+    public static function start() {
+        Client::initialize(
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY")
+        );
+
+        $engine = new LeanEngine();
+        $engine->start();
+    }
+
+    public static function stop() {
+
+    }
+
+    /**
      * Run cloud hook
      *
      * Example:
@@ -268,7 +288,7 @@ class Cloud {
      *
      * @param string $className  Classname
      * @param string $hookName   Hook name, e.g. beforeUpdate
-     * @param Object $object The object of attached hook
+     * @param LeanObject $object The object of attached hook
      * @param User   $user   Request user
      * @param array      $meta   Optional parameters that will be passed to
      *                           user function
@@ -340,4 +360,3 @@ class Cloud {
         return call_user_func($func, $params, $meta);
     }
 }
-
