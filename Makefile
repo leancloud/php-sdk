@@ -7,7 +7,7 @@ release:
 	make doc
 
 doc:
-	@rm -r docs
+	@rm -rf docs
 	@php5.6 vendor/bin/apigen generate --source src --destination docs
 
 test_engine:

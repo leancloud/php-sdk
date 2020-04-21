@@ -1,9 +1,9 @@
 
-0.12.0 发布日期：2019-12-30
+0.12.0 发布日期：2020-04-21
 ----
 
 * 支持平滑推送（`flow_control`）
-* 支持即使通讯服务的 `_rtmClientSign` hook
+* 支持即时通讯服务的 `_rtmClientSign`、`_conversationAdded`、`_conversationRemoved` hook
 * 支持 PHP 7.4
 
 0.11.0 发布日期：2019-10-25
