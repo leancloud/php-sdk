@@ -427,7 +427,7 @@ class LeanEngine {
     private function dispatchFunc($funcName, $body, $decodeObj=false) {
         // verify hook sign for RTM hooks
         if (in_array($funcName, array(
-            '_messageReceived', '_receiversOffline', '_messageSent',
+            '_messageReceived', '_receiversOffline', '_messageSent', '_messageUpdate',
             '_conversationStart', '_conversationStarted',
             '_conversationAdd', '_conversationAdded', '_conversationRemove', '_conversationRemoved', '_conversationUpdate',
             '_clientOnline', '_clientOffline', '_rtmClientSign'
