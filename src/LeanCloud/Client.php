@@ -715,4 +715,23 @@ class Client {
         return $min + (mt_rand(0, $M - 1) / $M) * ($max - $min);
     }
 
+    /**
+     * set api timeout
+     * @param int $timeout 
+     * @return void
+     */
+    public static function setApiTimeout($timeout){
+        $timeout = intval($timeout);
+        $timeout = max($timeout,0);
+        self::$apiTimeout = $timeout;
+    }
+
+    /**
+     *  get api timeout
+     * @return int
+     */
+    public static function getApiTimeout(){
+        return self::$apiTimeout;
+    }
+
 }
