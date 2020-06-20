@@ -40,7 +40,7 @@ class Client {
      *
      * @var int
      */
-    private static $apiTimeout = 15;
+    public static $apiTimeout = 15;
 
     /**
      * Application ID
