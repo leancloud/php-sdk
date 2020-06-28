@@ -145,6 +145,14 @@ class Client {
     }
 
     /**
+     * settings curl timeout.
+     * @param int $timeout seconds
+     */
+    public static function setTimeout(int $seconds) {
+        static::$apiTimeout = $seconds;
+    }
+
+    /**
      * Assert client is correctly initialized
      *
      * @throws RuntimeException
