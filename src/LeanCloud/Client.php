@@ -138,7 +138,7 @@ class Client {
      * settings curl timeout.
      * @param int $timeout seconds
      */
-    public static function setTimeout($seconds) {
+    public static function setApiTimeout($seconds) {
         static::$apiTimeout = $seconds;
     }
 
