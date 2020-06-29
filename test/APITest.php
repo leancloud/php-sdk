@@ -226,5 +226,14 @@ class LeanAPITest extends TestCase {
         Client::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
+    public function testRequestTimeout() {
+        $getTimeout = function() { return static::$apiTimeout; };
+        $getApiTimeout = $getTimeout->bindTo(null, Client::class);
+        $this->assertEquals(15, $getApiTimeout());
+        Client::setApiTimeout(3);
+        $this->assertEquals(3, $getApiTimeout());
+        Client::setApiTimeout(15); // revert to default
+    }
+
 }
 
