@@ -135,6 +135,17 @@ class Client {
     }
 
     /**
+     * Set a deadline for requests to complete.
+     *
+     * Note that file upload requests are not affected.
+     *
+     * @param integer $seconds
+     */
+    public static function setApiTimeout($seconds) {
+        static::$apiTimeout = intval($seconds);
+    }
+
+    /**
      * Assert client is correctly initialized
      *
      * @throws RuntimeException
