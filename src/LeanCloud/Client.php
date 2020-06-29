@@ -135,8 +135,11 @@ class Client {
     }
 
     /**
-     * settings curl timeout.
-     * @param int $timeout seconds
+     * Set a deadline for requests to complete.
+     *
+     * Note that file upload requests are not affected.
+     *
+     * @param integer $seconds
      */
     public static function setApiTimeout($seconds) {
         static::$apiTimeout = intval($seconds);
