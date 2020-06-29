@@ -139,7 +139,7 @@ class Client {
      * @param int $timeout seconds
      */
     public static function setApiTimeout($seconds) {
-        static::$apiTimeout = $seconds;
+        static::$apiTimeout = intval($seconds);
     }
 
     /**
