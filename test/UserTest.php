@@ -183,10 +183,8 @@ class UserTest extends TestCase {
 
     public function testRequestChangePhoneNumber() {
         $this->setExpectedException("LeanCloud\CloudException", null, 600);
-        $user = new User();
-        $user->setUsername("php_test_change_phone_number");
-        $user->setPassword("blabla");
-        $user->signUp();
+        // Remember to create this user before hand.
+        User::logIn("php_test_change_phone_number", "blabla");
         // phone number is from https://www.yinsiduanxin.com
         User::requestChangePhoneNumber("+8616533875941");
     }
@@ -194,9 +192,9 @@ class UserTest extends TestCase {
     public function testChangePhoneNumber() {
         $this->setExpectedException("LeanCloud\CloudException", null, 603);
         User::changePhoneNumber("992989", "+8616533875941");
-        $user = User::logIn("php_test_change_phone_number", "blabla");
-        $this->assertEquals("+8616533875941", $user->getMobilePhoneNumber());
-        $user->destroy();
+        // Uncomment the follow lines when manually running the test.
+        // $user = User::logIn("php_test_change_phone_number", "blabla");
+        // $this->assertEquals("+8616533875941", $user->getMobilePhoneNumber());
     }
 
     public function testLogInWithLinkedService() {
