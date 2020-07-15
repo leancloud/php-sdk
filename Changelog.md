@@ -1,4 +1,11 @@
 
+0.13.0 Released on 2020-07-15
+----
+
+- Add `requestChangePhoneNumber` & `changePhoneNumber` to *verify* mobile number before updating it.
+- Add `_messageUpdate` hook.
+- Add `setApiTimeout` to specify request timeout.
+
 0.12.0 发布日期：2020-04-21
 ----
 
