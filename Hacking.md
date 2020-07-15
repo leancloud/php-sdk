@@ -23,6 +23,12 @@
     make test_engine &
     make test
     ```
+  
+    Run one single test:
+    
+    ```sh
+    vendor/bin/phpunit --filter testInitializeWithString test/QueryTest.php
+    ```
 
 * `make doc` to build documentation (should running on PHP < 7.2)
 
