@@ -468,10 +468,35 @@ class User extends LeanObject {
     }
 
     /**
+     * Request mobile phone verify before updating it.
+     *
+     * @param string $phoneNumber
+     */
+    public static function requestChangePhoneNumber($phoneNumber) {
+        Client::post("/requestChangePhoneNumber", array(
+            "mobilePhoneNumber" => $phoneNumber
+        ));
+    }
+
+    /**
+     * Update mobile phone number by SMS code.
+     *
+     * @param string $smsCode
+     * @param string $phoneNumber
+     */
+    public static function changePhoneNumber($smsCode, $phoneNumber) {
+        Client::post("/changePhoneNumber", array(
+            "mobilePhoneNumber" => $phoneNumber,
+            "code" => $smsCode
+        ));
+    }
+
+    /**
      * Sign up user by mobile phone and SMS code
      *
      * @param string  $phoneNumber
      * @param string  $smsCode
+     * @return User
      */
     public static function signUpOrLoginByMobilePhone($phoneNumber, $smsCode) {
         $resp = Client::post("/usersByMobilePhone", array(
