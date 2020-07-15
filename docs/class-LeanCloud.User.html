@@ -171,7 +171,7 @@ fetched by</p>
 		<b>Namespace:</b> <a href="namespace-LeanCloud.html">LeanCloud</a><br>
 		
 
-			<b>Located at</b> <a href="source-class-LeanCloud.User.html#9-568" title="Go to source code">LeanCloud/User.php</a>
+			<b>Located at</b> <a href="source-class-LeanCloud.User.html#9-593" title="Go to source code">LeanCloud/User.php</a>
 		<br>
 	</div>
 
@@ -1368,7 +1368,7 @@ for login then.</p>
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="signUpOrLoginByMobilePhone" id="_signUpOrLoginByMobilePhone">
+	<tr data-order="requestChangePhoneNumber" id="_requestChangePhoneNumber">
 
 		<td class="attributes"><code>
 			 public static
@@ -1379,8 +1379,80 @@ for login then.</p>
 		</td>
 
 		<td class="name"><div>
+		<a class="anchor" href="#_requestChangePhoneNumber">#</a>
+		<code><a href="source-class-LeanCloud.User.html#470-479" title="Go to source code">requestChangePhoneNumber</a>( <span>string <var>$phoneNumber</var></span> )</code>
+
+		<div class="description short">
+			<p>Request mobile phone verify before updating it.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Request mobile phone verify before updating it.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$phoneNumber</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="changePhoneNumber" id="_changePhoneNumber">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_changePhoneNumber">#</a>
+		<code><a href="source-class-LeanCloud.User.html#481-492" title="Go to source code">changePhoneNumber</a>( <span>string <var>$smsCode</var></span>, <span>string <var>$phoneNumber</var></span> )</code>
+
+		<div class="description short">
+			<p>Update mobile phone number by SMS code.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Update mobile phone number by SMS code.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$smsCode</var></dt>
+					<dd></dd>
+					<dt><var>$phoneNumber</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="signUpOrLoginByMobilePhone" id="_signUpOrLoginByMobilePhone">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
 		<a class="anchor" href="#_signUpOrLoginByMobilePhone">#</a>
-		<code><a href="source-class-LeanCloud.User.html#470-485" title="Go to source code">signUpOrLoginByMobilePhone</a>( <span>string <var>$phoneNumber</var></span>, <span>string <var>$smsCode</var></span> )</code>
+		<code><a href="source-class-LeanCloud.User.html#494-510" title="Go to source code">signUpOrLoginByMobilePhone</a>( <span>string <var>$phoneNumber</var></span>, <span>string <var>$smsCode</var></span> )</code>
 
 		<div class="description short">
 			<p>Sign up user by mobile phone and SMS code</p>
@@ -1398,6 +1470,10 @@ for login then.</p>
 					<dd></dd>
 				</dl></div>
 
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-LeanCloud.User.html">LeanCloud\User</a></code>
+				</div>
 
 
 
@@ -1417,7 +1493,7 @@ for login then.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_logInWith">#</a>
-		<code><a href="source-class-LeanCloud.User.html#502-519" title="Go to source code">logInWith</a>( <span>string <var>$provider</var></span>, <span>array <var>$authToken</var></span> )</code>
+		<code><a href="source-class-LeanCloud.User.html#527-544" title="Go to source code">logInWith</a>( <span>string <var>$provider</var></span>, <span>array <var>$authToken</var></span> )</code>
 
 		<div class="description short">
 			<p>Log-in with 3rd party auth data</p>
@@ -1463,7 +1539,7 @@ current user.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_linkWith">#</a>
-		<code><a href="source-class-LeanCloud.User.html#521-542" title="Go to source code">linkWith</a>( <span>string <var>$provider</var></span>, <span>array <var>$authToken</var></span> )</code>
+		<code><a href="source-class-LeanCloud.User.html#546-567" title="Go to source code">linkWith</a>( <span>string <var>$provider</var></span>, <span>array <var>$authToken</var></span> )</code>
 
 		<div class="description short">
 			<p>Link user with 3rd party provider</p>
@@ -1504,7 +1580,7 @@ current user.</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_unlinkWith">#</a>
-		<code><a href="source-class-LeanCloud.User.html#544-566" title="Go to source code">unlinkWith</a>( <span>string <var>$provider</var></span> )</code>
+		<code><a href="source-class-LeanCloud.User.html#569-591" title="Go to source code">unlinkWith</a>( <span>string <var>$provider</var></span> )</code>
 
 		<div class="description short">
 			<p>Unlink user with a provider</p>

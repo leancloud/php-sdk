@@ -9,7 +9,7 @@ version="$1"
 
 #### Build new changelog
 echo "" >> Changelog.md.0
-echo "$version 发布日期：`date +%Y-%m-%d`" >> Changelog.md.0
+echo "$version Released on `date +%Y-%m-%d`" >> Changelog.md.0
 echo "----" >> Changelog.md.0
 git log `git describe --tags --abbrev=0`..HEAD --pretty=%s >> Changelog.md.0
 

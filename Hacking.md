@@ -23,8 +23,16 @@
     make test_engine &
     make test
     ```
+  
+    Run one single test:
+    
+    ```sh
+    vendor/bin/phpunit --filter testInitializeWithString test/QueryTest.php
+    ```
 
-* `make doc` to build documentation (should running on PHP < 7.2)
+* `make doc` to build documentation.
+   The make task uses PHP 5.6, to install it on recent versions of macOS,
+   see https://github.com/eXolnet/homebrew-deprecated/pull/25
 
 * Send a pull request at leancloud/php-sdk
 
