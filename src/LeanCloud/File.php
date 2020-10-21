@@ -366,7 +366,7 @@ class File {
 
         if ($this->isExternal()) {
             $data["url"] = $this->getUrl();
-            $resp = Client::post("/files/{$this->getName()}", $data);
+            $resp = Client::post("/files", $data);
             $this->mergeAfterSave($resp);
         } else {
             $key = static::genFileKey();

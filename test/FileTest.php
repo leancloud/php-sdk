@@ -63,6 +63,17 @@ class FileTest extends TestCase {
         $file->destroy();
     }
 
+    public function testSaveExternalFile() {
+        $file = File::createWithUrl("blabla.png", "https://leancloud.cn/favicon.png");
+        $file->save();
+        $this->assertNotEmpty($file->getObjectId());
+        $this->assertEquals("blabla.png", $file->getName());
+        $this->assertEquals("https://leancloud.cn/favicon.png", $file->getUrl());
+        $this->assertEquals("image/png",   $file->getMimeType());
+
+        $file->destroy();
+    }
+
     public function testFetchFile() {
         $file = File::createWithData("testFetch.txt", "你好，中国!");
         $file->save();
