@@ -2,6 +2,7 @@
 namespace LeanCloud\Engine;
 
 use LeanCloud\Client;
+use LeanCloud\User;
 
 /**
  * Cloud functions and hooks repository
@@ -242,8 +243,8 @@ class Cloud {
      * ```
      *
      * @param string   $funcName Name of defined function
-     * @param array    $data     Array of parameters passed to function
-     * @param User $user     Request user
+     * @param array    $params   Array of parameters passed to function
+     * @param User     $user     Request user
      * @param array    $meta     Optional parameters that will be passed to
      *                           user function
      * @return mixed
@@ -256,6 +257,26 @@ class Cloud {
             throw new FunctionError("Cloud function not found.", 404);
         }
         return call_user_func($func, $params, $user, $meta);
+    }
+
+    /**
+     * Invokes a remote cloud function
+     *
+     * Example:
+     *
+     * ```php
+     * LeanEngine::runRemote("sayHello", array("name" => "alice"));
+     * ```
+     *
+     * @param string $funcName Name of defined function
+     * @param array $params Array of parameters passed to function
+     * @param string $sessionToken run this function as the user corresponding to this session token
+     *
+     * @return array JSON decoded associated array
+     * @see self::run
+     */
+    public static function runRemote($funcName, $params, $sessionToken=null) {
+        return Client::post("/functions/{$funcName}", $params, $sessionToken);
     }
 
     /**

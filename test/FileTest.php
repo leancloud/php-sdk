@@ -11,7 +11,6 @@ class FileTest extends TestCase {
             getenv("LEANCLOUD_APP_ID"),
             getenv("LEANCLOUD_APP_KEY"),
             getenv("LEANCLOUD_APP_MASTER_KEY"));
-
     }
 
     public function testInitializeEmptyFileName() {
