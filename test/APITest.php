@@ -125,10 +125,9 @@ class LeanAPITest extends TestCase {
         $obj = array("name" => "alice",
                      "likes" => array("__op" => "Batch",
                                       "ops" => array($adds, $removes)));
-        $this->setExpectedException("LeanCloud\CloudException", null, 301);
         $resp = Client::post("/classes/TestObject", $obj);
-        // $this->assertNotEmpty($resp["objectId"]);
-        // Client::delete("/classes/TestObject/{$resp['objectId']}");
+        $this->assertNotEmpty($resp["objectId"]);
+        Client::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
     /**
