@@ -125,17 +125,15 @@ class LeanAPITest extends TestCase {
         $obj = array("name" => "alice",
                      "likes" => array("__op" => "Batch",
                                       "ops" => array($adds, $removes)));
-        $this->setExpectedException("LeanCloud\CloudException", null, 301);
         $resp = Client::post("/classes/TestObject", $obj);
-        // $this->assertNotEmpty($resp["objectId"]);
-        // Client::delete("/classes/TestObject/{$resp['objectId']}");
+        $this->assertNotEmpty($resp["objectId"]);
+        Client::delete("/classes/TestObject/{$resp['objectId']}");
     }
 
     /**
      * Batch on array operation will result error:
      *
-     * 301 - Fails to insert new document, cannot update on ...
-     *       at the same time.
+     * 304 - Invalid array operation.
      */
     public function testBatchOperationOnArray() {
         $obj = array("name" => "Batch test", "tags" => array());
@@ -150,10 +148,9 @@ class LeanAPITest extends TestCase {
         $obj     = array("tags" => array("__op" => "Batch",
                                          "ops"  => array($adds, $removes)));
 
-        $this->setExpectedException("LeanCloud\CloudException", null, 301);
-        $resp = Client::put("/classes/TestObject/{$resp['objectId']}",
+        $this->setExpectedException("LeanCloud\CloudException", null, 304);
+        Client::put("/classes/TestObject/{$resp['objectId']}",
                                 $obj);
-
         Client::delete("/classes/TestObject/{$obj['objectId']}");
     }
 
