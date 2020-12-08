@@ -10,6 +10,7 @@
             "email": "yun.wu@leancloud.rocks"
         }
     ],
+    "license": "MIT",
     "require": {
         "php": ">=5.6",
         "ext-curl": "*"
