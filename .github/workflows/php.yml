@@ -3,8 +3,14 @@ name: PHP Composer
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '**.md'
+      - 'doc/**'
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - '**.md'
+      - 'doc/**'
 
 jobs:
   build:
@@ -49,6 +55,7 @@ jobs:
         LEANCLOUD_APP_HOST: 127.0.0.1
         LEANCLOUD_APP_PORT: 8081
         LEANCLOUD_WILDCARD_DOMAIN: lncldglobal.com
+        LEANCLOUD_APP_ENV: production
       run: |
         make test_engine &
         php -r 'exit(PHP_VERSION_ID >= 70200 ? 0 : 1);' || vendor/bin/phpunit test/Php72ObjectDeprecated.php
