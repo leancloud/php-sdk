@@ -64,7 +64,7 @@ Zend Engine v3.2.0, Copyright (c) 1998-2018 Zend Technologies
     with Zend OPcache v7.2.34, Copyright (c) 1999-2018, by Zend Technologies
 ```
 
-By default, PHP does not enable xdebug.
+By default, PHP installed via Homebrew does not enable xdebug.
 You can install xdebug with pecl to enable it.
 For example, install xdebug for PHP 7.2 on macOS:
 
@@ -78,5 +78,5 @@ Once xdebug is enabled, run tests with coverage with the following commands:
 ```sh
 # export environment variables as usual
 make test_engine &
-XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml test
+XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text
 ```
