@@ -148,7 +148,7 @@ class File {
     /**
      * Set key of file
      *
-     * @return key
+     * @return self
      */
     public function setKey($val) {
         $this->_data["key"] = $val;
