@@ -45,6 +45,7 @@ jobs:
         LEANCLOUD_API_SERVER: https://us.avoscloud.com
         LEANCLOUD_APP_ID: wnDg0lPt0wcYGJSiHRwHBhD4
         LEANCLOUD_APP_KEY: u9ekx9HFSFFBErWwyWHFmPDy
+        LEANCLOUD_APP_MASTER_KEY: ${{ secrets.MASTER_KEY }}
         LEANCLOUD_REGION: US
         LEANCLOUD_APP_HOST: 127.0.0.1
         LEANCLOUD_APP_PORT: 8081
