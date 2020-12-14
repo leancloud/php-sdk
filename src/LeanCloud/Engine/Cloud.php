@@ -2,7 +2,6 @@
 namespace LeanCloud\Engine;
 
 use LeanCloud\Client;
-use LeanCloud\User;
 
 /**
  * Cloud functions and hooks repository
@@ -244,7 +243,7 @@ class Cloud {
      *
      * @param string   $funcName Name of defined function
      * @param array    $params   Array of parameters passed to function
-     * @param User     $user     Request user
+     * @param \LeanCloud\User    $user     Request user
      * @param array    $meta     Optional parameters that will be passed to
      *                           user function
      * @return mixed
@@ -309,8 +308,8 @@ class Cloud {
      *
      * @param string $className  Classname
      * @param string $hookName   Hook name, e.g. beforeUpdate
-     * @param LeanObject $object The object of attached hook
-     * @param User   $user   Request user
+     * @param \LeanCloud\LeanObject $object The object of attached hook
+     * @param \LeanCloud\User   $user   Request user
      * @param array      $meta   Optional parameters that will be passed to
      *                           user function
      * @return mixed
@@ -331,9 +330,10 @@ class Cloud {
     /**
      * Run hook when a user logs in
      *
-     * @param User $user The user object that tries to login
+     * @param \LeanCloud\User $user The user object that tries to login
      * @param array    $meta Optional parameters that will be passed to
      *                       user function
+     * @return mixed
      * @throws FunctionError
      * @see self::onLogin
      */
@@ -345,9 +345,10 @@ class Cloud {
      * Run hook when user verified by Email or SMS
      *
      * @param string   $type Either "sms" or "email", case-sensitive
-     * @param User $user The verifying user
+     * @param \LeanCloud\User $user The verifying user
      * @param array    $meta Optional parameters that will be passed to
      *                       user function
+     * @return mixed
      * @throws FunctionError
      * @see self::onVerified
      */
