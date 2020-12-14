@@ -85,7 +85,7 @@ class CloudTest extends TestCase {
     }
 
     public function testRemoteFunction() {
-        // Assumes [LeanFunction] is deployed at the staging environment of this application's LeanEngine.
+        // Assumes [LeanFunction] is deployed at this application's LeanEngine.
         // [LeanFunction]: https://github.com/leancloud/LeanFunction
         $response = Cloud::runRemote("hello", []);
         $result = $response["result"];
