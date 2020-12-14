@@ -41,8 +41,10 @@ class FileTest extends TestCase {
 
     public function testSaveTextFile() {
         $file = File::createWithData("test.txt", "Hello World!");
+        $this->assertNull($file->getKey());
         $file->save();
         $this->assertNotEmpty($file->getObjectId());
+        $this->assertNotEmpty($file->getKey());
         $this->assertNotEmpty($file->getUrl());
         $this->assertNotEmpty($file->getName());
         $this->assertEquals("text/plain", $file->getMimeType());
@@ -59,6 +61,27 @@ class FileTest extends TestCase {
         $this->assertEquals("text/plain", $file->getMimeType());
         $content = file_get_contents($file->getUrl());
         $this->assertEquals("你好，中国!", $content);
+
+        $file->destroy();
+    }
+
+    public function testSaveWithSpecifiedKeyWithoutMasterKey() {
+        $file = File::createWithData("test.txt", "Hello World!");
+        $file->setKey("abc");
+        $this->assertEquals("abc", $file->getKey());
+        $unsupportedKeyError = "Unsupported file key. Please use masterKey to set file key.";
+        $this->setExpectedException("LeanCloud\CloudException", $unsupportedKeyError, 1);
+        $file->save();
+        $this->assertEmpty($file->getObjectId());
+    }
+
+    public function testSaveExternalFile() {
+        $file = File::createWithUrl("blabla.png", "https://leancloud.cn/favicon.png");
+        $file->save();
+        $this->assertNotEmpty($file->getObjectId());
+        $this->assertEquals("blabla.png", $file->getName());
+        $this->assertEquals("https://leancloud.cn/favicon.png", $file->getUrl());
+        $this->assertEquals("image/png",   $file->getMimeType());
 
         $file->destroy();
     }

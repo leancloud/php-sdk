@@ -49,6 +49,7 @@ class File {
      */
     public function __construct($name, $data=null, $mimeType=null) {
         $this->_data["name"] = $name;
+        $this->_data["key"] = null;
         $this->_source       = $data;
 
         if (!$mimeType) {
@@ -134,6 +135,24 @@ class File {
      */
     public function getName() {
         return $this->get("name");
+    }
+
+    /**
+     * Get key of file
+     *
+     * @return string
+     */
+    public function getKey() {
+        return $this->get("key");
+    }
+    /**
+     * Set key of file
+     *
+     * @return self
+     */
+    public function setKey($val) {
+        $this->_data["key"] = $val;
+        return $this;
     }
 
     /**
@@ -259,19 +278,6 @@ class File {
     }
 
     /**
-     * Generate pseudo-uuid key for filename
-     *
-     * @return string
-     */
-    private static function genFileKey() {
-        $octets = array_map(function() {
-            $num = floor((1 + Client::randomFloat()) * 0x10000);
-            return substr(dechex($num), 1);
-        }, range(0, 4));
-        return implode("", $octets);
-    }
-
-    /**
      * Is the file exteranl
      *
      * @return bool
@@ -366,12 +372,13 @@ class File {
 
         if ($this->isExternal()) {
             $data["url"] = $this->getUrl();
-            $resp = Client::post("/files/{$this->getName()}", $data);
+            $resp = Client::post("/files", $data);
             $this->mergeAfterSave($resp);
         } else {
-            $key = static::genFileKey();
-            $key = "{$key}." . pathinfo($this->getName(), PATHINFO_EXTENSION);
-            $data["key"]    = $key;
+            $key = $this->getKey();
+            if (isset($key)) {
+                $data["key"] = $key;
+            }
             $data["__type"] = "File";
             $resp = Client::post("/fileTokens", $data);
             if (!isset($resp["token"])) {
@@ -401,6 +408,7 @@ class File {
                     unset($resp[$k]);
                 }
             }
+
             $this->mergeAfterSave($resp);
         }
     }
