@@ -1,9 +1,40 @@
 <?php
 
+use LeanCloud\Client;
 use LeanCloud\Engine\Cloud;
+use LeanCloud\User;
 use PHPUnit\Framework\TestCase;
 
 class CloudTest extends TestCase {
+    public static function setUpBeforeClass() {
+        Client::initialize(
+            getenv("LEANCLOUD_APP_ID"),
+            getenv("LEANCLOUD_APP_KEY"),
+            getenv("LEANCLOUD_APP_MASTER_KEY"));
+
+        $user = new User();
+        $user->setUsername("alice");
+        $user->setPassword("blabla");
+        $user->setEmail("alice@example.com");
+        try {
+            $user->signUp();
+        } catch (CloudException $ex) {
+            // skip
+        }
+    }
+
+    public static function tearDownAfterClass() {
+        // destroy default user if present
+        try {
+            $user = User::logIn("alice", "blabla");
+            $user->destroy();
+        } catch (CloudException $ex) {
+            // skip
+        }
+    }
+
+
+
     public function testGetKeys() {
         $name = uniqid();
         Cloud::define($name, function($params, $user) {
@@ -51,6 +82,27 @@ class CloudTest extends TestCase {
                              array("remoteAddress" => "10.0.0.1")
         );
         $this->assertEquals("10.0.0.1", $result);
+    }
+
+    public function testRemoteFunction() {
+        // Assumes [LeanFunction] is deployed at this application's LeanEngine.
+        // [LeanFunction]: https://github.com/leancloud/LeanFunction
+        $response = Cloud::runRemote("hello", []);
+        $result = $response["result"];
+        $this->assertEquals("Hello world!", $result);
+    }
+
+    public function testRemoteFunctionWithSession() {
+        // See testRemoteFunction for dependencies.
+        try {
+            User::logIn("alice", "blabla");
+        } catch (\LeanCloud\CloudException $e) {
+            // skip
+        }
+        $token = User::getCurrentSessionToken();
+        $response = Cloud::runRemote("echo-session-token", [], $token);
+        $result = $response["result"];
+        $this->assertEquals($token, $result);
     }
 
     public function testClassHook() {
