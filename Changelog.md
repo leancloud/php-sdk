@@ -1,4 +1,11 @@
 
+0.14.0 Released on 2020-12-15
+----
+
+- Add `runRemote()` (invoking cloud function remotely).
+- Allow specifying the file key/path with `masterKey`.
+- Add license (Apache-2.0).
+
 0.13.0 Released on 2020-07-15
 ----
 

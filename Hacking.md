@@ -47,7 +47,10 @@ and edit `Changelog.md` (git log subjects are for reference only, do not leave t
 
 Commit changes and send a pull request at leancloud/php-sdk.
 
-If everything is O.K., the maintainer will merge the pull request, push a new tag, and publish a new release at GitHub.
+If everything is O.K., the maintainer will merge the pull request, create a new tag, and publish a new release at GitHub.
+Then a new version will be published at Packagist automatically.
+It is recommended for the maintainer to create the tag when drafting a new release on GitHub web interface.
+If you prefer creating a tag locally, do not forget to pull from origin before creating a new tag. 
 Then a new version will be published at Packagist automatically.
 
 ## Run Tests with Coverage
