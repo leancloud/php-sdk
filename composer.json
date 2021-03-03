@@ -1,9 +1,9 @@
 {
-    "name": "leancloud/leancloud-sdk",
+    "name": "bellcode/leancloud-sdk",
     "description": "LeanCloud PHP SDK",
     "type": "library",
     "keywords": ["leancloud"],
-    "homepage": "https://github.com/leancloud/php-sdk",
+    "homepage": "https://github.com/HongjiangHuang/php-sdk",
     "authors": [
         {
             "name": "Juvenn Woo",
