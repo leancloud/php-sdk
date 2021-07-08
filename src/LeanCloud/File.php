@@ -385,6 +385,8 @@ class File {
                 // adapt for S3, when there is no token
                 $resp["token"] = null;
             }
+            $key = $resp["key"];
+            $this->setKey($key);
 
             $callbackParams = array("token" => $resp["token"]);
             try {
