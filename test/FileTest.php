@@ -63,6 +63,15 @@ class FileTest extends TestCase {
 
         $file->destroy();
     }
+    
+    public function testSaveLocalFileWithMimeTypeAndName() {
+        $file = File::createWithLocalFile(__FILE__, "application/x-php", "FileTest.php");
+        $file->save();
+        $this->assertNotEmpty($file->getUrl());
+        $this->assertEquals("application/x-php", $file->getMimeType());
+
+        $file->destroy();
+    }
 
     public function testSaveWithSpecifiedKeyWithoutMasterKey() {
         $file = File::createWithData("test.txt", "Hello World!");
