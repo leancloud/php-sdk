@@ -110,7 +110,7 @@ class LeanAPITest extends TestCase {
 
         Client::delete("/classes/TestObject/{$resp['objectId']}");
     }
-
+/* see #234
     public function testRelationBatchOp() {
         $adds = array("__op" => "AddRelation",
                       "objects" => array(
@@ -129,6 +129,7 @@ class LeanAPITest extends TestCase {
         $this->assertNotEmpty($resp["objectId"]);
         Client::delete("/classes/TestObject/{$resp['objectId']}");
     }
+*/
 
     /**
      * Batch on array operation will result error:
