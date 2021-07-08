@@ -1,4 +1,9 @@
 
+0.14.1 Released on 2021-07-08
+----
+
+- Fix a bug for uploading files at Chinese regions.
+
 0.14.0 Released on 2020-12-15
 ----
 
