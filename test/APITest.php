@@ -110,26 +110,29 @@ class LeanAPITest extends TestCase {
 
         Client::delete("/classes/TestObject/{$resp['objectId']}");
     }
-/* see #234
+
     public function testRelationBatchOp() {
         $adds = array("__op" => "AddRelation",
                       "objects" => array(
                           array("__type" => "Pointer",
                                 "className" => "TestObject",
-                                "objectId" => "abc001")));
-        $removes = array("__op" => "RemoveRelation",
-                      "objects" => array(
+                                "objectId" => "abc001"),
                           array("__type" => "Pointer",
                                 "className" => "TestObject",
                                 "objectId" => "abc002")));
+        $addsMore = array("__op" => "AddRelation",
+                      "objects" => array(
+                          array("__type" => "Pointer",
+                                "className" => "TestObject",
+                                "objectId" => "abc003")));
         $obj = array("name" => "alice",
                      "likes" => array("__op" => "Batch",
-                                      "ops" => array($adds, $removes)));
+                                      "ops" => array($adds, $addsMore)));
         $resp = Client::post("/classes/TestObject", $obj);
         $this->assertNotEmpty($resp["objectId"]);
         Client::delete("/classes/TestObject/{$resp['objectId']}");
     }
-*/
+
 
     /**
      * Batch on array operation will result error:
