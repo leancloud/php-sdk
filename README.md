@@ -1,8 +1,7 @@
 LeanCloud PHP SDK
 ====
 
-[![Build Status](https://img.shields.io/travis/leancloud/php-sdk.svg)
-](https://travis-ci.org/leancloud/php-sdk)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/leancloud/php-sdk/PHP%20Composer/master)
 [![Latest Version](https://img.shields.io/packagist/v/leancloud/leancloud-sdk.svg)
 ](https://packagist.org/packages/leancloud/leancloud-sdk)
 [![Coverage Status](https://img.shields.io/codecov/c/github/leancloud/php-sdk/master.svg)](https://codecov.io/github/leancloud/php-sdk)
