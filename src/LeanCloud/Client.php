@@ -236,8 +236,17 @@ class Client {
         } else if ($url = getenv("LEANCLOUD_API_SERVER")) {
             return $url . "/" . self::$apiVersion;
         } else {
-            $host = AppRouter::getInstance(self::$appId)->getRoute(AppRouter::API_SERVER_KEY);
-            return "https://{$host}/" . self::$apiVersion;
+            $region = getenv("LEANCLOUD_REGION");
+            $appIdPrefix = strtolower(substr(self::$appId, 0, 8));
+            if ($region == "US") {
+                return "https://{$appIdPrefix}.lncldglobal.com" . self::$apiVersion;
+            } else if (str_ends_with(self::$appId, "-MdYXbMMI")) {
+                return "https://{$appIdPrefix}.lncldglobal.com" . self::$apiVersion;
+            } else if (str_ends_with(self::$appId, "-9Nh9j0Va")) {
+                return "https://{$appIdPrefix}.lc-cn-e1-shared.com" . self::$apiVersion;
+            } else {
+                return "https://{$appIdPrefix}.lc-cn-n1-shared.com" . self::$apiVersion;
+            }
         }
     }
 
