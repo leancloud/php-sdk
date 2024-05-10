@@ -172,7 +172,7 @@ class UserTest extends TestCase {
     public function testVerifyMobilePhone() {
         // Ensure the post format is correct
         $this->setExpectedException("LeanCloud\CloudException", null, 603);
-        User::verifyMobilePhone("000000");
+        User::verifyMobilePhone("000000", "18612340000");
     }
 
     public function testSignUpOrLoginByMobilePhone() {
@@ -308,4 +308,3 @@ class UserTest extends TestCase {
     }
 
 }
-

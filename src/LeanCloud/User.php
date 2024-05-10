@@ -441,9 +441,11 @@ class User extends LeanObject {
      * @param string $smsCode
      * @param string $newPassword
      */
-    public static function resetPasswordBySmsCode($smsCode, $newPassword) {
-        Client::put("/resetPasswordBySmsCode/{$smsCode}",
-                        array("password" => $newPassword));
+    public static function resetPasswordBySmsCode($smsCode, $newPassword, $mobilePhoneNumber) {
+        Client::put("/resetPasswordBySmsCode/{$smsCode}", array(
+          "password" => $newPassword,
+          "mobilePhoneNumber" => $mobilePhoneNumber
+        ));
     }
 
     /**
@@ -463,8 +465,10 @@ class User extends LeanObject {
      *
      * @param string $smsCode
      */
-    public static function verifyMobilePhone($smsCode) {
-        Client::post("/verifyMobilePhone/{$smsCode}", null);
+    public static function verifyMobilePhone($smsCode, $mobilePhoneNumber) {
+        Client::post("/verifyMobilePhone/{$smsCode}", array(
+          "mobilePhoneNumber" => $mobilePhoneNumber
+        ));
     }
 
     /**
@@ -591,4 +595,3 @@ class User extends LeanObject {
     }
 
 }
-
