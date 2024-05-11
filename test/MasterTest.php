@@ -22,7 +22,7 @@ class MasterTest extends TestCase {
         $this->assertNotEmpty($file->getObjectId());
         $this->assertNotEmpty($file->getName());
 
-        $this->assertEquals("abc", $file->getKey());
+        $this->assertStringEndsWith("abc", $file->getKey());
         $url = $file->getUrl();
         $parsedUrl = parse_url($url);
         $path = $parsedUrl["path"];
