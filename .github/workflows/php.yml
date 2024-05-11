@@ -47,7 +47,7 @@ jobs:
 
     - name: Run test suite with phpunit
       env:
-        LEANCLOUD_API_SERVER: https://us.avoscloud.com
+        LEANCLOUD_API_SERVER: https://wndg0lpt.api.lncldglobal.com
         LEANCLOUD_APP_ID: wnDg0lPt0wcYGJSiHRwHBhD4
         LEANCLOUD_APP_KEY: u9ekx9HFSFFBErWwyWHFmPDy
         LEANCLOUD_APP_MASTER_KEY: ${{ secrets.MASTER_KEY }}
