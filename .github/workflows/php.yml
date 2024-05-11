@@ -15,23 +15,22 @@ on:
 jobs:
   build:
 
-    # Only ubuntu 16.04 has 5.6 and 7.0 preinstalled
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     strategy:
       max-parallel: 1
       matrix:
-        php-versions: [5.6, 7.0, 7.1, 7.2, 7.3, 7.4]
+        php-versions: [7.2, 7.4]
     name: PHP ${{ matrix.php-versions }} Test
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    
+
     - name: Setup PHP Action
       uses: shivammathur/setup-php@2.9.0
       with:
           php-version: ${{ matrix.php-versions }}
           coverage: xdebug
-          
+
     - name: Validate composer.json and composer.lock
       run: composer validate --no-check-lock
     - name: Get composer cache directory
@@ -48,7 +47,7 @@ jobs:
 
     - name: Run test suite with phpunit
       env:
-        LEANCLOUD_API_SERVER: https://us.avoscloud.com
+        LEANCLOUD_API_SERVER: https://wndg0lpt.api.lncldglobal.com
         LEANCLOUD_APP_ID: wnDg0lPt0wcYGJSiHRwHBhD4
         LEANCLOUD_APP_KEY: u9ekx9HFSFFBErWwyWHFmPDy
         LEANCLOUD_APP_MASTER_KEY: ${{ secrets.MASTER_KEY }}
