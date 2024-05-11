@@ -24,6 +24,7 @@ class AppRouterTest extends TestCase {
     }
 
     public function testGetRoute() {
+        $this->markTestSkipped("app-router no longer available");
         $appid = getenv("LEANCLOUD_APP_ID");
         $router = AppRouter::getInstance($appid);
         $host = $router->getRoute(AppRouter::API_SERVER_KEY);
