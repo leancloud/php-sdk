@@ -1,4 +1,9 @@
 
+0.14.2 Released on 2024-05-11
+----
+
+- Require phone number when verify sms code
+
 0.14.1 Released on 2021-07-08
 ----
 
